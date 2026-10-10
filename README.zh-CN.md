@@ -15,7 +15,7 @@
 
 在线测试页：<https://innovgame.github.io/slicer-converter/>。
 
-CLI 从 Releases 安装。`@innovgame/slicer-converter` 会在同一个标签发布时发到 GitHub Packages。先在 `.npmrc` 里写上：
+CLI 从 Releases 安装。同一个标签会把 `@innovgame/slicer-converter` 发到 GitHub Packages；配置了 `NPM_TOKEN` 时也会发到 npm。使用 GitHub Packages 时，先在 `.npmrc` 里写上：
 
 ```text
 @innovgame:registry=https://npm.pkg.github.com

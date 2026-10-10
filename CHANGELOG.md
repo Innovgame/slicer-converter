@@ -4,6 +4,8 @@ This file records changes that users can see. Versions follow repository tags, f
 
 ## Unreleased
 
+- The package publishes to GitHub Packages and, when `NPM_TOKEN` is set, to npm.
+
 ## 0.1.2
 
 - GitHub Discussions are enabled.

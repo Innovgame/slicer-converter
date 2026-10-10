@@ -109,10 +109,8 @@ jobs:
                   build-wasm: true
                   cache-key: cargo-github-packages
 
-            - name: Publish to GitHub Packages
+            - name: Publish package
               env:
-                  NODE_AUTH_TOKEN: ${{ github.token }}
-              working-directory: packages/slicer-wasm
-              run: |
-                  printf '%s\n' "@innovgame:registry=https://npm.pkg.github.com" "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > "$HOME/.npmrc"
-                  npm publish --ignore-scripts
+                  GITHUB_TOKEN: ${{ github.token }}
+                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: bash scripts/publish-npm-package.sh

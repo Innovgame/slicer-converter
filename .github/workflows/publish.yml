@@ -53,10 +53,8 @@ jobs:
                       exit 1
                   fi
 
-            - name: Publish to GitHub Packages
+            - name: Publish package
               env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  printf '%s\n' "@innovgame:registry=https://npm.pkg.github.com" "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > "$HOME/.npmrc"
-                  npm publish --ignore-scripts
-              working-directory: packages/slicer-wasm
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: bash scripts/publish-npm-package.sh
