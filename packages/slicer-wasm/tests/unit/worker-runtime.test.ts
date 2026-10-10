@@ -29,7 +29,9 @@ describe("createSlicerWorkerRuntime / createSlicerWorkerRuntime 用例", () => {
     it("reuses core ZIP archive entry types for prepareZipEntry dependencies / reuses core ZIP archive entry types for prepareZipEntry dependencies 用例", async () => {
         const source = await readFile("src/browser/worker/runtime.ts", "utf8");
 
-        expect(source).toContain('import type { ZipArchiveEntry, ZipPreparedEntryWithTimings } from "../archive/zip/archive.js";');
+        expect(source).toContain(
+            'import type { ZipArchiveEntry, ZipPreparedEntryWithTimings } from "../archive/zip/archive.js";'
+        );
         expect(source).not.toContain("type ZipPreparedEntry = {");
         expect(source).not.toContain("type ZipStreamPreparedEntry = {");
         expect(source).not.toContain("prepareZipEntryStream");

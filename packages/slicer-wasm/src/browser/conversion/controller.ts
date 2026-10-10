@@ -117,7 +117,10 @@ export async function buildSlicerZipOutputWithWorkers(input: {
                 compressionMethod: descriptor.compressionMethod
             });
         },
-        isDoneMessage: (message, layerIndex): message is Extract<SlicerWorkerResponse, { type: "zip-layer-prepared" }> =>
+        isDoneMessage: (
+            message,
+            layerIndex
+        ): message is Extract<SlicerWorkerResponse, { type: "zip-layer-prepared" }> =>
             message.type === "zip-layer-prepared" && message.index === layerIndex,
         async onDone(message, layerIndex) {
             await assembler.pushLayerEntry(layerIndex, {

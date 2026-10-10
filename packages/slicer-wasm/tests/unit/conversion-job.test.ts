@@ -6,7 +6,12 @@ import {
     runSlicerConversionJob,
     syncSupportedFormatInfosForValidation
 } from "../../src/index.js";
-import type { ManagedSlicerWorker, SlicerDocument, SlicerWorkerRequest, SlicerWorkerResponse } from "../../src/index.js";
+import type {
+    ManagedSlicerWorker,
+    SlicerDocument,
+    SlicerWorkerRequest,
+    SlicerWorkerResponse
+} from "../../src/index.js";
 import { formatFact } from "./support/format-facts.js";
 
 const wasmMocks = vi.hoisted(() => ({

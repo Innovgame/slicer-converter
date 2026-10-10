@@ -13,9 +13,7 @@ describe("slicer worker protocol / slicer worker 协议", () => {
     it("keeps request and response sentinels in sync with literal unions / request 与 response sentinels 同步 literal unions", async () => {
         const source = await readFile("src/browser/worker/protocol.ts", "utf8");
 
-        expect([...SLICER_WORKER_REQUEST_TYPES]).toEqual(
-            extractUnionMemberTypeLiterals(source, "SlicerWorkerRequest")
-        );
+        expect([...SLICER_WORKER_REQUEST_TYPES]).toEqual(extractUnionMemberTypeLiterals(source, "SlicerWorkerRequest"));
         expect([...SLICER_WORKER_RESPONSE_TYPES]).toEqual(
             extractUnionMemberTypeLiterals(source, "SlicerWorkerResponse")
         );

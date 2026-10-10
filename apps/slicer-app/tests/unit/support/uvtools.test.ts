@@ -5,10 +5,7 @@ import {
     getUvtoolsCompatibilityWarnings,
     parseUvtoolsCompatibilitySummary
 } from "../../support/uvtools";
-import {
-    ANYCUBIC_ARCHIVE_EXTENSIONS,
-    ANYCUBIC_UVTOOLS_STRICT_EXTENSIONS
-} from "../../support/anycubic-targets";
+import { ANYCUBIC_ARCHIVE_EXTENSIONS, ANYCUBIC_UVTOOLS_STRICT_EXTENSIONS } from "../../support/anycubic-targets";
 
 describe("UVTools compatibility output / UVTools 兼容输出", () => {
     it("reports incorrect image ratio warnings without failing compatibility / 报告图像比例 warning 但不失败", () => {

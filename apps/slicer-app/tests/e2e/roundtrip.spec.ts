@@ -51,7 +51,9 @@ const REAL_SMOKE_TARGET_LABELS = new Set(["ctb-v5", "chitubox-zip", "pm5", "sl1"
 test.describe("browser export-import roundtrip / 浏览器导出再导入闭环", () => {
     for (const roundtripCase of roundtripCases()) {
         test(`${roundtripCase.tag} ${roundtripCase.label} / ${roundtripCase.label} 用例`, async ({ page }) => {
-            test.setTimeout(roundtripCase.sourcePath.includes(`${path.sep}rust${path.sep}data${path.sep}`) ? 300_000 : 150_000);
+            test.setTimeout(
+                roundtripCase.sourcePath.includes(`${path.sep}rust${path.sep}data${path.sep}`) ? 300_000 : 150_000
+            );
 
             await disableNativeFileSystemSavePicker(page);
             await page.goto("/");
@@ -256,9 +258,7 @@ function realDataRoundtripCases(): RoundtripCase[] {
         sourceFormat: "GOO",
         includeSameFormatTarget: false
     }).map((roundtripCase) =>
-        REAL_SMOKE_TARGET_LABELS.has(roundtripCase.targetLabel)
-            ? { ...roundtripCase, tag: "@smoke" }
-            : roundtripCase
+        REAL_SMOKE_TARGET_LABELS.has(roundtripCase.targetLabel) ? { ...roundtripCase, tag: "@smoke" } : roundtripCase
     );
 }
 
@@ -497,5 +497,8 @@ function verifyAnycubicZipArchive(archiveBytes: Uint8Array): void {
 }
 
 function sanitizeLabel(value: string): string {
-    return value.replace(/\.[^.]+$/u, "").replace(/[^\p{Letter}\p{Number}]+/gu, "-").replace(/^-|-$/gu, "");
+    return value
+        .replace(/\.[^.]+$/u, "")
+        .replace(/[^\p{Letter}\p{Number}]+/gu, "-")
+        .replace(/^-|-$/gu, "");
 }

@@ -240,9 +240,7 @@ export function createBufferedOutputSink(
  * @zh 如果 sink 是缓冲 sink，则返回当前诊断统计快照。
  * @en Returns the current diagnostics snapshot when the sink is buffered.
  */
-export function snapshotBufferedOutputSinkStats(
-    sink: SlicerOutputSink
-): BufferedSlicerOutputSinkStats | undefined {
+export function snapshotBufferedOutputSinkStats(sink: SlicerOutputSink): BufferedSlicerOutputSinkStats | undefined {
     if (sink instanceof BufferedSlicerOutputSink) {
         return sink.snapshotStats();
     }

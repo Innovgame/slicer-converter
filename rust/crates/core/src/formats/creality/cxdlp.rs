@@ -1619,7 +1619,7 @@ fn decode_cxdlp_rle_rgba_into(
                 detail: "CXDLP RGBA output length overflow".to_string(),
             })?;
         output.resize(output_end, 0);
-        for rgba in output[output_start..output_end].chunks_exact_mut(4) {
+        for rgba in output[output_start..output_end].as_chunks_mut::<4>().0 {
             rgba[0] = pixel;
             rgba[1] = pixel;
             rgba[2] = pixel;
@@ -1955,7 +1955,9 @@ fn read_be_len_utf16_f32_at(
     }
 
     let units = data[*index..end]
-        .chunks_exact(2)
+        .as_chunks::<2>()
+        .0
+        .iter()
         .map(|chunk| u16::from_be_bytes([chunk[0], chunk[1]]))
         .take_while(|unit| *unit != 0)
         .collect::<Vec<_>>();

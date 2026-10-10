@@ -34,7 +34,8 @@ vi.mock("../../../../src/features/converter/model/use-converter-controller", () 
 
 describe("ConverterPage / 转换器页面", () => {
     it("keeps use-converter-controller as a thin facade over sub-controllers / 保持 使用-converter-controller as a thin facade over sub-controllers", async () => {
-        const { useConverterController } = await import("../../../src/features/converter/model/use-converter-controller");
+        const { useConverterController } =
+            await import("../../../src/features/converter/model/use-converter-controller");
         expect(typeof useConverterController).toBe("function");
     });
 

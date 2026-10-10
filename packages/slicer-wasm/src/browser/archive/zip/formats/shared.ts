@@ -92,7 +92,10 @@ export function readString(record: Record<string, unknown> | Record<string, stri
     return typeof value === "string" && value.length > 0 ? value : undefined;
 }
 
-export function readBoolean(record: Record<string, unknown> | Record<string, string>, key: string): boolean | undefined {
+export function readBoolean(
+    record: Record<string, unknown> | Record<string, string>,
+    key: string
+): boolean | undefined {
     const value = record[key];
     if (typeof value === "boolean") {
         return value;

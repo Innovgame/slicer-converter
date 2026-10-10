@@ -3,27 +3,14 @@ export {
     convertSlicerLayersWithWorkers,
     createSlicerBinaryLayerQueue
 } from "./controller.js";
-export type {
-    SlicerConversionPassResult,
-    SlicerZipConversionResult
-} from "./controller.js";
+export type { SlicerConversionPassResult, SlicerZipConversionResult } from "./controller.js";
 export { buildSlicerOutputFilename, buildSlicerOutputJobName } from "./filename.js";
 export { runSlicerConversionJob } from "./job.js";
-export type {
-    SlicerConversionJobResult,
-    SlicerConversionTimings
-} from "./job.js";
+export type { SlicerConversionJobResult, SlicerConversionTimings } from "./job.js";
 export { createSlicerConversionSession } from "./session.js";
-export type {
-    SlicerConversionSession,
-    SlicerZipLayerDescriptor,
-    SlicerZipStrategyPlan
-} from "./session.js";
+export type { SlicerConversionSession, SlicerZipLayerDescriptor, SlicerZipStrategyPlan } from "./session.js";
 export { runSlicerConversionStrategy } from "./strategy.js";
-export type {
-    SlicerConversionStrategyInput,
-    SlicerConversionStrategyResult
-} from "./strategy.js";
+export type { SlicerConversionStrategyInput, SlicerConversionStrategyResult } from "./strategy.js";
 export {
     DEFAULT_ANYCUBIC_MANUAL_TARGET,
     DEFAULT_CHITUBOX_MANUAL_TARGET,

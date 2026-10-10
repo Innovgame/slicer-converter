@@ -1,8 +1,4 @@
-import {
-    parseZipCentralDirectoryEntries,
-    type ZipDirectory,
-    type ZipEntryInfo
-} from "./directory.js";
+import { parseZipCentralDirectoryEntries, type ZipDirectory, type ZipEntryInfo } from "./directory.js";
 
 const LOCAL_FILE_HEADER_SIGNATURE = 0x04034b50;
 const LOCAL_FILE_HEADER_SIZE = 30;
@@ -192,9 +188,7 @@ export async function inflateRaw(data: Uint8Array, expectedSize?: number): Promi
             }
 
             if (offset + value.byteLength > inflated.byteLength) {
-                throw new Error(
-                    `Inflated data exceeded expected uncompressed size: expected ${expectedSize} bytes`
-                );
+                throw new Error(`Inflated data exceeded expected uncompressed size: expected ${expectedSize} bytes`);
             }
 
             inflated.set(value, offset);

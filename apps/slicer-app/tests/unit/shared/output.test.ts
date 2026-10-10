@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-    buildBinaryParts,
-    buildDownloadFilename,
-    toOwnedArrayBuffer
-} from "../../../src/shared/lib/output";
+import { buildBinaryParts, buildDownloadFilename, toOwnedArrayBuffer } from "../../../src/shared/lib/output";
 
 describe("download helpers / 下载 helpers", () => {
     it("builds download filenames from source names / 构建 下载 filenames 来自 source names", () => {

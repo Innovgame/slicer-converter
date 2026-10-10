@@ -23,7 +23,10 @@ test("cleans only roundtrip download history / 只清理 roundtrip 下载历史"
 test("roundtrip scripts clean downloads before Playwright starts / roundtrip 脚本在 Playwright 启动前清理下载目录", async () => {
     const packageJson = JSON.parse(await readFile(join(repoRoot, "apps", "slicer-app", "package.json"), "utf8"));
 
-    assert.match(packageJson.scripts["test:e2e:roundtrip"], /^node \.\.\/\.\.\/scripts\/clean-roundtrip-downloads\.mjs && playwright test/u);
+    assert.match(
+        packageJson.scripts["test:e2e:roundtrip"],
+        /^node \.\.\/\.\.\/scripts\/clean-roundtrip-downloads\.mjs && playwright test/u
+    );
     assert.match(
         packageJson.scripts["test:e2e:roundtrip:real"],
         /^node \.\.\/\.\.\/scripts\/clean-roundtrip-downloads\.mjs && playwright test/u

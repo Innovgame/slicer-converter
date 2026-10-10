@@ -293,14 +293,16 @@ describe("re-exports / 重新导出", () => {
         const encryptedCtbAssembly = mod.createStreamingDocumentAssemblyHelpers("encrypted-ctb");
         mockBuildDocumentFromLayers.mockReturnValueOnce(new Uint8Array([30]));
         expect(
-            encryptedCtbAssembly.streamingDocument?.buildDocument?.(
-                "{}",
-                "encrypted-ctb",
-                undefined,
-                [new Uint8Array([3])]
-            )
+            encryptedCtbAssembly.streamingDocument?.buildDocument?.("{}", "encrypted-ctb", undefined, [
+                new Uint8Array([3])
+            ])
         ).toEqual(new Uint8Array([30]));
-        expect(mockBuildDocumentFromLayers).toHaveBeenCalledWith("{}", "encrypted-ctb", [new Uint8Array([3])], undefined);
+        expect(mockBuildDocumentFromLayers).toHaveBeenCalledWith(
+            "{}",
+            "encrypted-ctb",
+            [new Uint8Array([3])],
+            undefined
+        );
         mockBuildDocumentFromLayers.mockReturnValueOnce(new Uint8Array([31]));
         encryptedCtbAssembly.streamingDocument?.buildDocument?.("{}", "encrypted-ctb", 515, [new Uint8Array([4])]);
         expect(mockBuildDocumentFromLayers).toHaveBeenCalledWith("{}", "encrypted-ctb", [new Uint8Array([4])], 515);
@@ -428,7 +430,10 @@ describe("public package surface / 公开 package surface", () => {
 
     it("exposes document assembly helpers instead of raw header/footer exports / 暴露 document assembly helpers 而不是 raw header/footer exports", () => {
         const apiSource = readFileSync(path.join(process.cwd(), "src/api.ts"), "utf8");
-        const assemblySource = readFileSync(path.join(process.cwd(), "src/browser/output/document-assembly.ts"), "utf8");
+        const assemblySource = readFileSync(
+            path.join(process.cwd(), "src/browser/output/document-assembly.ts"),
+            "utf8"
+        );
 
         expect(apiSource).not.toContain("build_header: typeof build_header");
         expect(apiSource).not.toContain("diagnose_export: typeof diagnose_export");
@@ -441,7 +446,10 @@ describe("public package surface / 公开 package surface", () => {
 
     it("keeps CXDLPv4 raw streaming helpers behind typed document assembly helpers / 保持 CXDLPv4 raw streaming helpers behind typed document assembly helpers", () => {
         const apiSource = readFileSync(path.join(process.cwd(), "src/api.ts"), "utf8");
-        const assemblySource = readFileSync(path.join(process.cwd(), "src/browser/output/document-assembly.ts"), "utf8");
+        const assemblySource = readFileSync(
+            path.join(process.cwd(), "src/browser/output/document-assembly.ts"),
+            "utf8"
+        );
 
         expect(apiSource).not.toContain("build_cxdlpv4_document_header: typeof build_cxdlpv4_document_header");
         expect(apiSource).not.toContain("build_cxdlpv4_layer_def: typeof build_cxdlpv4_layer_def");
@@ -599,10 +607,7 @@ describe("public package surface / 公开 package surface", () => {
 
 describe("browser module structure / 浏览器模块结构", () => {
     it("keeps conversion pipeline below the public API facade / 保持 conversion pipeline 位于 public API facade 下层", () => {
-        const pipelineSource = readFileSync(
-            path.join(process.cwd(), "src/browser/conversion/pipeline.ts"),
-            "utf8"
-        );
+        const pipelineSource = readFileSync(path.join(process.cwd(), "src/browser/conversion/pipeline.ts"), "utf8");
 
         expect(pipelineSource).not.toContain('from "../../api.js"');
     });
@@ -661,7 +666,10 @@ describe("browser module structure / 浏览器模块结构", () => {
     });
 
     it("keeps document assembly in the output module / 保持 document assembly 归属 output 模块", () => {
-        const wasmBinaryOutputSource = readFileSync(path.join(process.cwd(), "src/browser/output/wasm-binary.ts"), "utf8");
+        const wasmBinaryOutputSource = readFileSync(
+            path.join(process.cwd(), "src/browser/output/wasm-binary.ts"),
+            "utf8"
+        );
         const binaryOutputSource = readFileSync(path.join(process.cwd(), "src/browser/output/binary.ts"), "utf8");
 
         expect(existsSync(path.join(process.cwd(), "src/browser/output/document-assembly.ts"))).toBe(true);
@@ -745,8 +753,7 @@ function listTypeScriptImplementationFiles(directory: string): string[] {
 
 function findImportSpecifiers(source: string): string[] {
     const specifiers: string[] = [];
-    const importExportPattern =
-        /\b(?:import|export)\s+(?:type\s+)?(?:[^"']*?\s+from\s+)?["'](?<specifier>[^"']+)["']/g;
+    const importExportPattern = /\b(?:import|export)\s+(?:type\s+)?(?:[^"']*?\s+from\s+)?["'](?<specifier>[^"']+)["']/g;
     const dynamicImportPattern = /\bimport\s*\(\s*["'](?<specifier>[^"']+)["']\s*\)/g;
 
     for (const match of source.matchAll(importExportPattern)) {

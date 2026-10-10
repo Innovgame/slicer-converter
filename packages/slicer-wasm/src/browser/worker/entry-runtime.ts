@@ -1,8 +1,4 @@
-import {
-    getSlicerWorkerRequestErrorContext,
-    getWorkerErrorMessage,
-    toSlicerWorkerErrorMessage
-} from "./errors.js";
+import { getSlicerWorkerRequestErrorContext, getWorkerErrorMessage, toSlicerWorkerErrorMessage } from "./errors.js";
 import type { SlicerWorkerErrorMessage, SlicerWorkerRequest, SlicerWorkerResponse } from "./protocol.js";
 import type { SlicerWorkerRuntime } from "./runtime.js";
 

@@ -282,7 +282,7 @@ fn paint_pwsz_polygon(
         intersections
             .sort_by(|left, right| left.partial_cmp(right).unwrap_or(std::cmp::Ordering::Equal));
 
-        for pair in intersections.chunks_exact(2) {
+        for pair in intersections.as_chunks::<2>().0 {
             let start_x = (pair[0] - 0.5).ceil().max(0.0) as u32;
             let end_x = (pair[1] - 0.5).ceil().min(width as f32) as u32;
             for x in start_x..end_x {

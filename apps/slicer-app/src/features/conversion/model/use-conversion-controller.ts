@@ -73,10 +73,12 @@ export function useConversionController(input: {
                 type: "success",
                 message: result.statusMessage
             });
-            const warning = buildAnycubicExportWarning(diagnoseExport({
-                metadata: currentHeader.metadata,
-                targetFormat: conversionTarget.resolvedTargetFormat
-            }));
+            const warning = buildAnycubicExportWarning(
+                diagnoseExport({
+                    metadata: currentHeader.metadata,
+                    targetFormat: conversionTarget.resolvedTargetFormat
+                })
+            );
             if (warning) {
                 input.setStatus({ type: "warning", message: `${result.statusMessage} ${warning}` });
             }

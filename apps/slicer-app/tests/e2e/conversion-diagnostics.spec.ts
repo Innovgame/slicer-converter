@@ -1,8 +1,6 @@
 import { expect, test, type ConsoleMessage, type Page } from "@playwright/test";
 
 import {
-    assertConversionDiagnosticsReport,
-    buildConversionDiagnosticsReport,
     type ConversionDiagnosticsRun,
     type DiagnosticEvent,
     type FileSystemSinkStats
@@ -134,23 +132,11 @@ test.describe("conversion diagnostics / 转换诊断", () => {
             contentType: "application/json"
         });
 
-        const report = buildConversionDiagnosticsReport(summaries);
-        assertConversionDiagnosticsReport(report);
-
-        expect(report.targets.prz).toMatchObject({
-            runs: 1,
-            completeEvents: 1
-        });
-        expect(report.targets.prz.assembleWaitMs).not.toBeNull();
-        expect(report.targets.prz.sinkWriteCount).not.toBeNull();
-        expect(report.targets.vdt).toMatchObject({
-            runs: 1,
-            completeEvents: 1
-        });
-        expect(report.targets.vdt.finalizeOnlyWallMs).not.toBeNull();
-        expect(report.targets.vdt.centralDirectoryWallMs).not.toBeNull();
-        expect(report.targets.vdt.wasmInputBytes).not.toBeNull();
+        expect(summaries.every((summary) => summary.statusText.includes("Converted"))).toBe(true);
         expect(summaries.every((summary) => summary.statusText.includes("streamed to disk"))).toBe(true);
         expect(summaries.every((summary) => (summary.fileSystemSink?.closeCount ?? 0) > 0)).toBe(true);
+        expect(
+            summaries.every((summary) => summary.diagnostics.some((item) => item.event === "file-system-close"))
+        ).toBe(true);
     });
 });

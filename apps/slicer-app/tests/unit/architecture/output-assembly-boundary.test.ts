@@ -28,7 +28,9 @@ describe("output assembly package boundary / 输出组装 package 边界", () =>
         ).join("\n");
 
         expect(packageSources).toContain("showSaveFilePicker");
-        expect(existsSync(path.join(process.cwd(), "src/infrastructure/output/file-system-output-sink.ts"))).toBe(false);
+        expect(existsSync(path.join(process.cwd(), "src/infrastructure/output/file-system-output-sink.ts"))).toBe(
+            false
+        );
     });
 });
 

@@ -27,7 +27,8 @@ describe("preview worker handlers / preview worker handlers 用例", () => {
         );
 
         const handlers = createSlicerPreviewHandlers({
-            postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) => posted.push({ message, transfer }),
+            postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) =>
+                posted.push({ message, transfer }),
             now: () => 0,
             decodeLayerPreview,
             inflateRaw: vi.fn(),
@@ -101,7 +102,8 @@ describe("preview worker handlers / preview worker handlers 用例", () => {
             );
 
             const handlers = createSlicerPreviewHandlers({
-                postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) => posted.push({ message, transfer }),
+                postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) =>
+                    posted.push({ message, transfer }),
                 now: () => 0,
                 decodeLayerPreview,
                 inflateRaw: vi.fn(),
@@ -169,7 +171,8 @@ describe("preview worker handlers / preview worker handlers 用例", () => {
             const inflateRaw = vi.fn(async () => new Uint8Array([137, 80, 78, 71]));
 
             const handlers = createSlicerPreviewHandlers({
-                postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) => posted.push({ message, transfer }),
+                postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) =>
+                    posted.push({ message, transfer }),
                 now: () => 0,
                 decodeLayerPreview: vi.fn(),
                 inflateRaw,
@@ -241,7 +244,8 @@ describe("preview worker handlers / preview worker handlers 用例", () => {
         const inflateRaw = vi.fn(async () => new Uint8Array([137, 80, 78, 71]));
 
         const handlers = createSlicerPreviewHandlers({
-            postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) => posted.push({ message, transfer }),
+            postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) =>
+                posted.push({ message, transfer }),
             now: () => 0,
             decodeLayerPreview: vi.fn(),
             inflateRaw,
@@ -303,7 +307,8 @@ describe("preview worker handlers / preview worker handlers 用例", () => {
         const inflateRaw = vi.fn(async () => new Uint8Array([137, 80, 78, 71]));
 
         const handlers = createSlicerPreviewHandlers({
-            postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) => posted.push({ message, transfer }),
+            postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) =>
+                posted.push({ message, transfer }),
             now: () => 0,
             decodeLayerPreview: vi.fn(),
             inflateRaw,
@@ -361,7 +366,8 @@ describe("preview worker handlers / preview worker handlers 用例", () => {
         const inflateRaw = vi.fn(async () => new Uint8Array([137, 80, 78, 71]));
 
         const handlers = createSlicerPreviewHandlers({
-            postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) => posted.push({ message, transfer }),
+            postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) =>
+                posted.push({ message, transfer }),
             now: () => 0,
             decodeLayerPreview: vi.fn(),
             inflateRaw,
@@ -425,7 +431,8 @@ describe("preview worker handlers / preview worker handlers 用例", () => {
             const inflateRaw = vi.fn(async () => new Uint8Array([137, 80, 78, 71]));
 
             const handlers = createSlicerPreviewHandlers({
-                postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) => posted.push({ message, transfer }),
+                postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) =>
+                    posted.push({ message, transfer }),
                 now: () => 0,
                 decodeLayerPreview: vi.fn(),
                 inflateRaw,

@@ -68,8 +68,14 @@ test("writes a markdown roundtrip compatibility table / 写入 roundtrip 兼容�
     assert.match(markdown, /\*\*Risk\*\*: fail 1, warning 0, note 0, ok 0/u);
     assert.match(markdown, /\*\*Quality gate\*\*: fail/u);
     assert.match(markdown, /\*\*Family\*\*: anycubic 1/u);
-    assert.match(markdown, /\| risk \| data \| family \| target \| ext \| size \| decode \| encode \| sq \| res \| lcd \| layers \| src \| machine \| notes \|/u);
-    assert.match(markdown, /\| fail \| sample \| anycubic \| pw0 \| \.pw0 \| 75\.7 KB \| Y \| N \| N \| 64x64 \| 55\.44x98\.637 \| 10 \| TestPrinter \| Photon Zero \| ratio \\\| mismatch; encode unsupported; sample fixture resolution \|/u);
+    assert.match(
+        markdown,
+        /\| risk \| data \| family \| target \| ext \| size \| decode \| encode \| sq \| res \| lcd \| layers \| src \| machine \| notes \|/u
+    );
+    assert.match(
+        markdown,
+        /\| fail \| sample \| anycubic \| pw0 \| \.pw0 \| 75\.7 KB \| Y \| N \| N \| 64x64 \| 55\.44x98\.637 \| 10 \| TestPrinter \| Photon Zero \| ratio \\\| mismatch; encode unsupported; sample fixture resolution \|/u
+    );
 });
 
 test("summarizes sample fixture notes without raising row risk / 汇总 sample fixture notes 但不提升行风险", async () => {
@@ -102,7 +108,10 @@ test("summarizes sample fixture notes without raising row risk / 汇总 sample f
     const markdown = await readFile(getRoundtripCompatMarkdownReportPath(), "utf8");
     assert.match(markdown, /\*\*Risk\*\*: fail 0, warning 0, note 0, ok 1/u);
     assert.match(markdown, /\*\*Sample notes\*\*: 1/u);
-    assert.match(markdown, /\| ok \| sample \| chitubox \| ctb-v1 \| \.ctb \| 2\.2 KB \| Y \| Y \| N \| 64x64 \| 68\.04x120\.96 \| 10 \| TestPrinter \| Unknown \| legacy or generic machine metadata; sample fixture resolution \|/u);
+    assert.match(
+        markdown,
+        /\| ok \| sample \| chitubox \| ctb-v1 \| \.ctb \| 2\.2 KB \| Y \| Y \| N \| 64x64 \| 68\.04x120\.96 \| 10 \| TestPrinter \| Unknown \| legacy or generic machine metadata; sample fixture resolution \|/u
+    );
 });
 
 test("renders smoke cases as real data / smoke 用例按 real 数据展示", async () => {
@@ -132,7 +141,10 @@ test("renders smoke cases as real data / smoke 用例按 real 数据展示", asy
     await collectRoundtripCompatReport();
 
     const markdown = await readFile(getRoundtripCompatMarkdownReportPath(), "utf8");
-    assert.match(markdown, /\| ok \| real \| archive \| sl1 \| \.sl1 \| 1\.0 KB \| Y \| Y \| Y \| 8520x4320 \| 153\.36x77\.76 \| 1380 \| - \| SL1 \| - \|/u);
+    assert.match(
+        markdown,
+        /\| ok \| real \| archive \| sl1 \| \.sl1 \| 1\.0 KB \| Y \| Y \| Y \| 8520x4320 \| 153\.36x77\.76 \| 1380 \| - \| SL1 \| - \|/u
+    );
 });
 
 test("fails the quality gate for sample compatibility risks / sample 兼容性风险会触发质量门禁", async () => {
@@ -206,12 +218,21 @@ test("allows real image ratio warnings in the quality gate / real 图像比例 w
 test("roundtrip scripts collect compatibility reports after Playwright / roundtrip 脚本在 Playwright 后汇总兼容报告", async () => {
     const packageJson = JSON.parse(await readFile(join(repoRoot, "apps", "slicer-app", "package.json"), "utf8"));
 
-    assert.match(packageJson.scripts["test:e2e:roundtrip"], /playwright test .+ && node \.\.\/\.\.\/scripts\/collect-roundtrip-compat-report\.mjs/u);
-    assert.match(packageJson.scripts["test:e2e:roundtrip:real"], /playwright test .+ && node \.\.\/\.\.\/scripts\/collect-roundtrip-compat-report\.mjs/u);
+    assert.match(
+        packageJson.scripts["test:e2e:roundtrip"],
+        /playwright test .+ && node \.\.\/\.\.\/scripts\/collect-roundtrip-compat-report\.mjs/u
+    );
+    assert.match(
+        packageJson.scripts["test:e2e:roundtrip:real"],
+        /playwright test .+ && node \.\.\/\.\.\/scripts\/collect-roundtrip-compat-report\.mjs/u
+    );
     assert.match(packageJson.scripts["test:e2e:roundtrip:real:smoke"], /--grep @smoke/u);
     assert.match(packageJson.scripts["test:e2e:roundtrip:real:smoke"], /--workers=2/u);
     assert.match(packageJson.scripts["test:e2e:roundtrip:real:smoke"], /collect-roundtrip-compat-report\.mjs/u);
-    assert.match(packageJson.scripts["test:e2e:roundtrip:real:headed"], /playwright test .+ && node \.\.\/\.\.\/scripts\/collect-roundtrip-compat-report\.mjs/u);
+    assert.match(
+        packageJson.scripts["test:e2e:roundtrip:real:headed"],
+        /playwright test .+ && node \.\.\/\.\.\/scripts\/collect-roundtrip-compat-report\.mjs/u
+    );
 });
 
 test("collect script runs from node cli on Windows paths / collect 脚本可通过 node cli 执行 Windows 路径", async () => {

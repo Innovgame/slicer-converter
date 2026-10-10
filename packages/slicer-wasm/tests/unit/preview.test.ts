@@ -21,7 +21,10 @@ describe("decodeSlicerLayerPreview / 解码 slicer layer preview", () => {
                 ) {}
             }
         );
-        vi.stubGlobal("createImageBitmap", vi.fn(async () => bitmap));
+        vi.stubGlobal(
+            "createImageBitmap",
+            vi.fn(async () => bitmap)
+        );
         const decodeLayerPreview = vi.fn(() => ({
             pixels: new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]),
             width: 2,
@@ -65,7 +68,10 @@ describe("decodeSlicerLayerPreview / 解码 slicer layer preview", () => {
                 ) {}
             }
         );
-        vi.stubGlobal("createImageBitmap", vi.fn(async () => bitmap));
+        vi.stubGlobal(
+            "createImageBitmap",
+            vi.fn(async () => bitmap)
+        );
         const decodeZipPreview = vi.fn(async () => ({
             pixels: new Uint8Array(12),
             width: 3,
@@ -129,7 +135,10 @@ describe("decodeSlicerLayerPreview / 解码 slicer layer preview", () => {
                 ) {}
             }
         );
-        vi.stubGlobal("createImageBitmap", vi.fn(async () => bitmap));
+        vi.stubGlobal(
+            "createImageBitmap",
+            vi.fn(async () => bitmap)
+        );
         const inflateRaw = vi.fn(async () => new Uint8Array([137, 80, 78, 71]));
         const document = createDocument("sl1");
         vi.mocked(document.readLayerPayload).mockResolvedValue({

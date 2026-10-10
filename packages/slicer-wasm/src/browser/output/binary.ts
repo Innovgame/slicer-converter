@@ -258,7 +258,10 @@ async function writeBinaryGap(
     }
 }
 
-function readLayerRanges(header: Uint8Array, layerSizes: Uint32Array): Array<{ start: number; end: number; size: number }> {
+function readLayerRanges(
+    header: Uint8Array,
+    layerSizes: Uint32Array
+): Array<{ start: number; end: number; size: number }> {
     const view = new DataView(header.buffer, header.byteOffset, header.byteLength);
     if (header.byteLength < 0x48) {
         throw new Error("Finalized binary header is too small to contain a layer table");

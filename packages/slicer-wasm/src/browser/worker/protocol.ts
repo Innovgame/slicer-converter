@@ -17,7 +17,13 @@ export const SLICER_WORKER_REQUEST_TYPES = [
  * @zh slicer worker 可发送的 response 类型哨兵。
  * @en Response type sentinels emitted by a slicer worker.
  */
-export const SLICER_WORKER_RESPONSE_TYPES = ["ready", "layer-done", "preview-done", "zip-layer-prepared", "error"] as const;
+export const SLICER_WORKER_RESPONSE_TYPES = [
+    "ready",
+    "layer-done",
+    "preview-done",
+    "zip-layer-prepared",
+    "error"
+] as const;
 
 /**
  * @zh 普通 encoded layer 的 decode/encode 请求。

@@ -29,7 +29,11 @@ interface FileSystemAccessGlobal {
  */
 export type FileSystemOutputSinkDiagnostic =
     | { readonly type: "file-system-picker"; readonly suggestedName: string; readonly pickerWallMs: number }
-    | { readonly type: "file-system-create-writable"; readonly suggestedName: string; readonly createWritableWallMs: number }
+    | {
+          readonly type: "file-system-create-writable";
+          readonly suggestedName: string;
+          readonly createWritableWallMs: number;
+      }
     | { readonly type: "file-system-close"; readonly closeWallMs: number };
 
 /**

@@ -159,15 +159,15 @@ use super::{
 
 `super` 表示父模块，也就是 `transcode` 模块。这里引入的是转码层内部组件：
 
-| 名字                    | 作用                                        |
-| ----------------------- | ------------------------------------------- |
-| `fallback`              | 通用转码路径：decode -> encode              |
-| `TranscodeRegistry`     | fast path 注册表接口                        |
-| `DEFAULT_REGISTRY`      | 默认 fast path 注册表实例                   |
-| `FastPathOutcome`       | fast path 尝试结果：`Applied` 或 `Fallback` |
-| `LayerTranscodeRequest` | 一层转码所需的请求上下文                    |
-| `LayerTranscodeScratch` | 可复用临时 buffer                           |
-| `LayerTranscodeStats`   | 单层转码统计                                |
+| 名字                       | 作用                                               |
+| -------------------------- | -------------------------------------------------- |
+| `fallback`                 | 通用转码路径：decode -> encode                     |
+| `TranscodeRegistry`        | fast path 注册表接口                               |
+| `DEFAULT_REGISTRY`         | 默认 fast path 注册表实例                          |
+| `FastPathOutcome`          | fast path 尝试结果：`Applied` 或 `Fallback`        |
+| `LayerTranscodeRequest`    | 一层转码所需的请求上下文                           |
+| `LayerTranscodeScratch`    | 可复用临时 buffer                                  |
+| `LayerTranscodeStats`      | 单层转码统计                                       |
 | `TranscodeRouteDescriptor` | 从源/目标 `FormatSpec` 派生出来的转换级 route 事实 |
 
 这里能看出一个分层：
@@ -823,7 +823,7 @@ pairwise fast path 优先；
 ## 18. 读这个文件时最该抓住的语法
 
 | 语法                     | 例子                                        | 你要读出的意思                |
-| ------------------------ | ------------------------------------------- | ----------------------------- |
+| ------------------------ | ------------------------------------------- | ----------------------------- | ------ | --- | ---- | ------------------------------------- |
 | `&FormatSpec`            | `src_fmt: &FormatSpec`                      | 借用一个格式 profile 执行对象 |
 | `&dyn TranscodeRegistry` | `registry: &'static dyn TranscodeRegistry`  | 借用一个注册表接口对象        |
 | `&[u8]`                  | `src: &[u8]`                                | 借用一段只读 bytes            |
@@ -833,7 +833,7 @@ pairwise fast path 优先；
 | `match`                  | `match outcome { ... }`                     | 穷举 fast path 的结果         |
 | `static`                 | `DEFAULT_ENGINE`                            | 全局静态对象                  |
 | `'static`                | `&'static TranscodeEngine`                  | 引用指向全局长生命周期对象    |
-| `.map(|_| ())`           | `.map(|_| ())`                              | 简化 API：成功值丢弃，只保留成功/失败 |
+| `.map(                   | \_                                          | ())`                          | `.map( | \_  | ())` | 简化 API：成功值丢弃，只保留成功/失败 |
 
 ---
 

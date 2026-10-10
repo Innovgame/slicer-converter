@@ -4,7 +4,11 @@ import { describe, expect, it, vi } from "vitest";
 
 import { createBlobOutputSink } from "../../src/index.js";
 import { prepareZipEntry } from "../../src/browser/archive/zip/archive.js";
-import { createInMemoryZipSource, parseZipDirectoryFromReader, readZipEntryBytes } from "../../src/browser/archive/zip/source.js";
+import {
+    createInMemoryZipSource,
+    parseZipDirectoryFromReader,
+    readZipEntryBytes
+} from "../../src/browser/archive/zip/source.js";
 import { assembleZipArchiveForTest, createZipStreamAssemblerForTest } from "./support/zip-test-archive.js";
 import type { PatchableSlicerOutputSink } from "../../src/index.js";
 

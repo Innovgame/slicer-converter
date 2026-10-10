@@ -23,10 +23,7 @@ export {
 } from "./diagnostics.js";
 export type { OutputSinkWriteStats } from "./diagnostics.js";
 export { isFileSystemWriteSupported, openFileSystemSink } from "./file-system-sink.js";
-export type {
-    FileSystemOutputSinkDiagnostic,
-    OpenFileSystemSinkOptions
-} from "./file-system-sink.js";
+export type { FileSystemOutputSinkDiagnostic, OpenFileSystemSinkOptions } from "./file-system-sink.js";
 export { createOrderedLayerQueue } from "./stream.js";
 export type { OrderedLayerQueue } from "./stream.js";
 export { createLayerSpool } from "./layer-spool.js";

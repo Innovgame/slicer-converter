@@ -19,24 +19,23 @@ const FORBIDDEN_CORE_WASM_VALUE_IMPORTS = [
 
 describe("core WASM runtime boundary / core WASM runtime 边界", () => {
     it("keeps app imports on typed package APIs instead of raw WASM exports / app 只导入 package typed APIs 而不是 raw WASM exports", () => {
-        const offenders = listSourceFiles(path.join(process.cwd(), "src"))
-            .flatMap((file) => {
-                const text = readFileSync(file, "utf8");
-                const importBlocks = extractWasmValueImportBlocks(text);
-                const forbiddenNames = FORBIDDEN_CORE_WASM_VALUE_IMPORTS.filter((name) =>
-                    importBlocks.some((block) => block.includes(name))
-                );
-                if (forbiddenNames.length === 0) {
-                    return [];
-                }
+        const offenders = listSourceFiles(path.join(process.cwd(), "src")).flatMap((file) => {
+            const text = readFileSync(file, "utf8");
+            const importBlocks = extractWasmValueImportBlocks(text);
+            const forbiddenNames = FORBIDDEN_CORE_WASM_VALUE_IMPORTS.filter((name) =>
+                importBlocks.some((block) => block.includes(name))
+            );
+            if (forbiddenNames.length === 0) {
+                return [];
+            }
 
-                return [
-                    {
-                        file: path.relative(process.cwd(), file).replaceAll("\\", "/"),
-                        forbiddenNames
-                    }
-                ];
-            });
+            return [
+                {
+                    file: path.relative(process.cwd(), file).replaceAll("\\", "/"),
+                    forbiddenNames
+                }
+            ];
+        });
 
         expect(offenders).toEqual([]);
     });

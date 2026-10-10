@@ -64,9 +64,7 @@ export interface PreparedSlicerExportTarget {
  * @zh 列出 UI 可消费的导出目标矩阵：格式 -> 后缀 -> 版本。
  * @en Lists the UI-consumable export target matrix: format -> suffix -> version.
  */
-export function listSlicerExportTargetMatrix(
-    sourceFormat: SlicerFormatId | null
-): SlicerExportTargetFormatOption[] {
+export function listSlicerExportTargetMatrix(sourceFormat: SlicerFormatId | null): SlicerExportTargetFormatOption[] {
     const options: SlicerExportTargetFormatOption[] = [];
 
     for (const option of listExportTargetOptions(sourceFormat)) {
@@ -274,7 +272,9 @@ function findVersionByIdOrDefault(
     );
 }
 
-function anycubicDefaultVersionId(option: ReturnType<typeof listAnycubicManualTargetOptions>[number]): string | undefined {
+function anycubicDefaultVersionId(
+    option: ReturnType<typeof listAnycubicManualTargetOptions>[number]
+): string | undefined {
     return option.anycubicDefaultVersion === undefined ? undefined : String(option.anycubicDefaultVersion);
 }
 

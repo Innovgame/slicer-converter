@@ -326,15 +326,15 @@ pub struct FormatSpec {
 
 可以把 `FormatSpec` 先理解成“运行时执行内核 + 通用 catalog 字段”。`catalog` 放所有格式族都通用的 UI/registry 字段；Chitubox / Anycubic 这类格式族专属事实放在 `formats::catalog::FormatProfile.facts`，由 `global_registry().catalog_profiles()` 暴露给 WASM 和前端。具体行为由小策略对象组合出来：
 
-| 入口 / slot                               | 作用                                              |
-| ----------------------------------------- | ------------------------------------------------- |
-| `pipeline.parse_document(spec, data)`     | 从完整文件 bytes 解析 metadata 和 layer offset 表 |
-| `pipeline.encode_document_into(...)`      | 按 profile pipeline 组装完整输出文件              |
-| `decode_layer` / `decode_layer_into`      | 把某一层的格式私有 bytes 解码成灰度像素           |
-| `encode_layer` / `encode_layer_into`      | 把灰度像素编码成该格式的层数据                    |
-| `header.build_header(...)`                | 根据 metadata 构建目标文件 header                 |
-| `header.finalize_header(...)`             | 部分格式需要在知道 layer size 后回填 header       |
-| `footer.build_footer(...)`                | 构建 footer，默认空                               |
+| 入口 / slot                                | 作用                                              |
+| ------------------------------------------ | ------------------------------------------------- |
+| `pipeline.parse_document(spec, data)`      | 从完整文件 bytes 解析 metadata 和 layer offset 表 |
+| `pipeline.encode_document_into(...)`       | 按 profile pipeline 组装完整输出文件              |
+| `decode_layer` / `decode_layer_into`       | 把某一层的格式私有 bytes 解码成灰度像素           |
+| `encode_layer` / `encode_layer_into`       | 把灰度像素编码成该格式的层数据                    |
+| `header.build_header(...)`                 | 根据 metadata 构建目标文件 header                 |
+| `header.finalize_header(...)`              | 部分格式需要在知道 layer size 后回填 header       |
+| `footer.build_footer(...)`                 | 构建 footer，默认空                               |
 | `header.try_detect(...)` / family resolver | 通过 magic bytes 判断是否是该格式                 |
 
 真正的可替换接口更小，例如：

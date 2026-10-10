@@ -166,12 +166,14 @@ export function listAnycubicManualTargetOptions(): ManualSlicerTargetOption[] {
             }
 
             if (specifics.family === "anycubic-archive") {
-                return facts.targetNames.filter((targetName) => targetName !== facts.format).map((targetName) => ({
-                    value: targetName,
-                    resolvedTargetFormat: facts.format as SlicerFormatId,
-                    label: `${facts.displayName} (${targetName.toUpperCase()})`,
-                    extension: targetName
-                }));
+                return facts.targetNames
+                    .filter((targetName) => targetName !== facts.format)
+                    .map((targetName) => ({
+                        value: targetName,
+                        resolvedTargetFormat: facts.format as SlicerFormatId,
+                        label: `${facts.displayName} (${targetName.toUpperCase()})`,
+                        extension: targetName
+                    }));
             }
 
             throw new Error("unreachable non-anycubic specifics");
@@ -303,7 +305,9 @@ function resolveManualExportTarget(input: {
     }
 
     const manualTarget = normalizeManualTargetAlias(input.manualTarget, input.options);
-    const option = manualTarget ? input.options.find((candidate) => candidate.value === manualTarget) : input.options[0];
+    const option = manualTarget
+        ? input.options.find((candidate) => candidate.value === manualTarget)
+        : input.options[0];
     if (!option) {
         throw new Error(input.noAvailableTargetsMessage);
     }
@@ -319,10 +323,7 @@ function resolveManualExportTarget(input: {
     };
 }
 
-function normalizeManualTargetAlias(
-    manualTarget: string,
-    options: readonly ManualSlicerTargetOption[]
-): string {
+function normalizeManualTargetAlias(manualTarget: string, options: readonly ManualSlicerTargetOption[]): string {
     const direct = options.find((candidate) => candidate.value === manualTarget);
     if (direct) {
         return direct.value;

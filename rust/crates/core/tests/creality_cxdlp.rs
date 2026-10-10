@@ -641,6 +641,8 @@ fn creality_cxdlpv4_preview_does_not_require_full_sparse_layer_expansion() {
     assert_eq!(preview.height, 4);
     assert_eq!(&preview.pixels[..8], &[255, 255, 255, 255, 0, 0, 0, 255]);
     assert!(preview.pixels[8..]
-        .chunks_exact(4)
-        .all(|rgba| rgba == [0, 0, 0, 255]));
+        .as_chunks::<4>()
+        .0
+        .iter()
+        .all(|rgba| *rgba == [0, 0, 0, 255]));
 }

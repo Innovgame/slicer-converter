@@ -127,11 +127,7 @@ pnpm --filter @slicer-converter/wasm build
 Use `convertSlicerFileToSink()` when the caller owns the output sink:
 
 ```ts
-import {
-    convertSlicerFileToSink,
-    createBufferedOutputSink,
-    openFileSystemSink
-} from "@slicer-converter/wasm";
+import { convertSlicerFileToSink, createBufferedOutputSink, openFileSystemSink } from "@slicer-converter/wasm";
 
 const fileSystemSink = await openFileSystemSink({ suggestedName: "plate.ctb" });
 const output = createBufferedOutputSink(fileSystemSink);
@@ -169,10 +165,7 @@ The preview session builds worker payloads for raw encoded layers and ZIP/archiv
 ## Worker Runtime
 
 ```ts
-import {
-    createSlicerWorkerRuntime,
-    startSlicerWorkerEntryRuntime
-} from "@slicer-converter/wasm";
+import { createSlicerWorkerRuntime, startSlicerWorkerEntryRuntime } from "@slicer-converter/wasm";
 
 const runtime = createSlicerWorkerRuntime({
     postMessage: (message, transfer) => self.postMessage(message, transfer ?? []),

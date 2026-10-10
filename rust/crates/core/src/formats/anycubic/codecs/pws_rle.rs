@@ -149,7 +149,7 @@ fn append_rgba_run(
             detail: "PWS RGBA output length overflow".to_string(),
         })?;
     rgba.resize(end, 0);
-    for pixel in rgba[start..end].chunks_exact_mut(4) {
+    for pixel in rgba[start..end].as_chunks_mut::<4>().0 {
         pixel[0] = color;
         pixel[1] = color;
         pixel[2] = color;

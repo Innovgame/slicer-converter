@@ -244,10 +244,7 @@ function compatibleTsTypesFor(
         return ["string"];
     }
 
-    if (
-        rustType === "AnycubicMachineId" ||
-        rustType === "super::anycubic::AnycubicMachineId"
-    ) {
+    if (rustType === "AnycubicMachineId" || rustType === "super::anycubic::AnycubicMachineId") {
         return ["AnycubicMachineId"];
     }
 

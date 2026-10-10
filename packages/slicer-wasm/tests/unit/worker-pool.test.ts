@@ -1,6 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { createSlicerWorkerPoolState, initSlicerWorkerPool, waitForSlicerWorkerReady } from "../../src/browser/worker/pool.js";
+import {
+    createSlicerWorkerPoolState,
+    initSlicerWorkerPool,
+    waitForSlicerWorkerReady
+} from "../../src/browser/worker/pool.js";
 
 interface FakeWorker {
     busy: boolean;

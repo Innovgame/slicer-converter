@@ -11,15 +11,18 @@ if (!Number.isFinite(benchmarkLayers) || benchmarkLayers <= 0) {
     throw new Error("BENCH_RLE_LAYERS must be a positive number");
 }
 
-const output = execSync("cargo run --manifest-path rust/Cargo.toml -p slicer-converter-core --example bench_rle --release", {
-    cwd: process.cwd(),
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
-    env: {
-        ...process.env,
-        BENCH_RLE_LAYERS: String(Math.trunc(benchmarkLayers))
+const output = execSync(
+    "cargo run --manifest-path rust/Cargo.toml -p slicer-converter-core --example bench_rle --release",
+    {
+        cwd: process.cwd(),
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"],
+        env: {
+            ...process.env,
+            BENCH_RLE_LAYERS: String(Math.trunc(benchmarkLayers))
+        }
     }
-});
+);
 
 const pipelineMatch = output.match(/Pipeline \(GOO decode \+ CTB encode\):\s+([0-9.]+)ms\s+\(([0-9.]+)ms\/layer\)/);
 if (!pipelineMatch) {

@@ -55,8 +55,8 @@ describe("createBlobOutputSink / Blob 输出 sink", () => {
 
     it("keeps header patching out of the append-only sink contract / 追加写入契约不包含 header 修补", () => {
         const source = readFileSync("src/browser/output/sink.ts", "utf8");
-        const outputSinkBody = source.match(/export interface SlicerOutputSink \{(?<body>[\s\S]*?)\n\}/)?.groups
-            ?.body ?? "";
+        const outputSinkBody =
+            source.match(/export interface SlicerOutputSink \{(?<body>[\s\S]*?)\n\}/)?.groups?.body ?? "";
 
         expect(outputSinkBody).not.toContain("patchHeader");
         expect(source).toContain("export interface PatchableSlicerOutputSink extends SlicerOutputSink");

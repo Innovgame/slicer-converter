@@ -5,10 +5,10 @@
 - UVTools 仓库相对路径：`../UVtools`
 - 核心格式实现目录：`../UVtools/UVtools.Core/FileFormats/`
 - 已用于本项目对齐的关键文件：
-  - `../UVtools/UVtools.Core/FileFormats/SL1File.cs`
-  - `../UVtools/UVtools.Core/FileFormats/VDTFile.cs`
-  - `../UVtools/UVtools.Core/FileFormats/ChituboxZipFile.cs`
-  - `../UVtools/UVtools.Core/FileFormats/AnycubicZipFile.cs`
+    - `../UVtools/UVtools.Core/FileFormats/SL1File.cs`
+    - `../UVtools/UVtools.Core/FileFormats/VDTFile.cs`
+    - `../UVtools/UVtools.Core/FileFormats/ChituboxZipFile.cs`
+    - `../UVtools/UVtools.Core/FileFormats/AnycubicZipFile.cs`
 
 涉及 entry naming、manifest/config 字段、版本矩阵、RLE/PNG layer codec、archive layout、metadata defaults 时，应先交叉阅读对应 UVTools 文件，再落本项目 spec/plan 和测试。
 

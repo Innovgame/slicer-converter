@@ -52,7 +52,10 @@ describe("runSlicerLayerWorkerScheduler / runSlicerLayerWorkerScheduler 用例",
                 totalLayers: 1,
                 signal: new AbortController().signal,
                 buildDispatchPayload: async (index: number) => createTestPayload(index),
-                isDoneMessage: (message, layerIndex): message is Extract<SlicerWorkerResponse, { type: "layer-done" }> =>
+                isDoneMessage: (
+                    message,
+                    layerIndex
+                ): message is Extract<SlicerWorkerResponse, { type: "layer-done" }> =>
                     message.type === "layer-done" && message.index === layerIndex,
                 onDone: vi.fn()
             })
@@ -187,7 +190,10 @@ describe("runSlicerLayerWorkerScheduler / runSlicerLayerWorkerScheduler 用例",
                 totalLayers: 1,
                 signal: new AbortController().signal,
                 buildDispatchPayload: async (index: number) => createTestPayload(index),
-                isDoneMessage: (message, layerIndex): message is Extract<SlicerWorkerResponse, { type: "layer-done" }> =>
+                isDoneMessage: (
+                    message,
+                    layerIndex
+                ): message is Extract<SlicerWorkerResponse, { type: "layer-done" }> =>
                     message.type === "layer-done" && message.index === layerIndex,
                 onDone: () => {
                     throw new Error("assembler failed");

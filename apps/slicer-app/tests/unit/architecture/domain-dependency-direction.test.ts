@@ -11,7 +11,10 @@ describe("domain dependency direction / domain 依赖方向", () => {
             const imports = extractRelativeImports(readFileSync(file, "utf8"));
             const infrastructureImports = imports.filter((specifier) => {
                 const target = resolveImport(file, specifier);
-                return target !== null && path.relative(sourceRoot, target).replaceAll("\\", "/").startsWith("infrastructure/");
+                return (
+                    target !== null &&
+                    path.relative(sourceRoot, target).replaceAll("\\", "/").startsWith("infrastructure/")
+                );
             });
 
             if (infrastructureImports.length === 0) {

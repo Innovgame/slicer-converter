@@ -1,14 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
-    describeArchiveLayerEntries: vi
-        .fn()
-        .mockReturnValue(
-            JSON.stringify([
-                { index: 3, name: "demo00003.png", compression_method: 8 },
-                { index: 4, name: "demo00004.png", compression_method: 8 }
-            ])
-        )
+    describeArchiveLayerEntries: vi.fn().mockReturnValue(
+        JSON.stringify([
+            { index: 3, name: "demo00003.png", compression_method: 8 },
+            { index: 4, name: "demo00004.png", compression_method: 8 }
+        ])
+    )
 }));
 
 vi.mock("../../lib/slicer_converter.js", async (importOriginal) => ({

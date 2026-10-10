@@ -53,19 +53,18 @@ export function createStreamingDocumentAssemblyHelpers(targetFormat: SlicerForma
         finalizeHeader: (headerBytes, format, layerSizes, targetAnycubicVersion) =>
             finalizeHeaderRaw(headerBytes, format, layerSizes, targetAnycubicVersion),
         buildFooter: (format) => buildFooterRaw(format),
-        streamingDocument:
-            isBufferedDocumentTarget(targetFormat)
-                ? {
-                      buildDocument: (metadataJson, format, targetAnycubicVersion, layers) =>
-                          buildDocumentFromLayersRaw(metadataJson, format, layers, targetAnycubicVersion)
-                  }
-                : targetFormat === "cxdlpv4"
-                  ? {
-                        buildPrefix: buildCxdLpV4Prefix,
-                        checksumUpdate: (previous, chunk) => cxdLpCrc32UpdateRaw(previous, chunk),
-                        buildChecksumTrailer: u32ToBigEndian
-                    }
-                : undefined
+        streamingDocument: isBufferedDocumentTarget(targetFormat)
+            ? {
+                  buildDocument: (metadataJson, format, targetAnycubicVersion, layers) =>
+                      buildDocumentFromLayersRaw(metadataJson, format, layers, targetAnycubicVersion)
+              }
+            : targetFormat === "cxdlpv4"
+              ? {
+                    buildPrefix: buildCxdLpV4Prefix,
+                    checksumUpdate: (previous, chunk) => cxdLpCrc32UpdateRaw(previous, chunk),
+                    buildChecksumTrailer: u32ToBigEndian
+                }
+              : undefined
     };
 }
 

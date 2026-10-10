@@ -124,8 +124,13 @@ export function getSupportedFormats(): SupportedFormatInfo[] {
  * @zh 从 Rust format registry 诊断非致命导出问题。
  * @en Diagnoses non-fatal export issues from the Rust format registry.
  */
-export function diagnoseExport(input: { metadata: FileMetadata; targetFormat: SlicerFormatId }): ExportDiagnosticReport {
-    return JSON.parse(diagnoseExportRaw(buildFileMetadataJson(input.metadata), input.targetFormat)) as ExportDiagnosticReport;
+export function diagnoseExport(input: {
+    metadata: FileMetadata;
+    targetFormat: SlicerFormatId;
+}): ExportDiagnosticReport {
+    return JSON.parse(
+        diagnoseExportRaw(buildFileMetadataJson(input.metadata), input.targetFormat)
+    ) as ExportDiagnosticReport;
 }
 
 /**
@@ -145,9 +150,7 @@ export function getSlicerConverterWasmUrl(): URL {
  * @zh 确保底层 WASM 模块已初始化；不返回 public API facade。
  * @en Ensures the underlying WASM module is initialised; it does not return the public API facade.
  */
-export async function initSlicerConverterWasm(
-    wasmUrl: SlicerConverterInitInput = defaultWasmUrl
-): Promise<void> {
+export async function initSlicerConverterWasm(wasmUrl: SlicerConverterInitInput = defaultWasmUrl): Promise<void> {
     if (!initPromise) {
         initPromise = initWasm({ module_or_path: wasmUrl })
             .then(() => undefined)

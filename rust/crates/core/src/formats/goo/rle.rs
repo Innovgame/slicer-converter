@@ -301,7 +301,7 @@ impl GooDecodeSink for RgbaDecodeSink<'_> {
     fn resize_constant(&mut self, new_len: usize, value: u8) {
         let start = self.output.len();
         self.output.resize(new_len * 4, 0);
-        for pixel in self.output[start..].chunks_exact_mut(4) {
+        for pixel in self.output[start..].as_chunks_mut::<4>().0 {
             pixel[0] = value;
             pixel[1] = value;
             pixel[2] = value;

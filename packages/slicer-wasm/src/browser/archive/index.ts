@@ -36,12 +36,7 @@ export type {
 export type { ZipAssemblyTimings } from "./zip/assembly-timings.js";
 export { parseZipCentralDirectoryEntries } from "./zip/directory.js";
 export type { ZipDirectory, ZipEntryInfo } from "./zip/directory.js";
-export {
-    parseAnycubicZipFile,
-    parseChituboxZipFile,
-    parseSl1File,
-    parseVdtFile
-} from "./zip/header-parser.js";
+export { parseAnycubicZipFile, parseChituboxZipFile, parseSl1File, parseVdtFile } from "./zip/header-parser.js";
 export {
     createFileZipSource,
     createInMemoryZipSource,

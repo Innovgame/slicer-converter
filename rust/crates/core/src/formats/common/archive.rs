@@ -320,7 +320,7 @@ pub(crate) fn decode_png_thumbnail(png_data: &[u8]) -> Result<Thumbnail, Convert
                     "grayscale-alpha thumbnail data is truncated".to_string(),
                 ));
             }
-            for chunk in buffer.chunks_exact(2).take(pixel_count) {
+            for chunk in buffer.as_chunks::<2>().0.iter().take(pixel_count) {
                 pixels_rgba.extend_from_slice(&[chunk[0], chunk[0], chunk[0], chunk[1]]);
             }
         }
@@ -330,7 +330,7 @@ pub(crate) fn decode_png_thumbnail(png_data: &[u8]) -> Result<Thumbnail, Convert
                     "rgb thumbnail data is truncated".to_string(),
                 ));
             }
-            for chunk in buffer.chunks_exact(3).take(pixel_count) {
+            for chunk in buffer.as_chunks::<3>().0.iter().take(pixel_count) {
                 pixels_rgba.extend_from_slice(&[chunk[0], chunk[1], chunk[2], 255]);
             }
         }

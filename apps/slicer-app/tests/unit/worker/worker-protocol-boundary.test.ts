@@ -15,7 +15,12 @@ describe("worker protocol type boundary / worker 协议类型边界", () => {
             path.join(process.cwd(), "../../packages/slicer-wasm/src/browser/worker/protocol.ts"),
             "utf8"
         );
-        const workerTypeNames = ["SlicerWorkerRequest", "SlicerWorkerResponse", "SlicerWorkerErrorMessage", "SlicerWorkerError"];
+        const workerTypeNames = [
+            "SlicerWorkerRequest",
+            "SlicerWorkerResponse",
+            "SlicerWorkerErrorMessage",
+            "SlicerWorkerError"
+        ];
 
         expect(existsSync(typeBarrelPath)).toBe(false);
         for (const typeName of workerTypeNames) {

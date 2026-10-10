@@ -52,9 +52,7 @@ async function parseMetadata(
     const layerRecords = readRecordArray(layers.paras);
     const firstLayer = layerRecords[0] ?? {};
     const printInfoEntry = findZipEntry(entries, "print_info.json");
-    const printInfo = printInfoEntry
-        ? readRecord(JSON.parse(await readZipEntryText(source, printInfoEntry)))
-        : {};
+    const printInfo = printInfoEntry ? readRecord(JSON.parse(await readZipEntryText(source, printInfoEntry))) : {};
 
     const metadata: FileMetadata = {
         machine_name: readString(machine, "name"),

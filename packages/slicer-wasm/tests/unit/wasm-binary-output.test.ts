@@ -11,8 +11,12 @@ const mocks = vi.hoisted(() => ({
         buildHeader: vi.fn(() => new Uint8Array([1])),
         buildFooter: vi.fn(() => new Uint8Array([9])),
         buildDocument: vi.fn(
-            (_metadataJson: string, _targetFormat: string, _targetAnycubicVersion: number | undefined, layers: Uint8Array[]) =>
-                new Uint8Array([30, layers.length, ...Array.from(layers[0]), ...Array.from(layers[1])])
+            (
+                _metadataJson: string,
+                _targetFormat: string,
+                _targetAnycubicVersion: number | undefined,
+                layers: Uint8Array[]
+            ) => new Uint8Array([30, layers.length, ...Array.from(layers[0]), ...Array.from(layers[1])])
         ),
         finalizeHeader: vi.fn(() => new Uint8Array([7])),
         buildPrefix: vi.fn(() => [new Uint8Array([10]), new Uint8Array([20]), new Uint8Array([21])]),
@@ -130,11 +134,7 @@ describe("wasm binary output assembly / WASM 二进制输出 assembly", () => {
             sink: createBlobOutputSink()
         });
 
-        expect(mocks.assembly.buildHeader).toHaveBeenCalledWith(
-            '{"resolution_x":1,"layer_count":2}',
-            "pm5s",
-            515
-        );
+        expect(mocks.assembly.buildHeader).toHaveBeenCalledWith('{"resolution_x":1,"layer_count":2}', "pm5s", 515);
         expect(mocks.assembly.finalizeHeader).toHaveBeenCalledWith(
             new Uint8Array([1]),
             "pm5s",

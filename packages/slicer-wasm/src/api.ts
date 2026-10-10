@@ -39,11 +39,7 @@ export {
     getWasmErrorMessage,
     toWasmError
 } from "./browser/runtime/wasm.js";
-export type {
-    SlicerConverterInitInput,
-    WasmErrorInfo,
-    WasmLoadProgress
-} from "./browser/runtime/wasm.js";
+export type { SlicerConverterInitInput, WasmErrorInfo, WasmLoadProgress } from "./browser/runtime/wasm.js";
 
 /**
  * @zh 浏览器包公开的 WASM facade 类型集合；低层 raw 组装函数由 typed helper 封装。
@@ -107,9 +103,7 @@ const slicerConverterApi: SlicerConverterApi = {
  *   @en Optional custom WASM init input; defaults to the bundled path
  * @returns @zh 已初始化的 {@link SlicerConverterApi} @en The initialised {@link SlicerConverterApi}
  */
-export async function initSlicerConverter(
-    wasmUrl?: SlicerConverterInitInput
-): Promise<SlicerConverterApi> {
+export async function initSlicerConverter(wasmUrl?: SlicerConverterInitInput): Promise<SlicerConverterApi> {
     await initSlicerConverterWasm(wasmUrl);
     return slicerConverterApi;
 }

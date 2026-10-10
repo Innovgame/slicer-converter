@@ -215,7 +215,11 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                                     void onPreviewLayerChange(layerIndex, "committed");
                                 }}
                             />
-                            <div className="sc-rail-readout" data-clip-end="current" style={{ bottom: `${readoutPosition}%` }}>
+                            <div
+                                className="sc-rail-readout"
+                                data-clip-end="current"
+                                style={{ bottom: `${readoutPosition}%` }}
+                            >
                                 <button
                                     aria-label="Increase layer"
                                     className="sc-rail-nudge"

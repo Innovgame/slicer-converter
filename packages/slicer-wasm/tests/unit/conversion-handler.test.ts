@@ -32,7 +32,8 @@ describe("conversion worker handlers / 转换 worker handlers", () => {
         }));
         let now = 10;
         const handlers = createSlicerConversionHandlers({
-            postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) => posted.push({ message, transfer }),
+            postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) =>
+                posted.push({ message, transfer }),
             now: () => {
                 now += 5;
                 return now;
@@ -98,7 +99,8 @@ describe("conversion worker handlers / 转换 worker handlers", () => {
         const posted: Array<{ message: unknown; transfer?: Transferable[] }> = [];
         const convertZipLayerForTarget = vi.fn(async () => new Uint8Array([0x51, 0x55]));
         const handlers = createSlicerConversionHandlers({
-            postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) => posted.push({ message, transfer }),
+            postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) =>
+                posted.push({ message, transfer }),
             now: vi.fn(() => 10),
             decodeEncodeLayer: vi.fn(),
             decodeLayerPreview: vi.fn(),

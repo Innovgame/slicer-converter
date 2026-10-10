@@ -11,8 +11,12 @@ describe("domain format runtime boundary / domain format 运行期边界", () =>
         expect(extractWasmValueImports('export { getSupportedFormats } from "@slicer-converter/wasm";')).toEqual([
             "{ getSupportedFormats }"
         ]);
-        expect(extractWasmValueImports('import type { SupportedFormatInfo } from "@slicer-converter/wasm";')).toEqual([]);
-        expect(extractWasmValueImports('export type { SupportedFormatInfo } from "@slicer-converter/wasm";')).toEqual([]);
+        expect(extractWasmValueImports('import type { SupportedFormatInfo } from "@slicer-converter/wasm";')).toEqual(
+            []
+        );
+        expect(extractWasmValueImports('export type { SupportedFormatInfo } from "@slicer-converter/wasm";')).toEqual(
+            []
+        );
     });
 
     it("does not keep app-local format facts after package sinkdown / package 下沉后不保留 app 本地格式事实", () => {

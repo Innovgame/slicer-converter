@@ -1,10 +1,6 @@
 import { diagnoseExport, initSlicerConverterWasm } from "../runtime/wasm.js";
 import { buildSlicerOutputFilename } from "./filename.js";
-import {
-    resolveSlicerExportTarget,
-    type ExportTargetFormat,
-    type ResolvedSlicerExportTarget
-} from "./target.js";
+import { resolveSlicerExportTarget, type ExportTargetFormat, type ResolvedSlicerExportTarget } from "./target.js";
 import { openSlicerDocument, openSlicerDocumentFile } from "../document/source.js";
 import { parseBrowserFileHeader } from "../format/header.js";
 import { createBlobOutputSink, type PatchableSlicerOutputSink } from "../output/sink.js";
@@ -134,7 +130,9 @@ export interface SlicerConversionDeps {
         readonly workerUrl?: URL;
         readonly createWorker?: () => ManagedSlicerWorker;
     }): Promise<SlicerWorkerPoolState<ManagedSlicerWorker>> | SlicerWorkerPoolState<ManagedSlicerWorker>;
-    diagnoseExport(input: { metadata: FileMetadata; targetFormat: SlicerFormatId }): { warnings: ExportDiagnosticWarning[] };
+    diagnoseExport(input: { metadata: FileMetadata; targetFormat: SlicerFormatId }): {
+        warnings: ExportDiagnosticWarning[];
+    };
     runJob(input: {
         readonly document: SlicerDocument;
         readonly targetFormat: SlicerFormatId;
@@ -214,7 +212,11 @@ export async function convertSlicerFileWithDeps(
     await deps.init();
 
     const sourceFile = toNamedFile(input.file, input.fileName);
-    const document = await deps.openDocument({ file: sourceFile, extension: input.sourceExtension, fileName: input.fileName });
+    const document = await deps.openDocument({
+        file: sourceFile,
+        extension: input.sourceExtension,
+        fileName: input.fileName
+    });
     const sink = input.output ?? deps.createDefaultSink();
     let pool: SlicerWorkerPoolState<ManagedSlicerWorker> | null = null;
 
@@ -249,9 +251,10 @@ export async function convertSlicerFileWithDeps(
             signal,
             updateProgress(current, total, label) {
                 reportProgress(input, {
-                    phase: label.toLowerCase().includes("assembling") || label.toLowerCase().includes("finalizing")
-                        ? "assembling"
-                        : "converting-layers",
+                    phase:
+                        label.toLowerCase().includes("assembling") || label.toLowerCase().includes("finalizing")
+                            ? "assembling"
+                            : "converting-layers",
                     current,
                     total,
                     label
@@ -331,7 +334,9 @@ function reportProgress(input: ConvertSlicerFileInput, progress: SlicerConversio
     input.onProgress?.(progress);
 }
 
-function toConvertSlicerFileInput(input: ConvertSlicerFileToBlobInput | ConvertSlicerFileToSinkInput): ConvertSlicerFileInput {
+function toConvertSlicerFileInput(
+    input: ConvertSlicerFileToBlobInput | ConvertSlicerFileToSinkInput
+): ConvertSlicerFileInput {
     const workerInput = toWorkerInput(input.worker);
     return {
         file: input.file,
@@ -345,10 +350,9 @@ function toConvertSlicerFileInput(input: ConvertSlicerFileToBlobInput | ConvertS
     };
 }
 
-function toWorkerInput(worker?: SlicerDxWorkerStrategy): Pick<
-    ConvertSlicerFileInput,
-    "workerCount" | "workerPool" | "workerUrl" | "createWorker"
-> {
+function toWorkerInput(
+    worker?: SlicerDxWorkerStrategy
+): Pick<ConvertSlicerFileInput, "workerCount" | "workerPool" | "workerUrl" | "createWorker"> {
     if (!worker || worker.kind === "auto") {
         return {
             workerCount: worker?.count,

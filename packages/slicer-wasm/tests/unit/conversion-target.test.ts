@@ -349,14 +349,18 @@ describe("export target matrix / 导出目标矩阵", () => {
                 suffixId: "pwms",
                 versionId: "515"
             })?.version
-        ).toEqual(expect.objectContaining({ id: "515", target: expect.objectContaining({ resolvedAnycubicVersion: 515 }) }));
+        ).toEqual(
+            expect.objectContaining({ id: "515", target: expect.objectContaining({ resolvedAnycubicVersion: 515 }) })
+        );
         expect(
             findSlicerExportTargetMatrixSelection({
                 sourceFormat: asSlicerFormatId("goo"),
                 formatId: "anycubic-manual",
                 suffixId: "pwms"
             })?.version
-        ).toEqual(expect.objectContaining({ id: "516", target: expect.objectContaining({ resolvedAnycubicVersion: 516 }) }));
+        ).toEqual(
+            expect.objectContaining({ id: "516", target: expect.objectContaining({ resolvedAnycubicVersion: 516 }) })
+        );
     });
 
     it("deduplicates Anycubic archive aliases resolving to the same suffix and target / 去重解析到相同后缀和目标的 Anycubic archive aliases", () => {
@@ -435,10 +439,9 @@ describe("export target matrix / 导出目标矩阵", () => {
         );
 
         expect(anycubic?.suffixes.map((suffix) => suffix.id)).toEqual(["pm4u", "pm7"]);
-        expect(anycubic?.suffixes.flatMap((suffix) => suffix.versions).map((version) => version.target.resolvedExtension)).toEqual([
-            "pm4u",
-            "pm7"
-        ]);
+        expect(
+            anycubic?.suffixes.flatMap((suffix) => suffix.versions).map((version) => version.target.resolvedExtension)
+        ).toEqual(["pm4u", "pm7"]);
     });
 
     it("does not expose Anycubic archive identity as a manual UI option / 不把 Anycubic archive identity 暴露为手动 UI 选项", () => {

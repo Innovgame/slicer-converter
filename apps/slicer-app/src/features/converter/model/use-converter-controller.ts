@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 
-import {
-    findSlicerExportTargetMatrixSelection,
-    type ParsedHeader
-} from "@slicer-converter/wasm";
+import { findSlicerExportTargetMatrixSelection, type ParsedHeader } from "@slicer-converter/wasm";
 
 import type { PreviewImageState, ProgressState, StatusState } from "./converter-view-state";
 import { useRuntimeController } from "../../../app/runtime/use-runtime-controller";
@@ -106,7 +103,9 @@ export function useConverterController(): ConverterController {
             formatId: slicerConverterSelection?.format.id ?? slicerConverterFormatId,
             suffixId: value
         });
-        setSlicerConverterFormatId(selection?.format.id ?? slicerConverterSelection?.format.id ?? slicerConverterFormatId);
+        setSlicerConverterFormatId(
+            selection?.format.id ?? slicerConverterSelection?.format.id ?? slicerConverterFormatId
+        );
         setSlicerConverterSuffixId(selection?.suffix.id ?? value);
         setSlicerConverterVersionId(selection?.version.id ?? "");
     }
@@ -118,8 +117,12 @@ export function useConverterController(): ConverterController {
             suffixId: slicerConverterSelection?.suffix.id ?? slicerConverterSuffixId,
             versionId: value
         });
-        setSlicerConverterFormatId(selection?.format.id ?? slicerConverterSelection?.format.id ?? slicerConverterFormatId);
-        setSlicerConverterSuffixId(selection?.suffix.id ?? slicerConverterSelection?.suffix.id ?? slicerConverterSuffixId);
+        setSlicerConverterFormatId(
+            selection?.format.id ?? slicerConverterSelection?.format.id ?? slicerConverterFormatId
+        );
+        setSlicerConverterSuffixId(
+            selection?.suffix.id ?? slicerConverterSelection?.suffix.id ?? slicerConverterSuffixId
+        );
         setSlicerConverterVersionId(selection?.version.id ?? value);
     }
 

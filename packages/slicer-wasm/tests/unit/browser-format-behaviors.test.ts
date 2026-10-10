@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { getDocumentOpenerForFormat, validateBrowserFormatBehaviors } from "../../src/browser/format/browser-format-behaviors.js";
+import {
+    getDocumentOpenerForFormat,
+    validateBrowserFormatBehaviors
+} from "../../src/browser/format/browser-format-behaviors.js";
 import { syncFormatFacts } from "../../src/browser/format/format.js";
 import { IMPORT_ONLY_CAPABILITIES, formatFact } from "./support/format-facts.js";
 
@@ -8,7 +11,12 @@ const KNOWN_BROWSER_BEHAVIOR_FACTS = [
     formatFact({ name: "sl1", aliases: ["sl1", "sl1s"], extensions: ["sl1", "sl1s"], is_zip: true }),
     formatFact({ name: "vdt", aliases: ["vdt"], extensions: ["vdt"], is_zip: true }),
     formatFact({ name: "chitubox-zip", aliases: ["chitubox-zip", "chituzip"], extensions: ["zip"], is_zip: true }),
-    formatFact({ name: "anycubic-zip", aliases: ["anycubic-zip", "pm7"], extensions: ["anycubic-zip", "pm7"], is_zip: true }),
+    formatFact({
+        name: "anycubic-zip",
+        aliases: ["anycubic-zip", "pm7"],
+        extensions: ["anycubic-zip", "pm7"],
+        is_zip: true
+    }),
     formatFact({ name: "goo", aliases: ["goo"], extensions: ["goo"], is_zip: false })
 ];
 

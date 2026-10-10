@@ -5,8 +5,7 @@ import { promisify } from "node:util";
 import { expect } from "@playwright/test";
 
 const execFileAsync = promisify(execFile);
-const UVTOOLS_FAILURE_PATTERN =
-    /Unhandled exception|EndOfStreamException|Corrupted RLE|FileLoadException|Not a valid/i;
+const UVTOOLS_FAILURE_PATTERN = /Unhandled exception|EndOfStreamException|Corrupted RLE|FileLoadException|Not a valid/i;
 const UVTOOLS_WARNING_PATTERN = /incorrect image ratio|UsingSquarePixels:\s*False/i;
 const UVTOOLS_SUCCESS_PATTERN = /Opening file .*Done/i;
 const UVTOOLS_CAN_DECODE_PATTERN = /CanDecode:\s*True/i;

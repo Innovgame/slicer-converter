@@ -28,6 +28,4 @@ export const ANYCUBIC_UVTOOLS_STRICT_EXTENSIONS = ANYCUBIC_BINARY_EXTENSIONS.fil
     (extension) => extension !== "pm4n"
 );
 
-export const ANYCUBIC_UVTOOLS_STRICT_EXTENSION_SET: ReadonlySet<string> = new Set(
-    ANYCUBIC_UVTOOLS_STRICT_EXTENSIONS
-);
+export const ANYCUBIC_UVTOOLS_STRICT_EXTENSION_SET: ReadonlySet<string> = new Set(ANYCUBIC_UVTOOLS_STRICT_EXTENSIONS);

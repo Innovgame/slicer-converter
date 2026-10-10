@@ -100,7 +100,9 @@ function formatMarkdownReport(summary) {
 function formatMarkdownSummary(summary) {
     const riskCounts = countBy(summary.entries, (entry) => compatibilityRisk(entry, compatibilityNotes(entry)));
     const familyCounts = countBy(summary.entries, (entry) => entry.outputFamily ?? "-");
-    const sampleNoteCount = summary.entries.filter((entry) => hasSampleFixtureNotes(entry, compatibilityNotes(entry))).length;
+    const sampleNoteCount = summary.entries.filter((entry) =>
+        hasSampleFixtureNotes(entry, compatibilityNotes(entry))
+    ).length;
     return [
         `**Total**: ${summary.total}`,
         `**Risk**: fail ${riskCounts.fail ?? 0}, warning ${riskCounts.warning ?? 0}, note ${riskCounts.note ?? 0}, ok ${riskCounts.ok ?? 0}`,
@@ -172,7 +174,8 @@ function compatibilityRisk(entry, notes) {
 function compatibilityNotes(entry) {
     const uvtools = entry.uvtools ?? {};
     const notes = [];
-    const isSampleFixtureResolution = entry.tag === "@sample" && uvtools.resolutionX === 64 && uvtools.resolutionY === 64;
+    const isSampleFixtureResolution =
+        entry.tag === "@sample" && uvtools.resolutionX === 64 && uvtools.resolutionY === 64;
 
     if (uvtools.canDecode === false) {
         notes.push("decode unsupported");

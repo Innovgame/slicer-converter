@@ -91,9 +91,8 @@ describe("ZIP archive browser helpers / ZIP archive 浏览器辅助函数", () =
     });
 
     it("encodes central header and data descriptor fields / 编码 central header 与 data descriptor 字段", async () => {
-        const { buildCentralHeader, buildDataDescriptor, encodeZipEntryName } = await import(
-            "../../src/browser/archive/zip/archive.js"
-        );
+        const { buildCentralHeader, buildDataDescriptor, encodeZipEntryName } =
+            await import("../../src/browser/archive/zip/archive.js");
         const nameBytes = encodeZipEntryName("0.png");
         const centralHeader = buildCentralHeader({
             nameBytes,
@@ -136,8 +135,6 @@ describe("ZIP archive browser helpers / ZIP archive 浏览器辅助函数", () =
     it("encodes entry names as UTF-8 bytes / 将 entry name 编码为 UTF-8 bytes", async () => {
         const { encodeZipEntryName } = await import("../../src/browser/archive/zip/archive.js");
 
-        expect(Array.from(encodeZipEntryName("层/0.png"))).toEqual(
-            Array.from(new TextEncoder().encode("层/0.png"))
-        );
+        expect(Array.from(encodeZipEntryName("层/0.png"))).toEqual(Array.from(new TextEncoder().encode("层/0.png")));
     });
 });

@@ -62,7 +62,11 @@ describe("format facts lookup / 格式事实查询", () => {
         expect(getFormatFacts("zip").format).toBe("chitubox-zip");
         expect(getFormatFacts("chituzip").isZip).toBe(true);
         expect(resolveConcreteFormatId("ctb-v2")).toBe("ctb");
-        expect(listFormatFacts().map((facts) => facts.format).sort()).toEqual(["chitubox-zip", "ctb"]);
+        expect(
+            listFormatFacts()
+                .map((facts) => facts.format)
+                .sort()
+        ).toEqual(["chitubox-zip", "ctb"]);
     });
 
     it("keeps first alias and extension lookup winners while canonical names stay direct / 保持 first alias and extension lookup winners 同时 canonical names stay direct", () => {
