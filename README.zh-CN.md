@@ -62,11 +62,26 @@ npm install @innovgame/slicer-converter
 
 ## 快速开始
 
+下载 Release 二进制后，用你自己的切片文件运行。Windows：
+
+```powershell
+.\slicer-converter-windows-x86_64.exe --input your-file.goo --output your-file.ctb
+```
+
+Linux 或 macOS 先加上可执行权限，再使用对应的文件名：
+
+```bash
+chmod +x ./slicer-converter-linux-x86_64
+./slicer-converter-linux-x86_64 --input your-file.goo --output your-file.ctb
+```
+
+macOS Apple Silicon 使用 `slicer-converter-macos-aarch64`。源格式从文件内容识别，目标格式从输出文件名推断。
+
+如果克隆了本仓库，`examples/sample.ctb` 是一个很小的样本，只够试 CLI，不是可打印模型。
+
 ```bash
 slicer-converter --input examples/sample.ctb --output sample.sl1
 ```
-
-`examples/sample.ctb` 是仓库里的一个很小的样本，只够试 CLI，不是可打印模型。
 
 浏览器测试页：<https://innovgame.github.io/slicer-converter/>。
 

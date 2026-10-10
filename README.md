@@ -62,11 +62,26 @@ Import that package from `@innovgame/slicer-converter`. The API is the same.
 
 ## Quick start
 
+After you download a Release binary, run it with your own slicer file. On Windows:
+
+```powershell
+.\slicer-converter-windows-x86_64.exe --input your-file.goo --output your-file.ctb
+```
+
+On Linux or macOS, mark the binary executable and use the matching file name:
+
+```bash
+chmod +x ./slicer-converter-linux-x86_64
+./slicer-converter-linux-x86_64 --input your-file.goo --output your-file.ctb
+```
+
+macOS Apple Silicon uses `slicer-converter-macos-aarch64`. The source format comes from the file bytes. The target format comes from the output name.
+
+If you cloned this repository, `examples/sample.ctb` is a tiny fixture for a first run. It is not a printable model.
+
 ```bash
 slicer-converter --input examples/sample.ctb --output sample.sl1
 ```
-
-`examples/sample.ctb` is a tiny fixture in this repository. It is enough to try the CLI. It is not a printable model.
 
 The browser test page is at <https://innovgame.github.io/slicer-converter/>.
 
