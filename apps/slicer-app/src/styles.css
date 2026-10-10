@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "driver.js/dist/driver.css";
 
 @theme {
     --color-background: #10151c;
@@ -310,6 +311,176 @@ select option:disabled {
     align-items: center;
     margin-left: auto;
     gap: 8px;
+}
+
+.sc-preferences {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sc-brand {
+    flex: 1 1 auto;
+    overflow: hidden;
+    margin-right: 12px;
+}
+
+.sc-tour-invitation {
+    position: fixed;
+    top: calc(var(--sc-header-height) + 12px);
+    right: 16px;
+    z-index: 10;
+    width: min(320px, calc(100vw - 32px));
+    padding: 18px;
+    border: 1px solid var(--color-outline-strong);
+    border-radius: var(--sc-radius);
+    background: var(--color-popover);
+    color: var(--color-popover-foreground);
+    box-shadow: var(--sc-shadow-pop);
+}
+
+.sc-tour-invitation h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.sc-tour-invitation p {
+    margin: 8px 0 16px;
+    color: var(--color-muted-foreground);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.sc-tour-invitation-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.sc-tour-invitation-actions button {
+    min-height: 34px;
+    padding: 6px 12px;
+    border: 1px solid var(--color-outline);
+    border-radius: var(--sc-radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.sc-tour-later {
+    background: transparent;
+    color: var(--color-muted-foreground);
+}
+
+.sc-tour-start {
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
+}
+
+.sc-tour-invitation-actions button:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.driver-popover.sc-tour-popover {
+    min-width: 0;
+    width: min(320px, calc(100vw - 24px));
+    max-width: min(320px, calc(100vw - 24px));
+    padding: 18px;
+    border: 1px solid var(--color-outline-strong);
+    border-radius: var(--sc-radius);
+    background: var(--color-popover);
+    color: var(--color-popover-foreground);
+    box-shadow: var(--sc-shadow-pop);
+    font-family: var(--font-sans);
+}
+
+.sc-tour-popover .driver-popover-title {
+    padding-right: 72px;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.sc-tour-popover .driver-popover-description {
+    margin-top: 10px;
+    color: var(--color-muted-foreground);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.sc-tour-popover .driver-popover-close-btn {
+    top: 13px;
+    right: 12px;
+    width: auto;
+    height: 26px;
+    padding: 0 6px;
+    border-radius: var(--sc-radius-sm);
+    color: var(--color-muted-foreground);
+    font-size: 11px;
+}
+
+.sc-tour-popover .driver-popover-close-btn:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-foreground);
+}
+
+.sc-tour-popover .driver-popover-footer {
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.sc-tour-popover .driver-popover-progress-text {
+    color: var(--color-muted-foreground);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.sc-tour-popover .driver-popover-footer-btn {
+    min-height: 32px;
+    padding: 6px 10px;
+    border: 1px solid var(--color-outline);
+    border-radius: var(--sc-radius-sm);
+    background: var(--color-raised);
+    color: var(--color-foreground);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.sc-tour-popover .driver-popover-next-btn {
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
+}
+
+.sc-tour-popover .driver-popover-footer-btn:hover {
+    background: var(--color-surface-hover);
+}
+
+.sc-tour-popover .driver-popover-next-btn:hover {
+    background: color-mix(in srgb, var(--color-primary) 90%, #000);
+}
+
+.sc-tour-popover button:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.sc-tour-popover .driver-popover-arrow-side-left {
+    border-left-color: var(--color-popover);
+}
+
+.sc-tour-popover .driver-popover-arrow-side-right {
+    border-right-color: var(--color-popover);
+}
+
+.sc-tour-popover .driver-popover-arrow-side-top {
+    border-top-color: var(--color-popover);
+}
+
+.sc-tour-popover .driver-popover-arrow-side-bottom {
+    border-bottom-color: var(--color-popover);
 }
 
 .sc-project-links {

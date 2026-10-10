@@ -111,5 +111,53 @@
     "language": {
         "toChinese": "切换到中文",
         "toEnglish": "Switch to English"
+    },
+    "onboarding": {
+        "entry": "新手引导",
+        "welcome": "欢迎使用切片文件转换器",
+        "invitation": "快速了解文件导入、图层预览和格式导出。之后也可以随时点击帮助按钮重新查看。",
+        "start": "开始引导",
+        "later": "暂时跳过",
+        "next": "下一步",
+        "back": "上一步",
+        "finish": "完成",
+        "skip": "跳过引导",
+        "progress": "第 {{current}} / {{total}} 步",
+        "steps": {
+            "source": {
+                "title": "打开切片文件",
+                "description": "将切片文件拖到这里，或点击浏览文件。打开后可查看文件格式、分辨率、层数和缩略图。"
+            },
+            "preview": {
+                "title": "查看图层",
+                "description": "滚轮缩放，拖动平移。底部工具栏支持适应窗口、原始像素显示和像素网格。"
+            },
+            "previewEmpty": {
+                "description": "打开切片文件后，这里会显示曝光图层。滚轮缩放，拖动平移；底部工具栏支持适应窗口、原始像素和像素网格。"
+            },
+            "layer": {
+                "title": "跳转到指定层",
+                "description": "拖动右侧滑块，或输入 1 至总层数之间的层号后按 Enter 跳转。上下箭头逐层调整，mm 数值显示当前 Z 高度。"
+            },
+            "export": {
+                "title": "选择导出格式",
+                "description": "选择打印机支持的目标格式、扩展名和版本。转换前请留意设备尺寸与比例相关的警告。"
+            },
+            "exportEmpty": {
+                "description": "打开文件后，这里会显示目标格式、扩展名、版本和输出文件名。选择与打印机匹配的设置，并留意尺寸与比例警告。"
+            },
+            "convert": {
+                "title": "转换并保存",
+                "description": "确认输出文件名后，点击转换保存结果。这里会显示转换进度，也可以取消正在进行的转换。"
+            },
+            "preferences": {
+                "title": "设置你的偏好",
+                "description": "切换深浅主题或中英文，选择会自动保存。之后可随时点击帮助按钮重新查看引导。"
+            },
+            "feedback": {
+                "title": "报告问题与反馈建议",
+                "description": "遇到问题可点击“报告问题”，填写文件格式、复现步骤并附上截图；希望改进某项功能可点击“功能建议”。两个入口会在新标签页打开 GitHub Issue 表单，提交需要 GitHub 账号。“GitHub”链接可查看项目源码。"
+            }
+        }
     }
 }

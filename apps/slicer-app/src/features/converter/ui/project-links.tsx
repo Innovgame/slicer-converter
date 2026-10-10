@@ -16,7 +16,7 @@ const LINK_ICONS = {
 export function ProjectLinks() {
     const { t } = useTranslation();
     return (
-        <nav className="sc-project-links" aria-label={t("links.title")}>
+        <nav className="sc-project-links" aria-label={t("links.title")} data-tour="feedback">
             {PROJECT_LINKS.map((link) => {
                 const LinkIcon = LINK_ICONS[link.id];
                 return (

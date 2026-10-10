@@ -9,6 +9,7 @@ interface AppShellProps {
     title: string;
     documentStatus: string;
     documentLoaded: boolean;
+    help: ReactNode;
     source: ReactNode;
     viewer: ReactNode;
     inspector: ReactNode;
@@ -19,7 +20,16 @@ interface AppShellProps {
  * @zh 桌面保持三栏。平板是上预览、下并排。手机按预览、源文件、导出向下滚动。
  * @en Desktop keeps three columns. Tablets put the preview above two columns. Phones scroll preview, source, then export.
  */
-export function AppShell({ title, documentStatus, documentLoaded, source, viewer, inspector, status }: AppShellProps) {
+export function AppShell({
+    title,
+    documentStatus,
+    documentLoaded,
+    help,
+    source,
+    viewer,
+    inspector,
+    status
+}: AppShellProps) {
     return (
         <main className="sc-workbench">
             <header className="sc-header">
@@ -36,16 +46,23 @@ export function AppShell({ title, documentStatus, documentLoaded, source, viewer
                 </div>
                 <div className="sc-header-actions">
                     <ProjectLinks />
-                    <ThemeToggle />
-                    <LanguageToggle />
+                    {help}
+                    <div className="sc-preferences" data-tour="preferences">
+                        <ThemeToggle />
+                        <LanguageToggle />
+                    </div>
                 </div>
             </header>
             <div className="sc-body">
                 <div className="sc-viewer-column">
-                    <section className="sc-viewport">{viewer}</section>
+                    <section className="sc-viewport" data-tour="preview">
+                        {viewer}
+                    </section>
                 </div>
                 <aside className="sc-source">{source}</aside>
-                <aside className="sc-inspector">{inspector}</aside>
+                <aside className="sc-inspector" data-tour="export">
+                    {inspector}
+                </aside>
             </div>
             <footer className="sc-status-bar">{status}</footer>
         </main>

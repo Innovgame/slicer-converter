@@ -104,7 +104,7 @@ export function ConvertPanel({
                     </div>
                 </div>
 
-                <div className="sc-group">
+                <div className="sc-group" data-tour="export-target">
                     <p className="sc-group-title">{t("export.target")}</p>
                     <label htmlFor="slicerConverterFormat" className="sc-label">
                         {t("common.format")}

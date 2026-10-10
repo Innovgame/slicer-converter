@@ -112,5 +112,53 @@
     "language": {
         "toChinese": "Switch to Chinese",
         "toEnglish": "Switch to English"
+    },
+    "onboarding": {
+        "entry": "Quick tour",
+        "welcome": "Welcome to Slicer File Converter",
+        "invitation": "Take a quick tour of opening files, viewing layers and choosing an export format. You can replay it any time from the help button.",
+        "start": "Start tour",
+        "later": "Not now",
+        "next": "Next",
+        "back": "Back",
+        "finish": "Finish",
+        "skip": "Skip tour",
+        "progress": "{{current}} of {{total}}",
+        "steps": {
+            "source": {
+                "title": "Open your slicer file",
+                "description": "Drag a slicer file here or click to browse. After opening a file, this panel shows its format, dimensions, layer count and thumbnail."
+            },
+            "preview": {
+                "title": "Inspect the layers",
+                "description": "Use the wheel to zoom and drag to pan. The toolbar fits the image, shows native pixels and toggles the pixel grid."
+            },
+            "previewEmpty": {
+                "description": "Your exposure layers appear here after you open a slicer file. Use the wheel to zoom and drag to pan; the toolbar offers fit, native pixels and a pixel grid."
+            },
+            "layer": {
+                "title": "Jump to a layer",
+                "description": "Drag the vertical slider or enter a layer number from 1 to the total and press Enter. The arrows step one layer at a time; the mm value shows the Z height."
+            },
+            "export": {
+                "title": "Choose an export format",
+                "description": "Choose the target format, extension and version supported by your printer. Review any geometry warnings before converting."
+            },
+            "exportEmpty": {
+                "description": "Open a file to reveal the target format, extension, version and output name. Choose settings that match your printer and review any geometry warnings."
+            },
+            "convert": {
+                "title": "Convert and save",
+                "description": "Check the output file name, then click Convert to save the result. Progress appears here; you can cancel a running conversion."
+            },
+            "preferences": {
+                "title": "Make it yours",
+                "description": "Switch between light and dark themes or English and Chinese. Your choices are remembered. Reopen this tour any time using the help button."
+            },
+            "feedback": {
+                "title": "Report issues and share ideas",
+                "description": "Use Report a bug to describe a problem, including the file format, steps to reproduce and screenshots. Use Request a feature to suggest improvements. Both open a GitHub issue form in a new tab; submitting feedback requires a GitHub account. The GitHub link opens the project repository."
+            }
+        }
     }
 }

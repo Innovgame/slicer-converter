@@ -1,4 +1,5 @@
 import { useTranslation } from "../../shared/i18n/i18n";
+import { Onboarding } from "../../features/onboarding";
 
 import {
     AppShell,
@@ -22,6 +23,7 @@ export function ConverterPage() {
             title={t("app.title")}
             documentStatus={controller.sourceFile?.name ?? t("app.noFile")}
             documentLoaded={controller.sourceFile !== null}
+            help={<Onboarding documentLoaded={controller.parsedHeader !== null} converting={controller.converting} />}
             source={
                 <FileSummaryCard
                     sourceFile={controller.sourceFile}
