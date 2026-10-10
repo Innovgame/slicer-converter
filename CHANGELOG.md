@@ -4,6 +4,12 @@ This file records changes that users can see. Versions follow repository tags, f
 
 ## Unreleased
 
+- The test page header links to the repository, a bug report, and a feature request.
+- The test page uses a warm resin workbench. Source and export panels are marked, and export fields are grouped into output and target.
+- The layer rail stays with the thumb while dragging, and the layer number can be typed.
+- The test page can switch between English and Chinese. The choice is saved in the browser.
+- The README opens with install steps and the Release binary names.
+
 ## 0.1.3
 
 - Node can initialise the published package by reading the bundled wasm file. Browser loading still uses `fetch`.
