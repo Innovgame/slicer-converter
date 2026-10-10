@@ -5,7 +5,7 @@ Browser TypeScript API for opening, previewing, and converting resin slicer file
 ## Install
 
 ```bash
-npm install @rekorlee/slicer-converter
+npm install slicer-converter
 ```
 
 GitHub Packages uses a different name. Add this to `.npmrc`, then install `@innovgame/slicer-converter`:
@@ -17,7 +17,7 @@ Point the `@innovgame` scope at GitHub Packages in `.npmrc`:
 ```
 
 ```ts
-import { convertSlicerFileToBlob, openSlicerDocumentFile } from "@innovgame/slicer-converter";
+import { convertSlicerFileToBlob, openSlicerDocumentFile } from "slicer-converter";
 ```
 
 The published package includes the compiled JavaScript facade and the release WASM binary. Rust is not required after install.
