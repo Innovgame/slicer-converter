@@ -1,5 +1,9 @@
 name: Release
 
+permissions:
+    contents: write
+    packages: write
+
 on:
     push:
         tags:
@@ -9,11 +13,8 @@ on:
             tag:
                 description: Existing tag to publish
                 required: true
-                default: v0.1.1
+                default: v0.1.2
                 type: string
-
-permissions:
-    contents: write
 
 jobs:
     build:
@@ -92,4 +93,26 @@ jobs:
                   gh release create "$tag" "${binaries[@]}" SHA256SUMS \
                       --repo "${GITHUB_REPOSITORY}" \
                       --title "$tag" \
-                      --notes "Binaries built from ${GITHUB_SHA}. Includes Windows x64, Linux glibc x64, Linux musl x64, and macOS Apple Silicon. Intel macOS builds from source. Verify downloads with SHA256SUMS. npm and crates.io packages are not published. See CHANGELOG.md."
+                      --notes "Binaries built from ${GITHUB_SHA}. Includes Windows x64, Linux glibc x64, Linux musl x64, and macOS Apple Silicon. Intel macOS builds from source. Verify downloads with SHA256SUMS. @innovgame/slicer-converter is published to GitHub Packages by this workflow. See CHANGELOG.md."
+
+    github-packages:
+        name: GitHub Packages
+        runs-on: ubuntu-24.04
+        steps:
+            - uses: actions/checkout@v5
+              with:
+                  ref: ${{ github.event.inputs.tag || github.sha }}
+
+            - uses: ./.github/actions/setup-toolchain
+              with:
+                  wasm: true
+                  build-wasm: true
+                  cache-key: cargo-github-packages
+
+            - name: Publish to GitHub Packages
+              env:
+                  NODE_AUTH_TOKEN: ${{ github.token }}
+              working-directory: packages/slicer-wasm
+              run: |
+                  printf '%s\n' "@innovgame:registry=https://npm.pkg.github.com" "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > "$HOME/.npmrc"
+                  npm publish --ignore-scripts
