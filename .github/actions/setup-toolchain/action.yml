@@ -45,7 +45,7 @@ runs:
 
         - name: Cache Cargo
           if: inputs.rust == 'true'
-          uses: actions/cache@v4
+          uses: actions/cache@v5
           with:
               path: |
                   ~/.cargo/registry
@@ -59,12 +59,12 @@ runs:
           shell: bash
           run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
-        - uses: pnpm/action-setup@v4
+        - uses: pnpm/action-setup@v5
           if: inputs.node == 'true'
 
         - name: Setup Node
           if: inputs.node == 'true'
-          uses: actions/setup-node@v4
+          uses: actions/setup-node@v5
           with:
               node-version: 22
               cache: pnpm

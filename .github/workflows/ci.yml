@@ -23,7 +23,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 15
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
 
             - uses: ./.github/actions/setup-toolchain
               with:
@@ -41,7 +41,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 45
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
 
             - uses: ./.github/actions/setup-toolchain
               with:
@@ -60,7 +60,7 @@ jobs:
               run: cargo test --manifest-path rust/Cargo.toml --workspace
 
             - name: Setup Node for benchmark gate
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v5
               with:
                   node-version: 22
 
@@ -72,7 +72,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 30
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
 
             - uses: ./.github/actions/setup-toolchain
               with:
@@ -93,7 +93,7 @@ jobs:
               run: pnpm test:scripts
 
             - name: Upload app coverage
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v6
               with:
                   name: app-coverage-html
                   path: apps/slicer-app/coverage
@@ -104,7 +104,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 30
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
 
             - uses: ./.github/actions/setup-toolchain
               with:
@@ -119,7 +119,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 40
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
 
             - uses: ./.github/actions/setup-toolchain
               with:
