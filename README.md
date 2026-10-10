@@ -7,7 +7,7 @@ Resin slicer file converter for MSLA and DLP printers. One Rust format registry 
 
 **This project is inspired by [UVtools](https://github.com/sn4k3/UVtools).** [UVtools](https://github.com/sn4k3/UVtools), maintained by [Tiago Conceição](https://github.com/sn4k3), is the public reference for reading, repairing, and converting resin slicer files. slicer-converter follows that line: detection, version matrices, archive layout, manifest and config fields, and RLE or PNG layer codecs are aligned with UVtools format behavior, then packaged as a Rust engine for the CLI and the browser. The code, runtime, and license are maintained independently. This repository is not affiliated with UVtools.
 
-![Slicer File Converter preview](docs/images/app-preview.png)
+![Slicer File Converter preview](docs/images/app-preview-2.png)
 
 Version `0.1.0`. Download CLI binaries from [Releases](https://github.com/Innovgame/slicer-converter/releases). npm and crates.io packages are not published; build the browser package from source. Creality CXDLP v1, v2, and v3 are import-only. See [CHANGELOG.md](CHANGELOG.md).
 
