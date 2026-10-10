@@ -16,3 +16,10 @@ updates:
           - dependency-name: aes
             update-types:
                 - version-update:semver-major
+          - dependency-name: cbc
+            update-types:
+                - version-update:semver-minor
+                - version-update:semver-major
+          - dependency-name: criterion
+            update-types:
+                - version-update:semver-major
