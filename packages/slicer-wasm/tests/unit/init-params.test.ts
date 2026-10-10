@@ -25,6 +25,13 @@ describe("wasm init wrappers / WASM 初始化包装器", () => {
 
         await mod.initSlicerConverter();
 
+        const moduleOrPath = mocks.releaseInit.mock.calls[0]?.[0]?.module_or_path;
+        if (wasmUrl.protocol === "file:") {
+            expect(moduleOrPath).toBeInstanceOf(Uint8Array);
+            expect((moduleOrPath as Uint8Array).byteLength).toBeGreaterThan(0);
+            return;
+        }
+
         expect(mocks.releaseInit).toHaveBeenCalledWith({ module_or_path: wasmUrl });
     });
 
@@ -45,10 +52,11 @@ describe("wasm init wrappers / WASM 初始化包装器", () => {
 
         const mod = await import("../../src/api.js");
         const onProgress = vi.fn();
+        const wasmUrl = new URL("https://example.com/slicer_converter_bg.wasm");
 
-        await mod.initSlicerConverterWithProgress(onProgress);
+        await mod.initSlicerConverterWithProgress(onProgress, wasmUrl);
 
-        expect(fetchMock).toHaveBeenCalledWith(mod.getSlicerConverterWasmUrl());
+        expect(fetchMock).toHaveBeenCalledWith(wasmUrl);
         expect(onProgress).toHaveBeenCalledWith({
             phase: "downloading",
             loadedBytes: 0,
