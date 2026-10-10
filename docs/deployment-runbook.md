@@ -62,6 +62,30 @@ pnpm build:app
 
 不要只上传 HTML，必须带上同目录中的 JS、CSS、worker chunk 和 wasm 资源。
 
+## 本地 CLI 发布产物
+
+在 Windows 上生成多平台 CLI：
+
+```powershell
+pnpm build:cli:artifacts
+```
+
+这条命令生成当前平台的 Windows 版本，并在 WSL 可用时生成 Linux glibc 与 Linux musl 版本：
+
+- `dist/windows/slicer-converter.exe`
+- `dist/linux-glibc/slicer-converter`
+- `dist/linux-musl/slicer-converter`
+
+单个平台：
+
+```powershell
+./scripts/build-cli-artifacts.ps1 -Windows
+./scripts/build-cli-artifacts.ps1 -LinuxGlibc
+./scripts/build-cli-artifacts.ps1 -LinuxMusl
+```
+
+macOS 二进制需要在 macOS 上构建。Intel 与 Apple Silicon 分别产出 `x86_64-apple-darwin` 和 `aarch64-apple-darwin`。需要通用二进制时，再在 macOS 上用 `lipo` 合成。
+
 ## 自定义 base path
 
 当前 Vite 配置：
