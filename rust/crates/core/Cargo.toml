@@ -22,7 +22,7 @@ crc32fast = "1"
 zip = { version = "8", default-features = false, features = ["deflate"] }
 thiserror = "2"
 aes = "0.8"
-cbc = { version = "0.1", features = ["alloc"] }
+cbc = { version = "0.2", features = ["alloc"] }
 sha2 = "0.10"
 
 [dev-dependencies]
