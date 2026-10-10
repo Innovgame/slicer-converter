@@ -12,7 +12,8 @@ export default defineConfig({
     plugins: [react(), tailwindcss()],
     resolve: {
         alias: {
-            "@": path.resolve(appRoot, "src")
+            "@": path.resolve(appRoot, "src"),
+            "@slicer-converter/wasm": path.resolve(projectRoot, "packages/slicer-wasm/src/index.ts")
         }
     },
     root: appRoot,

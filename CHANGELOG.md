@@ -7,7 +7,7 @@ This file records changes that users can see. Versions follow repository tags, f
 - GitHub Discussions are enabled.
 - Dependabot checks npm, Cargo, and GitHub Actions weekly.
 - crates.io publishing is wired for tagged releases and waits for `CARGO_REGISTRY_TOKEN`.
-- `@slicer-converter/wasm` stays private until it exports a built package.
+- `@slicer-converter/wasm` publishes built `dist` and `lib` artifacts to npm when `NPM_TOKEN` is set.
 
 ## 0.1.1
 

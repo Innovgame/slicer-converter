@@ -8,7 +8,8 @@ const appRoot = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
     resolve: {
         alias: {
-            "@": path.resolve(appRoot, "src")
+            "@": path.resolve(appRoot, "src"),
+            "@slicer-converter/wasm": path.resolve(appRoot, "../../packages/slicer-wasm/src/index.ts")
         }
     },
     test: {

@@ -1,18 +1,35 @@
 {
     "name": "@slicer-converter/wasm",
-    "version": "0.1.0",
-    "private": true,
+    "version": "0.1.1",
     "type": "module",
-    "description": "Rust/WASM package for slicer-converter",
+    "description": "Browser API for opening, previewing, and converting resin slicer files",
+    "license": "MIT",
+    "homepage": "https://innovgame.github.io/slicer-converter/",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Innovgame/slicer-converter.git",
+        "directory": "packages/slicer-wasm"
+    },
+    "bugs": {
+        "url": "https://github.com/Innovgame/slicer-converter/issues"
+    },
     "files": [
-        "src",
-        "lib"
+        "dist",
+        "lib",
+        "README.md"
     ],
     "exports": {
-        ".": "./src/index.ts"
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        }
+    },
+    "publishConfig": {
+        "access": "public"
     },
     "scripts": {
-        "build": "wasm-pack build ../../rust/crates/wasm --target web --release --out-dir ../../../packages/slicer-wasm/lib --out-name slicer_converter",
+        "build": "wasm-pack build ../../rust/crates/wasm --target web --release --out-dir ../../../packages/slicer-wasm/lib --out-name slicer_converter && node scripts/remove-lib-gitignore.mjs && tsc -p tsconfig.build.json",
+        "prepublishOnly": "pnpm build",
         "test:unit": "node ../../scripts/run-vitest-safe.mjs run --pool=threads"
     },
     "devDependencies": {

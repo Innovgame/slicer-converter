@@ -15,7 +15,11 @@
 
 在线测试页：<https://innovgame.github.io/slicer-converter/>。
 
-CLI 从 Releases 安装。`@slicer-converter/wasm` 仍然是私有包，因为它导出的是 TypeScript 源码，wasm 二进制在本地构建。crates.io 发布已经接到打标签的流程上，配置 `CARGO_REGISTRY_TOKEN` 后才会执行。
+CLI 从 Releases 安装。`@slicer-converter/wasm` 会在同一个标签发布时发到 npm，前提是配置了 `NPM_TOKEN`：
+
+```bash
+npm install @slicer-converter/wasm
+```
 
 ## 目录
 

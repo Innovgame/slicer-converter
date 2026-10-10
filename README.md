@@ -15,7 +15,11 @@ Version `0.1.1`. Download CLI binaries from [Releases](https://github.com/Innovg
 
 The live test page is at <https://innovgame.github.io/slicer-converter/>.
 
-Install the CLI from Releases. `@slicer-converter/wasm` stays private because its export points at TypeScript source and the wasm binary is built locally. crates.io publishing is set up for tagged releases and runs when `CARGO_REGISTRY_TOKEN` is configured.
+Install the CLI from Releases. `@slicer-converter/wasm` is published to npm from the same tag when `NPM_TOKEN` is set:
+
+```bash
+npm install @slicer-converter/wasm
+```
 
 ## Contents
 

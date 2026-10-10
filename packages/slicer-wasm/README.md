@@ -2,17 +2,21 @@
 
 Browser TypeScript API for opening, previewing, and converting resin slicer files with the Rust/WASM converter.
 
-## Install And Build
+## Install
 
-This package is currently consumed from the workspace:
+```bash
+npm install @slicer-converter/wasm
+```
 
 ```ts
 import { convertSlicerFileToBlob, openSlicerDocumentFile } from "@slicer-converter/wasm";
 ```
 
-Before running an app, build the WASM artifact:
+The published package includes the compiled JavaScript facade and the release WASM binary. Rust is not required after install.
 
-```powershell
+In this repository, build both artifacts before publishing or packing:
+
+```bash
 pnpm --filter @slicer-converter/wasm build
 ```
 

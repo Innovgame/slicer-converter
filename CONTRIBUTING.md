@@ -44,7 +44,7 @@ Use a short English conventional commit, such as `fix:`, `feat:`, `docs:`, or `c
 Releases are cut from `master` with a `v*` tag. Do not keep a long-lived release branch.
 
 1. Move the `Unreleased` notes in [CHANGELOG.md](CHANGELOG.md) under the new version heading, for example `## 0.1.2`.
-2. Update the version in [README.md](README.md) to the same version.
+2. Update the version in [README.md](README.md), [README.zh-CN.md](README.zh-CN.md), and `packages/slicer-wasm/package.json` to the same version. The npm publish rejects a tag that does not match that package version.
 3. Commit those changes.
 4. Wait until CI passes for that commit.
 5. Tag and push the tag:
