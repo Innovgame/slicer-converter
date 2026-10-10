@@ -46,10 +46,12 @@ jobs:
             - uses: ./.github/actions/setup-toolchain
               with:
                   node: false
+                  components: rustfmt,clippy
                   cache-key: cargo-rust
 
             - name: Check Rust formatting
-              run: cargo fmt --check --manifest-path rust/Cargo.toml
+              working-directory: rust
+              run: cargo fmt --check
 
             - name: Run Clippy
               run: cargo clippy --manifest-path rust/Cargo.toml --all-targets --all-features -- -D warnings
@@ -128,6 +130,5 @@ jobs:
             - name: Install Playwright browsers
               run: pnpm --filter @slicer-converter/slicer-app exec playwright install --with-deps chromium firefox
 
-            # Hosted runners do not have UVtools. @real/@sample/@smoke live in the roundtrip spec and call UVtools.
             - name: Run browser e2e
-              run: pnpm --filter @slicer-converter/slicer-app exec playwright test --grep-invert "@uvtools|@real|@sample|@smoke"
+              run: pnpm test:app:e2e

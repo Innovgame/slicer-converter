@@ -126,13 +126,12 @@ fn chitubox_zip_tests_are_split_from_family_registry_suite() {
         "Chitubox Zip behavior should live in tests/chitubox_zip_profiles.rs"
     );
 
-    for test_name in ["chitubox_zip_pipeline_parses_gcode_metadata_and_png_layers"] {
-        let marker = format!("fn {test_name}");
-        assert!(
-            !registry_source.contains(&marker),
-            "{test_name} should live in tests/chitubox_zip_profiles.rs, not format_family_registry.rs"
-        );
-    }
+    let test_name = "chitubox_zip_pipeline_parses_gcode_metadata_and_png_layers";
+    let marker = format!("fn {test_name}");
+    assert!(
+        !registry_source.contains(&marker),
+        "{test_name} should live in tests/chitubox_zip_profiles.rs, not format_family_registry.rs"
+    );
 }
 
 #[test]

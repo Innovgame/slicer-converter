@@ -402,7 +402,7 @@ fn put_bytes(data: &mut [u8], offset: usize, bytes: &[u8]) -> Result<(), Convert
 fn checked_end(data: &[u8], offset: usize, len: usize) -> Result<usize, ConvertError> {
     let end = offset
         .checked_add(len)
-        .ok_or_else(|| ConvertError::BufferTooSmall {
+        .ok_or(ConvertError::BufferTooSmall {
             need: usize::MAX,
             got: data.len(),
         })?;

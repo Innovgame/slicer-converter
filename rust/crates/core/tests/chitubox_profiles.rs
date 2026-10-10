@@ -2148,8 +2148,8 @@ fn chitubox_ctb_v4_document_pipeline_places_layer_payloads_at_finalized_offsets(
         .light_pwm(200, 210)
         .build()
         .expect("metadata");
-    let layer0 = ctb::encode_layer_data(&vec![0u8; 16], 0, 8, 2).expect("layer 0");
-    let layer1 = ctb::encode_layer_data(&vec![255u8; 16], 1, 8, 2).expect("layer 1");
+    let layer0 = ctb::encode_layer_data(&[0u8; 16], 0, 8, 2).expect("layer 0");
+    let layer1 = ctb::encode_layer_data(&[255u8; 16], 1, 8, 2).expect("layer 1");
 
     let output = encode_binary_document(spec, &metadata, &[layer0.clone(), layer1.clone()]);
     let layer_table_offset = le_u32(&output, 0x40) as usize;

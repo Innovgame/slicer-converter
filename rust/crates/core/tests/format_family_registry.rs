@@ -260,17 +260,16 @@ fn global_registry_resolves_export_targets_through_family_resolvers() {
 fn global_registry_rejects_import_only_profiles_as_export_targets() {
     let registry = formats::global_registry();
 
-    for target in ["cxdlp"] {
-        let err = match registry.resolve_export_spec(target, None, ExportTargetOptions::default()) {
-            Ok(spec) => panic!(
-                "Creality {target} should not resolve as an export target, got {}",
-                spec.identity.name
-            ),
-            Err(error) => error,
-        };
+    let target = "cxdlp";
+    let err = match registry.resolve_export_spec(target, None, ExportTargetOptions::default()) {
+        Ok(spec) => panic!(
+            "Creality {target} should not resolve as an export target, got {}",
+            spec.identity.name
+        ),
+        Err(error) => error,
+    };
 
-        assert_eq!(err.to_string(), "Unknown file format");
-    }
+    assert_eq!(err.to_string(), "Unknown file format");
 
     let export_spec = registry
         .resolve_export_spec("cxdlpv4", None, ExportTargetOptions::default())

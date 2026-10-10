@@ -58,7 +58,8 @@ export function toSlicerWorkerError(
         stage: typeof record?.stage === "string" ? record.stage : fallback.stage,
         retryable: typeof record?.retryable === "boolean" ? record.retryable : fallback.retryable,
         timestamp: typeof record?.timestamp === "number" ? record.timestamp : (fallback.timestamp ?? Date.now()),
-        message: typeof record?.message === "string" ? record.message : (fallback.message ?? getWorkerErrorMessage(error)),
+        message:
+            typeof record?.message === "string" ? record.message : (fallback.message ?? getWorkerErrorMessage(error)),
         format: typeof record?.format === "string" ? record.format : fallback.format,
         layerIndex: typeof record?.layerIndex === "number" ? record.layerIndex : fallback.layerIndex,
         detail: typeof record?.detail === "string" ? record.detail : fallback.detail

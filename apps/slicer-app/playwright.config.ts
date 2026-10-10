@@ -7,6 +7,7 @@ const isCi = process.env.CI === "true";
 
 export default defineConfig({
     testDir: "./tests/e2e",
+    testIgnore: isCi ? [/uvtools-compat\.spec\.ts/, /roundtrip\.spec\.ts/] : undefined,
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 1 : 0,

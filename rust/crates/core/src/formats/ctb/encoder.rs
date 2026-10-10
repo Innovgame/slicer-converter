@@ -153,17 +153,8 @@ pub fn build_ctb_header_with_profile(
     };
 
     let layer_table_offset = offset;
-    let layer_data_offset = if uses_layer_def_ex {
-        layer_table_offset + 36 * metadata.slicing.layer_count
-    } else {
-        layer_table_offset + 36 * metadata.slicing.layer_count
-    };
-
-    let layer_table_length = if uses_layer_def_ex {
-        36 * metadata.slicing.layer_count
-    } else {
-        36 * metadata.slicing.layer_count
-    };
+    let layer_table_length = 36 * metadata.slicing.layer_count;
+    let layer_data_offset = layer_table_offset + layer_table_length;
 
     let header_capacity = if uses_layer_def_ex {
         layer_table_offset + layer_table_length + layer_def_ex_size * metadata.slicing.layer_count

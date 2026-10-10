@@ -22,6 +22,10 @@ inputs:
         description: Cargo cache key prefix
         required: false
         default: cargo
+    components:
+        description: Extra rustup components, comma-separated
+        required: false
+        default: ""
 
 runs:
     using: composite
@@ -29,12 +33,15 @@ runs:
         - name: Install Rust
           if: inputs.rust == 'true' && inputs.wasm != 'true'
           uses: dtolnay/rust-toolchain@stable
+          with:
+              components: ${{ inputs.components }}
 
         - name: Install Rust with wasm32
           if: inputs.rust == 'true' && inputs.wasm == 'true'
           uses: dtolnay/rust-toolchain@stable
           with:
               targets: wasm32-unknown-unknown
+              components: ${{ inputs.components }}
 
         - name: Cache Cargo
           if: inputs.rust == 'true'

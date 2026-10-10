@@ -178,27 +178,6 @@ pub(crate) fn ensure_export_capable(
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::ExportTargetRequest;
-
-    #[test]
-    fn export_target_requests_normalize_paths_suffixes_and_explicit_profiles() {
-        let request = ExportTargetRequest::new("/tmp/model.v4.ctb", None);
-        assert_eq!(
-            request.candidates().collect::<Vec<_>>(),
-            vec!["model.v4.ctb", "v4.ctb", "ctb"]
-        );
-
-        let dotted = ExportTargetRequest::new(".ctb", None);
-        assert_eq!(dotted.candidates().collect::<Vec<_>>(), vec!["ctb"]);
-
-        let explicit = ExportTargetRequest::new("model.ctb", Some("ctb-v5"));
-        assert_eq!(explicit.candidates().collect::<Vec<_>>(), vec!["ctb-v5"]);
-        assert_eq!(explicit.explicit_profile_for("ctb-v5"), Some("ctb-v5"));
-    }
-}
-
 /// Default resolver for families without special profile-scoping rules.
 ///
 /// It tries hinted extension detection first, then falls back to profile header
@@ -329,5 +308,26 @@ impl ProfileResolver for HintScopedProfileResolver {
         }
 
         SimpleProfileResolver::new().resolve_export_profile(target, metadata, options, profiles)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::ExportTargetRequest;
+
+    #[test]
+    fn export_target_requests_normalize_paths_suffixes_and_explicit_profiles() {
+        let request = ExportTargetRequest::new("/tmp/model.v4.ctb", None);
+        assert_eq!(
+            request.candidates().collect::<Vec<_>>(),
+            vec!["model.v4.ctb", "v4.ctb", "ctb"]
+        );
+
+        let dotted = ExportTargetRequest::new(".ctb", None);
+        assert_eq!(dotted.candidates().collect::<Vec<_>>(), vec!["ctb"]);
+
+        let explicit = ExportTargetRequest::new("model.ctb", Some("ctb-v5"));
+        assert_eq!(explicit.candidates().collect::<Vec<_>>(), vec!["ctb-v5"]);
+        assert_eq!(explicit.explicit_profile_for("ctb-v5"), Some("ctb-v5"));
     }
 }

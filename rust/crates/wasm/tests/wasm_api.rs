@@ -307,7 +307,7 @@ fn list_supported_formats_exposes_anycubic_manual_target_facts() {
             && format
                 .get("specifics")
                 .and_then(|value| value.get("default_version"))
-                == Some(&serde_json::Value::String("v518".to_string()))
+                == Some(&serde_json::json!(518))
     }));
 }
 

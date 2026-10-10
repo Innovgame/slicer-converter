@@ -17,7 +17,7 @@ interface UvtoolsCompatTarget {
 
 test.describe("external UVTools compatibility smoke / 外部 UVTools 兼容 smoke", () => {
     for (const target of uvtoolsCompatTargets()) {
-        test(`${target.label} @uvtools / ${target.label} 可被 UVTools 解析`, async (_fixtures, testInfo) => {
+        test(`${target.label} @uvtools / ${target.label} 可被 UVTools 解析`, async ({ page: _page }, testInfo) => {
             test.setTimeout(180_000);
 
             const outputPath = testInfo.outputPath(target.outputName);

@@ -227,7 +227,7 @@ pub fn supported_format_infos(
                     .collect(),
                 is_zip: spec.capabilities.is_archive,
                 capabilities: spec.capabilities,
-                specifics: supported_format_specifics(*profile),
+                specifics: supported_format_specifics(profile),
             }
         })
         .collect()

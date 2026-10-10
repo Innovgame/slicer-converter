@@ -365,6 +365,7 @@ pub(super) fn decode_layer_preview_uint8array(
 /// 编码单个 grayscale layer，并把 scratch bytes 交给输出 adapter。该 shared helper 让
 /// `Vec<u8>` 返回路径与 `Uint8Array` 返回路径复用同一 encode 实现，同时保留 thread-local
 /// encode buffer 以跨调用复用。
+#[allow(clippy::too_many_arguments)]
 fn encode_layer_with_output<T>(
     pixels: &[u8],
     layer_index: u32,
@@ -973,6 +974,7 @@ pub(super) fn decode_encode_layer_uint8array(
 ///
 /// 解码并编码单层，返回 route statistics JSON；执行路径与
 /// `decode_encode_layer_uint8array` 相同，但序列化统计信息而不是返回图层字节。
+#[allow(clippy::too_many_arguments)]
 pub(super) fn decode_encode_layer_stats_json(
     data: &[u8],
     layer_index: u32,

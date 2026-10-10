@@ -1948,7 +1948,7 @@ fn read_be_len_utf16_f32_at(
             got: data.len(),
         });
     }
-    if len % 2 != 0 {
+    if !len.is_multiple_of(2) {
         return Err(ConvertError::BinrwError(format!(
             "invalid {label}: odd UTF-16BE byte length {len}"
         )));

@@ -361,12 +361,14 @@ fn build_encrypted_ctb_document(
     write_settings(
         &mut settings,
         metadata,
-        DEFAULT_CHECKSUM,
-        layer_pointers_offset,
-        machine_name_offset,
-        machine_name.len(),
-        layer_count,
-        version,
+        EncryptedSettingsFields {
+            checksum: DEFAULT_CHECKSUM,
+            layer_pointers_offset,
+            machine_name_offset,
+            machine_name_size: machine_name.len(),
+            layer_count,
+            version,
+        },
     )?;
     let encrypted_settings = aes_encrypt_zero_padded(&settings)?;
     output[settings_offset..settings_offset + settings_size].copy_from_slice(&encrypted_settings);
@@ -429,16 +431,28 @@ fn write_file_header(
     Ok(())
 }
 
-fn write_settings(
-    settings: &mut [u8],
-    metadata: &FileMetadata,
+struct EncryptedSettingsFields {
     checksum: u64,
     layer_pointers_offset: usize,
     machine_name_offset: usize,
     machine_name_size: usize,
     layer_count: usize,
     version: u32,
+}
+
+fn write_settings(
+    settings: &mut [u8],
+    metadata: &FileMetadata,
+    fields: EncryptedSettingsFields,
 ) -> Result<(), ConvertError> {
+    let EncryptedSettingsFields {
+        checksum,
+        layer_pointers_offset,
+        machine_name_offset,
+        machine_name_size,
+        layer_count,
+        version,
+    } = fields;
     put_le_u64(settings, 0, checksum)?;
     put_le_u32(
         settings,
