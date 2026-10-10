@@ -1,40 +1,34 @@
 @import "tailwindcss";
 
-/*
- * Machine-shop resin tokens. The palette is taken from the printer itself: warm graphite
- * for the frame, cool steel for readouts, and the 405 nm cure lamp amber as the single
- * action colour. Cyan is gone on purpose; amber is the only thing that glows.
- */
 @theme {
-    --color-background: #121110;
-    --color-foreground: #f2eeea;
-    --color-card: #1a1917;
-    --color-muted: #262421;
-    --color-muted-foreground: #a49e96;
-    --color-primary: #f0a02a;
-    --color-primary-foreground: #221905;
-    --color-secondary: #262421;
-    --color-secondary-foreground: #f2eeea;
+    --color-background: #10151c;
+    --color-foreground: #e7edf5;
+    --color-card: #19212b;
+    --color-muted: #263241;
+    --color-muted-foreground: #a2b0c2;
+    --color-primary: #3972d0;
+    --color-primary-foreground: #ffffff;
+    --color-secondary: #263241;
+    --color-secondary-foreground: #e7edf5;
     --color-destructive: #e4645c;
     --color-border: rgba(255, 255, 255, 0.1);
     --color-input: rgba(255, 255, 255, 0.13);
-    --color-popover: #1a1917;
-    --color-popover-foreground: #f2eeea;
-    --color-card-foreground: #f2eeea;
-    --color-ring: #f0a02a;
+    --color-popover: #19212b;
+    --color-popover-foreground: #e7edf5;
+    --color-card-foreground: #e7edf5;
+    --color-ring: #85b1ff;
 
-    --color-accent: #f0a02a;
-    --color-accent-strong: #ffc766;
-    --color-surface: #1a1917;
-    --color-raised: #232120;
-    --color-surface-hover: #2e2b28;
+    --color-accent: #85b1ff;
+    --color-accent-strong: #85b1ff;
+    --color-surface: #19212b;
+    --color-raised: #212d3b;
+    --color-surface-hover: #2d3c4f;
     --color-outline: rgba(255, 255, 255, 0.12);
     --color-outline-subtle: rgba(255, 255, 255, 0.065);
     --color-outline-strong: rgba(255, 255, 255, 0.24);
-    --color-dim: rgba(242, 238, 234, 0.72);
-    --color-subtle: rgba(242, 238, 234, 0.52);
-    /* Steel is the cold counterweight to the amber: readouts, units, secondary meta. */
-    --color-steel: #8fa3ad;
+    --color-dim: rgba(231, 237, 245, 0.72);
+    --color-subtle: rgba(231, 237, 245, 0.52);
+    --color-steel: #94a9c2;
 
     --font-sans: "Segoe UI Variable Text", "Segoe UI", Inter, system-ui, sans-serif;
     --font-mono: "Cascadia Mono", "Cascadia Code", Consolas, ui-monospace, monospace;
@@ -49,15 +43,14 @@
     --sc-status-height: 28px;
     --sc-panel-header-height: 38px;
     --sc-gap: 12px;
-    /* Stage behind the layer plate: a machined bed, not a dotted field. */
-    --sc-stage-a: #191c1e;
-    --sc-stage-b: #0d0f10;
-    --sc-stage-dot: rgba(255, 255, 255, 0.055);
+    --sc-layer-thumb-size: 14px;
+    --sc-stage-a: #18222f;
+    --sc-stage-b: #101720;
+    --sc-stage-dot: rgba(164, 187, 216, 0.035);
     --sc-stage-plate-ring: rgba(255, 255, 255, 0.14);
     --sc-shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.035) inset;
     --sc-shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.45);
     --sc-shadow-pop: 0 12px 34px rgba(0, 0, 0, 0.5);
-    --sc-primary-glow: 0 0 0 1px rgba(240, 160, 42, 0.35), 0 6px 20px rgba(240, 160, 42, 0.2);
 }
 
 *,
@@ -150,42 +143,41 @@ select option:disabled {
 
 [data-theme="light"] {
     color-scheme: light;
-    --color-background: #eceae6;
-    --color-foreground: #1a1816;
-    --color-card: #faf9f7;
-    --color-muted: #e4e1db;
-    --color-muted-foreground: #605b54;
-    --color-primary: #b4700b;
-    --color-primary-foreground: #fffaf0;
-    --color-secondary: #e4e1db;
-    --color-secondary-foreground: #1a1816;
+    --color-background: #edf1f7;
+    --color-foreground: #243147;
+    --color-card: #ffffff;
+    --color-muted: #e5ebf4;
+    --color-muted-foreground: #617189;
+    --color-primary: #2563eb;
+    --color-primary-foreground: #ffffff;
+    --color-secondary: #e5ebf4;
+    --color-secondary-foreground: #243147;
     --color-destructive: #b3261e;
-    --color-border: rgba(26, 24, 22, 0.13);
-    --color-input: rgba(26, 24, 22, 0.15);
-    --color-popover: #faf9f7;
-    --color-popover-foreground: #1a1816;
-    --color-card-foreground: #1a1816;
-    --color-ring: #b4700b;
-    --color-accent: #b4700b;
-    --color-accent-strong: #8a5406;
-    --color-surface: #faf9f7;
-    --color-raised: #f2f0ec;
-    --color-surface-hover: #e4e1db;
-    --color-outline: rgba(26, 24, 22, 0.15);
-    --color-outline-subtle: rgba(26, 24, 22, 0.085);
-    --color-outline-strong: rgba(26, 24, 22, 0.26);
-    --color-dim: rgba(26, 24, 22, 0.72);
-    --color-subtle: rgba(26, 24, 22, 0.54);
-    --color-steel: #4a5a63;
+    --color-border: rgba(36, 49, 71, 0.13);
+    --color-input: rgba(36, 49, 71, 0.15);
+    --color-popover: #ffffff;
+    --color-popover-foreground: #243147;
+    --color-card-foreground: #243147;
+    --color-ring: #2563eb;
+    --color-accent: #2563eb;
+    --color-accent-strong: #174eb9;
+    --color-surface: #ffffff;
+    --color-raised: #f3f6fb;
+    --color-surface-hover: #e5ebf4;
+    --color-outline: rgba(36, 49, 71, 0.15);
+    --color-outline-subtle: rgba(36, 49, 71, 0.085);
+    --color-outline-strong: rgba(36, 49, 71, 0.26);
+    --color-dim: rgba(36, 49, 71, 0.72);
+    --color-subtle: rgba(36, 49, 71, 0.54);
+    --color-steel: #637a98;
 
-    --sc-stage-a: #e3e1dc;
-    --sc-stage-b: #cfccc6;
-    --sc-stage-dot: rgba(26, 24, 22, 0.09);
-    --sc-stage-plate-ring: rgba(26, 24, 22, 0.14);
+    --sc-stage-a: #e6edf6;
+    --sc-stage-b: #d8e2ef;
+    --sc-stage-dot: rgba(36, 49, 71, 0.05);
+    --sc-stage-plate-ring: rgba(36, 49, 71, 0.14);
     --sc-shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.85) inset;
-    --sc-shadow-raised: 0 1px 2px rgba(26, 24, 22, 0.09);
-    --sc-shadow-pop: 0 12px 34px rgba(26, 24, 22, 0.16);
-    --sc-primary-glow: 0 0 0 1px rgba(180, 112, 11, 0.3), 0 6px 18px rgba(180, 112, 11, 0.18);
+    --sc-shadow-raised: 0 1px 2px rgba(36, 49, 71, 0.09);
+    --sc-shadow-pop: 0 12px 34px rgba(36, 49, 71, 0.16);
 }
 
 [data-theme="light"] body {
@@ -255,9 +247,7 @@ select option:disabled {
         var(--color-muted)
     );
     color: var(--color-primary);
-    box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.3),
-        0 6px 16px rgba(0, 0, 0, 0.28);
+    box-shadow: var(--sc-shadow-raised);
 }
 
 .sc-brand-mark svg {
@@ -305,11 +295,11 @@ select option:disabled {
 }
 
 .sc-document-status.is-loaded {
-    color: color-mix(in srgb, var(--color-primary) 58%, var(--color-muted-foreground));
+    color: var(--color-accent);
 }
 
 .sc-document-status.is-loaded::before {
-    background: var(--color-primary);
+    background: var(--color-accent);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent);
     opacity: 1;
 }
@@ -616,7 +606,7 @@ select option:disabled {
     margin: 0;
     border: 1px solid var(--color-outline-subtle);
     border-radius: var(--sc-radius);
-    background: color-mix(in srgb, var(--color-muted) 26%, transparent);
+    background: color-mix(in srgb, var(--color-muted) 48%, var(--color-card));
     padding: 2px 10px;
     font-size: 12px;
 }
@@ -985,8 +975,8 @@ select option:disabled {
 }
 
 .sc-layer-slider::-webkit-slider-thumb {
-    width: 14px;
-    height: 14px;
+    width: var(--sc-layer-thumb-size);
+    height: var(--sc-layer-thumb-size);
     margin-left: -4px;
     border: 2px solid var(--color-card);
     border-radius: var(--sc-radius-pill);
@@ -1016,34 +1006,33 @@ select option:disabled {
 
 .sc-layer-slider::-moz-range-thumb {
     width: 20px;
-    height: 9px;
+    height: var(--sc-layer-thumb-size);
     border: 1px solid color-mix(in srgb, var(--color-primary) 50%, #000);
     border-radius: 2px;
     background: var(--color-primary);
 }
 
-/* A readout pill follows the thumb; the nudges are invisible until the rail is hovered or focused. */
 .sc-rail-readout {
     position: absolute;
-    right: calc(100% + 4px);
+    right: calc(100% + 9px);
     z-index: 1;
     display: grid;
     grid-template-rows: 18px auto 18px;
-    justify-items: end;
-    min-width: 40px;
+    justify-items: center;
+    gap: 2px;
     transform: translateY(50%);
     pointer-events: auto;
 }
 
 .sc-rail-copy {
-    display: grid;
-    justify-items: end;
-    padding: 4px 8px;
-    border: 1px solid var(--color-outline-subtle);
-    border-radius: var(--sc-radius);
-    background: color-mix(in srgb, var(--color-card) 88%, transparent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 9px;
+    border: 1px solid var(--color-outline);
+    border-radius: var(--sc-radius-sm);
+    background: var(--color-card);
     box-shadow: var(--sc-shadow-raised);
-    backdrop-filter: blur(10px);
 }
 
 .sc-rail-value,
@@ -1054,10 +1043,40 @@ select option:disabled {
 }
 
 .sc-rail-value {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-muted-foreground);
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.sc-layer-number-input {
+    width: 5ch;
+    min-width: 0;
+    height: 24px;
+    padding: 1px 3px;
+    border: 1px solid var(--color-outline-subtle);
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--color-raised) 60%, var(--color-card));
     color: var(--color-foreground);
-    font-size: 11.5px;
-    font-weight: 650;
-    line-height: 1.25;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    text-align: center;
+}
+
+.sc-layer-number-input:hover {
+    border-color: var(--color-outline);
+    background: var(--color-raised);
+}
+
+.sc-layer-number-input:focus-visible {
+    border-color: var(--color-primary);
+    outline: 2px solid color-mix(in srgb, var(--color-primary) 22%, transparent);
+    outline-offset: 1px;
+    background: var(--color-raised);
 }
 
 .sc-rail-unit {
@@ -1066,12 +1085,36 @@ select option:disabled {
 }
 
 .sc-rail-detail {
-    color: var(--color-muted-foreground);
-    font-size: 10.5px;
-    line-height: 1.35;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-foreground);
+    font-size: 12px;
+    line-height: 1.4;
 }
 
-.sc-rail-nudge,
+.sc-rail-total {
+    color: var(--color-muted-foreground);
+    font-size: 11px;
+}
+
+.sc-rail-nudge {
+    position: relative;
+    width: 36px;
+    height: 18px;
+    border-radius: var(--sc-radius-sm);
+}
+
+.sc-rail-nudge::before {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: transparent;
+    content: "";
+    pointer-events: none;
+}
+
 .sc-clip-reset {
     width: 18px;
     height: 18px;
@@ -1091,6 +1134,10 @@ select option:disabled {
 }
 
 .sc-rail-nudge:hover:not(:disabled) {
+    background: transparent;
+}
+
+.sc-rail-nudge:hover:not(:disabled)::before {
     background: color-mix(in srgb, var(--color-foreground) 12%, transparent);
 }
 
@@ -1129,7 +1176,6 @@ select option:disabled {
     background: radial-gradient(circle at 1px 1px, var(--sc-stage-dot) 1px, transparent 0) 0 0 / 22px 22px;
 }
 
-/* Empty states stay steel-grey: amber is reserved for the one real action. */
 .sc-empty-mark {
     display: grid;
     width: 40px;
@@ -1160,7 +1206,7 @@ select option:disabled {
     padding: 14px;
     border: 1px solid var(--color-outline-subtle);
     border-radius: var(--sc-radius);
-    background: color-mix(in srgb, var(--color-muted) 26%, transparent);
+    background: color-mix(in srgb, var(--color-muted) 48%, var(--color-card));
 }
 
 .sc-group-title {
@@ -1317,22 +1363,15 @@ select option:disabled {
     flex: 0 0 auto;
 }
 
-/* The cure lamp: the one surface on the page that glows. */
 .sc-primary-btn {
-    border: 1px solid color-mix(in srgb, var(--color-primary) 55%, #000);
-    background: linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--color-accent-strong) 58%, var(--color-primary)),
-        color-mix(in srgb, var(--color-primary) 92%, #000)
-    );
+    border: 1px solid color-mix(in srgb, var(--color-primary) 80%, #000);
+    background: var(--color-primary);
     color: var(--color-primary-foreground);
-    box-shadow:
-        var(--sc-primary-glow),
-        inset 0 1px 0 rgba(255, 255, 255, 0.32);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 .sc-primary-btn:hover:not(:disabled) {
-    background: linear-gradient(180deg, color-mix(in srgb, var(--color-accent-strong) 88%, #fff), var(--color-primary));
+    background: color-mix(in srgb, var(--color-primary) 90%, #000);
 }
 
 .sc-primary-btn:active:not(:disabled) {
@@ -1631,7 +1670,7 @@ select option:disabled {
     }
 
     .sc-layer-rail {
-        top: 12px;
+        top: 24px;
         right: 8px;
         bottom: 12px;
         width: 36px;
@@ -1658,13 +1697,12 @@ select option:disabled {
     }
 }
 
-/* Status text stays legible on the graphite bar: one warm hue per meaning, nothing neon. */
 @layer utilities {
     .status-error {
-        color: #f0a49c;
+        color: #ef9aa4;
     }
     .status-success {
-        color: #9dcf9a;
+        color: #8ac9a5;
     }
     .status-info {
         color: var(--color-steel);
@@ -1673,7 +1711,7 @@ select option:disabled {
         color: #f2c477;
     }
     .status-cancel {
-        color: #f0a49c;
+        color: #ef9aa4;
     }
 
     [data-theme="light"] .status-error,
@@ -1687,6 +1725,6 @@ select option:disabled {
         color: #45585f;
     }
     [data-theme="light"] .status-warning {
-        color: #8a5406;
+        color: #9a6700;
     }
 }

@@ -44,12 +44,18 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
     const dragFrameRef = useRef<number | null>(null);
     const [view, setView] = useState<LayerViewportState>(EMPTY_LAYER_VIEW);
     const [zoomDraft, setZoomDraft] = useState<string | null>(null);
+    const [layerDraft, setLayerDraft] = useState<string | null>(null);
+    /**
+     * @zh 拖动读数立即响应输入；预览请求仍按帧合并，父级确认当前层后清除草稿。
+     * @en Drag readouts respond immediately; preview requests stay frame-coalesced until the parent acknowledges the layer.
+     */
+    const [dragLayer, setDragLayer] = useState<{ header: ParsedHeader | null; index: number } | null>(null);
+    const displayedLayer = dragLayer?.header === parsedHeader ? dragLayer.index : selectedLayer;
     const totalLayers = parsedHeader?.layers.length ?? 0;
     const visible = totalLayers > 0;
     const plate = plateFrom(parsedHeader, previewImage);
     const sliderMax = Math.max(totalLayers - 1, 0);
-    const railPosition = sliderMax === 0 ? 0 : (selectedLayer / sliderMax) * 100;
-    const readoutPosition = Math.min(92, Math.max(8, railPosition));
+    const railPosition = sliderMax === 0 ? 0 : (displayedLayer / sliderMax) * 100;
     const percent = Math.round(view.zoom * 1000) / 10;
 
     const cancelPendingDragFrame = (): void => {
@@ -87,11 +93,27 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
     };
 
     const nudgeLayer = (delta: number): void => {
-        const next = selectedLayer + delta;
+        const next = displayedLayer + delta;
         if (next < 0 || next > sliderMax) {
             return;
         }
         void onPreviewLayerChange(next, "committed");
+    };
+
+    const commitLayerNumber = (): void => {
+        if (layerDraft === null) {
+            return;
+        }
+        const text = layerDraft.trim();
+        const layerNumber = /^\d+$/.test(text) ? Number(text) : Number.NaN;
+        setLayerDraft(null);
+        if (!visible || !Number.isSafeInteger(layerNumber)) {
+            return;
+        }
+        const layerIndex = Math.min(sliderMax, Math.max(0, layerNumber - 1));
+        sliderDraggingRef.current = false;
+        cancelPendingDragFrame();
+        void onPreviewLayerChange(layerIndex, "committed");
     };
 
     const commitZoom = (text: string): void => {
@@ -102,7 +124,18 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
         setZoomDraft(null);
     };
 
-    useEffect(() => cancelPendingDragFrame, []);
+    useEffect(() => {
+        sliderDraggingRef.current = false;
+        cancelPendingDragFrame();
+        setLayerDraft(null);
+        return cancelPendingDragFrame;
+    }, [parsedHeader]);
+
+    useEffect(() => {
+        if (dragLayer && (dragLayer.header !== parsedHeader || dragLayer.index === selectedLayer)) {
+            setDragLayer(null);
+        }
+    }, [dragLayer, parsedHeader, selectedLayer]);
 
     useLayoutEffect(() => {
         const canvas = canvasRef.current;
@@ -193,7 +226,7 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                                 min="0"
                                 style={{ "--layer-fill": `${railPosition}%` } as CSSProperties}
                                 type="range"
-                                value={selectedLayer}
+                                value={displayedLayer}
                                 onPointerDown={(event) => {
                                     sliderDraggingRef.current = true;
                                     void onPreviewLayerChange(
@@ -211,6 +244,7 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                                 onChange={(event) => {
                                     const layerIndex = Number.parseInt(event.target.value, 10);
                                     if (sliderDraggingRef.current) {
+                                        setDragLayer({ header: parsedHeader, index: layerIndex });
                                         queueDraggingLayer(layerIndex);
                                         return;
                                     }
@@ -220,37 +254,58 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                             <div
                                 className="sc-rail-readout"
                                 data-clip-end="current"
-                                style={{ bottom: `${readoutPosition}%` }}
+                                style={{
+                                    bottom: `calc(${railPosition}% + var(--sc-layer-thumb-size) * ${0.5 - railPosition / 100})`
+                                }}
                             >
                                 <button
                                     aria-label="Increase layer"
                                     className="sc-rail-nudge"
-                                    disabled={!visible || selectedLayer >= sliderMax}
+                                    disabled={!visible || displayedLayer >= sliderMax}
                                     type="button"
                                     onClick={() => nudgeLayer(1)}
                                 >
                                     <ChevronUpIcon />
                                 </button>
                                 <span className="sc-rail-copy">
-                                    <span className="sc-rail-value">
-                                        {formatLayerHeight(
-                                            layerTopMm(selectedLayer, parsedHeader?.metadata.layer_height_mm)
-                                        )}
-                                        <span className="sc-rail-unit"> mm</span>
-                                    </span>
                                     <span className="sc-rail-detail">
                                         <span id="layerNum" className="sc-sr">
-                                            {selectedLayer}
+                                            {displayedLayer}
                                         </span>
-                                        <span>
-                                            {selectedLayer + 1} / {totalLayers} 层
-                                        </span>
+                                        <input
+                                            aria-label="Layer number"
+                                            className="sc-layer-number-input"
+                                            disabled={!visible}
+                                            inputMode="numeric"
+                                            type="text"
+                                            title={`Enter a layer number from 1 to ${totalLayers}`}
+                                            value={layerDraft ?? String(displayedLayer + 1)}
+                                            onFocus={(event) => event.currentTarget.select()}
+                                            onChange={(event) => setLayerDraft(event.currentTarget.value)}
+                                            onBlur={commitLayerNumber}
+                                            onKeyDown={(event) => {
+                                                if (event.key === "Enter") {
+                                                    event.preventDefault();
+                                                    commitLayerNumber();
+                                                } else if (event.key === "Escape") {
+                                                    event.preventDefault();
+                                                    setLayerDraft(null);
+                                                }
+                                            }}
+                                        />
+                                        <span className="sc-rail-total">/ {totalLayers}</span>
+                                    </span>
+                                    <span className="sc-rail-value" aria-label="Layer Z height">
+                                        {formatLayerHeight(
+                                            layerTopMm(displayedLayer, parsedHeader?.metadata.layer_height_mm)
+                                        )}
+                                        <span className="sc-rail-unit">mm</span>
                                     </span>
                                 </span>
                                 <button
                                     aria-label="Decrease layer"
                                     className="sc-rail-nudge"
-                                    disabled={!visible || selectedLayer <= 0}
+                                    disabled={!visible || displayedLayer <= 0}
                                     type="button"
                                     onClick={() => nudgeLayer(-1)}
                                 >
@@ -261,7 +316,7 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                         <button
                             aria-label="Reset to first layer"
                             className="sc-clip-reset"
-                            disabled={!visible || selectedLayer === 0}
+                            disabled={!visible || displayedLayer === 0}
                             type="button"
                             onClick={() => void onPreviewLayerChange(0, "committed")}
                         >

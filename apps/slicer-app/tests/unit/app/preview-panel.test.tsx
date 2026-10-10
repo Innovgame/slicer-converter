@@ -92,6 +92,9 @@ describe("PreviewPanel / 预览面板", () => {
         fireEvent.change(slider!, { target: { value: "5" } });
 
         expect(onPreviewLayerChange).toHaveBeenCalledTimes(1);
+        expect(slider).toHaveValue("5");
+        expect(container.querySelector("#layerNum")).toHaveTextContent("5");
+        expect(screen.getByRole("textbox", { name: "Layer number" })).toHaveValue("6");
 
         vi.advanceTimersByTime(16);
 
@@ -114,6 +117,102 @@ describe("PreviewPanel / 预览面板", () => {
         expect(onPreviewLayerChange).toHaveBeenLastCalledWith(6, "committed");
         vi.advanceTimersByTime(16);
         expect(onPreviewLayerChange).toHaveBeenCalledTimes(3);
+    });
+
+    it("discards pending drag input when the document changes / 切换文档时丢弃尚未提交的拖动输入", () => {
+        vi.useFakeTimers();
+        const onPreviewLayerChange = vi.fn(async () => undefined);
+        vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({
+            clearRect: vi.fn(),
+            drawImage: vi.fn()
+        } as unknown as CanvasRenderingContext2D);
+
+        const { container, rerender } = render(
+            React.createElement(PreviewPanel, {
+                parsedHeader: multiLayerParsedHeader,
+                selectedLayer: 0,
+                previewImage: null,
+                onPreviewLayerChange
+            })
+        );
+        const slider = container.querySelector<HTMLInputElement>("#layerSlider")!;
+        fireEvent.pointerDown(slider);
+        fireEvent.change(slider, { target: { value: "7" } });
+        expect(container.querySelector("#layerNum")).toHaveTextContent("7");
+
+        rerender(
+            React.createElement(PreviewPanel, {
+                parsedHeader,
+                selectedLayer: 0,
+                previewImage: null,
+                onPreviewLayerChange
+            })
+        );
+        vi.advanceTimersByTime(16);
+
+        expect(slider).toHaveValue("0");
+        expect(screen.getByRole("textbox", { name: "Layer number" })).toHaveValue("1");
+        expect(onPreviewLayerChange).toHaveBeenCalledTimes(1);
+    });
+
+    it.each([
+        { layer: "4", expected: 3 },
+        { layer: "5", expected: 4 },
+        { layer: "0", expected: 0 },
+        { layer: "20", expected: 9 }
+    ])("jumps to layer $layer using displayed numbering / 按显示层号跳转", ({ layer, expected }) => {
+        const onPreviewLayerChange = vi.fn(async () => undefined);
+        vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({
+            clearRect: vi.fn(),
+            drawImage: vi.fn()
+        } as unknown as CanvasRenderingContext2D);
+        render(
+            React.createElement(PreviewPanel, {
+                parsedHeader: multiLayerParsedHeader,
+                selectedLayer: 0,
+                previewImage: null,
+                onPreviewLayerChange
+            })
+        );
+        const input = screen.getByRole("textbox", { name: "Layer number" });
+        fireEvent.change(input, { target: { value: layer } });
+        fireEvent.keyDown(input, { key: "Enter" });
+        expect(onPreviewLayerChange).toHaveBeenCalledExactlyOnceWith(expected, "committed");
+    });
+
+    it("commits layer numbers on blur and rejects invalid input / 失焦提交层数并拒绝无效输入", () => {
+        const onPreviewLayerChange = vi.fn(async () => undefined);
+        vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({
+            clearRect: vi.fn(),
+            drawImage: vi.fn()
+        } as unknown as CanvasRenderingContext2D);
+        render(
+            React.createElement(PreviewPanel, {
+                parsedHeader: {
+                    ...multiLayerParsedHeader,
+                    metadata: { ...multiLayerParsedHeader.metadata, layer_height_mm: 0.1 }
+                },
+                selectedLayer: 0,
+                previewImage: null,
+                onPreviewLayerChange
+            })
+        );
+        const input = screen.getByRole("textbox", { name: "Layer number" });
+        fireEvent.change(input, { target: { value: "3" } });
+        fireEvent.blur(input);
+        expect(onPreviewLayerChange).toHaveBeenCalledExactlyOnceWith(2, "committed");
+        onPreviewLayerChange.mockClear();
+        for (const value of ["", "abc", "-1", "Infinity", "1.5"]) {
+            fireEvent.change(input, { target: { value } });
+            fireEvent.keyDown(input, { key: "Enter" });
+            expect(input).toHaveValue("1");
+        }
+        expect(onPreviewLayerChange).not.toHaveBeenCalled();
+        fireEvent.change(input, { target: { value: "5" } });
+        fireEvent.keyDown(input, { key: "Escape" });
+        fireEvent.blur(input);
+        expect(input).toHaveValue("1");
+        expect(onPreviewLayerChange).not.toHaveBeenCalled();
     });
 
     it("keeps the previous layer frame while the selected bitmap is in flight / 等待 selected layer bitmap 时保留上一帧", () => {
