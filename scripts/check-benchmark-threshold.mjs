@@ -36,7 +36,7 @@ try {
 } catch (error) {
     const stderr = typeof error.stderr === "string" ? error.stderr : "";
     const stdout = typeof error.stdout === "string" ? error.stdout : "";
-    throw new Error(`bench_rle failed.\n${stdout}\n${stderr}`);
+    throw new Error(`bench_rle failed.\n${stdout}\n${stderr}`, { cause: error });
 }
 
 const pipelineMatch = output.match(/Pipeline \(GOO decode \+ CTB encode\):\s+([0-9.]+)ms\s+\(([0-9.]+)ms\/layer\)/);
