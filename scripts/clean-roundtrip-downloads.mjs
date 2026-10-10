@@ -1,5 +1,6 @@
 import { mkdir, readdir, rm } from "node:fs/promises";
-import { dirname, join, relative, resolve } from "node:path";
+import { tmpdir } from "node:os";
+import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -9,17 +10,26 @@ export function getRoundtripDownloadsPath() {
     return downloadRoot;
 }
 
-export async function cleanRoundtripDownloads() {
-    const relativePath = relative(repoRoot, downloadRoot).replaceAll("\\", "/");
+export function assertRoundtripDownloadsPath(root = downloadRoot) {
+    const resolved = resolve(root);
+    const relativePath = relative(repoRoot, resolved).replaceAll("\\", "/");
+    const tempRelative = relative(resolve(tmpdir()), resolved);
+    const underTemp = tempRelative !== "" && !tempRelative.startsWith("..") && !isAbsolute(tempRelative);
 
-    if (relativePath !== "apps/slicer-app/test-results/roundtrip-downloads") {
-        throw new Error(`Refusing to clean unexpected path: ${downloadRoot}`);
+    if (relativePath !== "apps/slicer-app/test-results/roundtrip-downloads" && !underTemp) {
+        throw new Error(`Refusing to use unexpected roundtrip downloads path: ${resolved}`);
     }
 
-    await mkdir(downloadRoot, { recursive: true });
-    const entries = await readdir(downloadRoot);
+    return resolved;
+}
 
-    await Promise.all(entries.map((entry) => rm(join(downloadRoot, entry), { recursive: true, force: true })));
+export async function cleanRoundtripDownloads(root = downloadRoot) {
+    const target = assertRoundtripDownloadsPath(root);
+
+    await mkdir(target, { recursive: true });
+    const entries = await readdir(target);
+
+    await Promise.all(entries.map((entry) => rm(join(target, entry), { recursive: true, force: true })));
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {

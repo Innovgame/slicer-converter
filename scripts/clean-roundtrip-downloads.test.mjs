@@ -1,23 +1,28 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
-import { cleanRoundtripDownloads, getRoundtripDownloadsPath } from "./clean-roundtrip-downloads.mjs";
+import { cleanRoundtripDownloads } from "./clean-roundtrip-downloads.mjs";
 
 const repoRoot = resolve(import.meta.dirname, "..");
 
 test("cleans only roundtrip download history / 只清理 roundtrip 下载历史", async () => {
-    const downloadRoot = getRoundtripDownloadsPath();
+    const downloadRoot = await mkdtemp(join(tmpdir(), "slicer-roundtrip-"));
     const staleFile = join(downloadRoot, "chitubox", "stale.ctb");
 
-    await mkdir(join(downloadRoot, "chitubox"), { recursive: true });
-    await writeFile(staleFile, "old");
+    try {
+        await mkdir(join(downloadRoot, "chitubox"), { recursive: true });
+        await writeFile(staleFile, "old");
 
-    await cleanRoundtripDownloads();
+        await cleanRoundtripDownloads(downloadRoot);
 
-    await assert.rejects(stat(staleFile), /ENOENT/u);
-    assert.equal((await stat(downloadRoot)).isDirectory(), true);
+        await assert.rejects(stat(staleFile), /ENOENT/u);
+        assert.equal((await stat(downloadRoot)).isDirectory(), true);
+    } finally {
+        await rm(downloadRoot, { recursive: true, force: true });
+    }
 });
 
 test("roundtrip scripts clean downloads before Playwright starts / roundtrip 脚本在 Playwright 启动前清理下载目录", async () => {

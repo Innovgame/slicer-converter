@@ -1,25 +1,19 @@
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
-import { dirname, join, relative, resolve } from "node:path";
+import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const downloadRoot = join(repoRoot, "apps", "slicer-app", "test-results", "roundtrip-downloads");
-const reportPath = join(downloadRoot, "compat-report.json");
-const markdownReportPath = join(downloadRoot, "compat-report.md");
+import { assertRoundtripDownloadsPath, getRoundtripDownloadsPath } from "./clean-roundtrip-downloads.mjs";
 
-export function getRoundtripCompatReportPath() {
-    return reportPath;
+export function getRoundtripCompatReportPath(root = getRoundtripDownloadsPath()) {
+    return join(assertRoundtripDownloadsPath(root), "compat-report.json");
 }
 
-export function getRoundtripCompatMarkdownReportPath() {
-    return markdownReportPath;
+export function getRoundtripCompatMarkdownReportPath(root = getRoundtripDownloadsPath()) {
+    return join(assertRoundtripDownloadsPath(root), "compat-report.md");
 }
 
-export async function collectRoundtripCompatReport() {
-    const relativePath = relative(repoRoot, downloadRoot).replaceAll("\\", "/");
-    if (relativePath !== "apps/slicer-app/test-results/roundtrip-downloads") {
-        throw new Error(`Refusing to collect unexpected path: ${downloadRoot}`);
-    }
+export async function collectRoundtripCompatReport(root = getRoundtripDownloadsPath()) {
+    const downloadRoot = assertRoundtripDownloadsPath(root);
 
     await mkdir(downloadRoot, { recursive: true });
     const reports = await collectCompatFiles(downloadRoot);
@@ -31,8 +25,8 @@ export async function collectRoundtripCompatReport() {
         entries: reports,
         qualityGate: evaluateQualityGate(reports)
     };
-    await writeFile(reportPath, `${JSON.stringify(summary, null, 2)}\n`, "utf8");
-    await writeFile(markdownReportPath, `${formatMarkdownReport(summary)}\n`, "utf8");
+    await writeFile(getRoundtripCompatReportPath(downloadRoot), `${JSON.stringify(summary, null, 2)}\n`, "utf8");
+    await writeFile(getRoundtripCompatMarkdownReportPath(downloadRoot), `${formatMarkdownReport(summary)}\n`, "utf8");
     return summary;
 }
 
@@ -271,7 +265,7 @@ function markdownCell(value) {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
-    const summary = await collectRoundtripCompatReport();
+    const summary = await collectRoundtripCompatReport(process.env.SC_ROUNDTRIP_DOWNLOADS);
     if (!summary.qualityGate.ok) {
         const details = summary.qualityGate.violations
             .map((violation) => `- ${violation.label}: ${violation.risk} (${violation.reason})`)
