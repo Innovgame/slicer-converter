@@ -4,10 +4,13 @@ This file records changes that users can see. Versions follow repository tags, f
 
 ## Unreleased
 
+## 0.1.4
+
 - The test page header links to the repository, a bug report, and a feature request.
 - The test page uses a warm resin workbench. Source and export panels are marked, and export fields are grouped into output and target.
 - The layer rail stays with the thumb while dragging, and the layer number can be typed.
 - The test page can switch between English and Chinese. The choice is saved in the browser.
+- A first visit offers a tour of opening a file, inspecting layers, exporting, and sending feedback. The tour follows the selected language, can be dismissed, and can be replayed from the help button.
 - The README opens with install steps and the Release binary names.
 
 ## 0.1.3
