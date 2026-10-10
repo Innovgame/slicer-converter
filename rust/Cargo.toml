@@ -6,6 +6,11 @@ members = [
 ]
 resolver = "2"
 
+[workspace.package]
+repository = "https://github.com/Innovgame/slicer-converter"
+homepage = "https://innovgame.github.io/slicer-converter/"
+license = "MIT"
+
 [profile.release]
 opt-level = 3
 lto = true

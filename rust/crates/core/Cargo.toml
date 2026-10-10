@@ -3,7 +3,10 @@ name = "slicer-converter-core"
 version = "0.1.0"
 edition = "2021"
 description = "Core MSLA/DLP slicer file format conversion engine"
-license = "MIT"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme = "../../../README.md"
 
 [lib]
 name = "slicer_converter_core"
