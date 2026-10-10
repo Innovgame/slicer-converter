@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { LayersIcon } from "./icons";
+import { ProjectLinks } from "./project-links";
 import { ThemeToggle } from "./theme-toggle";
 
 interface AppShellProps {
@@ -30,6 +31,7 @@ export function AppShell({ title, documentStatus, source, viewer, inspector, sta
                     </div>
                 </div>
                 <div className="sc-header-actions">
+                    <ProjectLinks />
                     <ThemeToggle />
                 </div>
             </header>

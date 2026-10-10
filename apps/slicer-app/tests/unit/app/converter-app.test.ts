@@ -48,6 +48,18 @@ describe("ConverterPage / 转换器页面", () => {
         render(React.createElement(ThemeProvider, null, React.createElement(ConverterPage)));
 
         expect(screen.getByText("Slicer File Converter")).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: "Open the slicer-converter GitHub repository" })).toHaveAttribute(
+            "href",
+            "https://github.com/Innovgame/slicer-converter"
+        );
+        expect(screen.getByRole("link", { name: "Report a bug" })).toHaveAttribute(
+            "href",
+            "https://github.com/Innovgame/slicer-converter/issues/new?template=bug_report.md"
+        );
+        expect(screen.getByRole("link", { name: "Request a feature" })).toHaveAttribute(
+            "href",
+            "https://github.com/Innovgame/slicer-converter/issues/new?template=feature_request.md"
+        );
         expect(screen.queryByRole("button", { name: "Load sample.goo" })).not.toBeInTheDocument();
         expect(screen.queryByText("Quick test with sample files")).not.toBeInTheDocument();
         expect(document.getElementById("statusMsg")).not.toBeNull();
