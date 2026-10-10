@@ -1,5 +1,7 @@
 # slicer-converter
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 Resin slicer file converter for MSLA and DLP printers. One Rust format registry drives the CLI and the browser WebAssembly build.
 
 [![CI](https://github.com/Innovgame/slicer-converter/actions/workflows/ci.yml/badge.svg)](https://github.com/Innovgame/slicer-converter/actions/workflows/ci.yml)
