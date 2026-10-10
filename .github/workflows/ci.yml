@@ -94,7 +94,7 @@ jobs:
               run: pnpm test:scripts
 
             - name: Upload app coverage
-              uses: actions/upload-artifact@v6
+              uses: actions/upload-artifact@v7
               with:
                   name: app-coverage-html
                   path: apps/slicer-app/coverage
