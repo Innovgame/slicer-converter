@@ -60,7 +60,7 @@ jobs:
               run: cargo test --manifest-path rust/Cargo.toml --workspace
 
             - name: Setup Node for benchmark gate
-              uses: actions/setup-node@v5
+              uses: actions/setup-node@v7
               with:
                   node-version: 22
                   package-manager-cache: false
