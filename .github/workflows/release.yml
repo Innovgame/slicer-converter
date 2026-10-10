@@ -4,6 +4,13 @@ on:
     push:
         tags:
             - v*
+    workflow_dispatch:
+        inputs:
+            tag:
+                description: Existing tag to publish
+                required: true
+                default: v0.1.1
+                type: string
 
 permissions:
     contents: write
@@ -32,12 +39,10 @@ jobs:
                       target: aarch64-apple-darwin
                       asset_name: slicer-converter-macos-aarch64
                       binary_name: slicer-converter
-                    - os: macos-13
-                      target: x86_64-apple-darwin
-                      asset_name: slicer-converter-macos-x86_64
-                      binary_name: slicer-converter
         steps:
             - uses: actions/checkout@v5
+              with:
+                  ref: ${{ github.event.inputs.tag || github.ref }}
 
             - name: Install musl tools
               if: matrix.target == 'x86_64-unknown-linux-musl'
@@ -83,7 +88,8 @@ jobs:
                       exit 1
                   fi
                   sha256sum "${binaries[@]}" > SHA256SUMS
-                  gh release create "${GITHUB_REF_NAME}" "${binaries[@]}" SHA256SUMS \
+                  tag="${{ github.event.inputs.tag || github.ref_name }}"
+                  gh release create "$tag" "${binaries[@]}" SHA256SUMS \
                       --repo "${GITHUB_REPOSITORY}" \
-                      --title "${GITHUB_REF_NAME}" \
-                      --notes "Binaries built from ${GITHUB_SHA}. Includes Windows x64, Linux glibc x64, Linux musl x64, macOS Apple Silicon, and macOS Intel. Verify downloads with SHA256SUMS. npm and crates.io packages are not published. See CHANGELOG.md."
+                      --title "$tag" \
+                      --notes "Binaries built from ${GITHUB_SHA}. Includes Windows x64, Linux glibc x64, Linux musl x64, and macOS Apple Silicon. Intel macOS builds from source. Verify downloads with SHA256SUMS. npm and crates.io packages are not published. See CHANGELOG.md."

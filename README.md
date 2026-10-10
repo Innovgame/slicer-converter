@@ -150,7 +150,7 @@ One platform:
 
 macOS binaries are built on macOS. Intel and Apple Silicon produce `x86_64-apple-darwin` and `aarch64-apple-darwin`. Use `lipo` on macOS when you need a universal binary.
 
-Tagged releases publish Windows, Linux glibc, Linux musl, macOS Apple Silicon, and macOS Intel binaries through [Release](.github/workflows/release.yml). Each release includes `SHA256SUMS`.
+Tagged releases publish Windows, Linux glibc, Linux musl, and macOS Apple Silicon binaries through [Release](.github/workflows/release.yml). Each release includes `SHA256SUMS`. Intel macOS builds from source.
 
 ## Browser API
 
