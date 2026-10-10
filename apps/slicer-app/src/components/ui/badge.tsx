@@ -5,12 +5,12 @@ import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-    "inline-flex h-5 shrink-0 items-center rounded-md border px-1.5 font-mono text-[11px] font-medium whitespace-nowrap",
+    "inline-flex h-5 shrink-0 items-center rounded-[4px] border px-1.5 font-mono text-[11px] font-medium whitespace-nowrap",
     {
         variants: {
             variant: {
-                default: "border-transparent bg-primary/15 text-primary",
-                secondary: "border-transparent bg-muted text-muted-foreground",
+                default: "border-primary/25 bg-primary/15 text-primary",
+                secondary: "border-border bg-muted text-muted-foreground",
                 outline: "border-border text-foreground"
             }
         },

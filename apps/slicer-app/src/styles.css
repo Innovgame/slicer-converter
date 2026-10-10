@@ -37,14 +37,14 @@
 
 :root {
     color-scheme: dark;
-    --sc-radius: 8px;
-    --sc-radius-sm: 6px;
+    --sc-radius: 6px;
+    --sc-radius-sm: 5px;
     --sc-radius-pill: 999px;
     --sc-header-height: 52px;
     --sc-status-height: 28px;
     --sc-panel-header-height: 38px;
     --sc-gap: 12px;
-    --sc-layer-thumb-size: 14px;
+    --sc-layer-thumb-size: 12px;
     --sc-stage-a: #18222f;
     --sc-stage-b: #101720;
     --sc-stage-dot: rgba(164, 187, 216, 0.035);
@@ -52,6 +52,9 @@
     --sc-shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.035) inset;
     --sc-shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.45);
     --sc-shadow-pop: 0 12px 34px rgba(0, 0, 0, 0.5);
+    --sc-control-highlight: rgba(255, 255, 255, 0.09);
+    --sc-control-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+    --sc-field-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.16);
 }
 
 *,
@@ -73,6 +76,7 @@ body {
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-size: 13px;
+    letter-spacing: 0;
     line-height: 1.45;
     -webkit-font-smoothing: antialiased;
 }
@@ -118,8 +122,8 @@ select option:disabled {
 
 /* Rounded floating thumb: inset by a transparent border so it reads as a pill. */
 ::-webkit-scrollbar {
-    width: 11px;
-    height: 11px;
+    width: 9px;
+    height: 9px;
 }
 
 ::-webkit-scrollbar-track {
@@ -127,7 +131,8 @@ select option:disabled {
 }
 
 ::-webkit-scrollbar-thumb {
-    border: 4px solid transparent;
+    min-height: 28px;
+    border: 3px solid transparent;
     border-radius: var(--sc-radius-pill);
     background: color-mix(in srgb, var(--color-foreground) 20%, transparent);
     background-clip: padding-box;
@@ -179,6 +184,9 @@ select option:disabled {
     --sc-shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.85) inset;
     --sc-shadow-raised: 0 1px 2px rgba(36, 49, 71, 0.09);
     --sc-shadow-pop: 0 12px 34px rgba(36, 49, 71, 0.16);
+    --sc-control-highlight: rgba(255, 255, 255, 0.65);
+    --sc-control-shadow: 0 1px 2px rgba(36, 49, 71, 0.06);
+    --sc-field-shadow: inset 0 1px 2px rgba(36, 49, 71, 0.04);
 }
 
 [data-theme="light"] body {
@@ -240,20 +248,14 @@ select option:disabled {
     height: 34px;
     flex: 0 0 auto;
     place-items: center;
-    border: 1px solid color-mix(in srgb, var(--color-primary) 32%, var(--color-outline));
-    border-radius: 10px;
-    background: linear-gradient(
-        150deg,
-        color-mix(in srgb, var(--color-primary) 22%, var(--color-muted)),
-        var(--color-muted)
-    );
+    border: 0;
+    background: transparent;
     color: var(--color-primary);
-    box-shadow: var(--sc-shadow-raised);
 }
 
 .sc-brand-mark svg {
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
 }
 
 .sc-brand-copy {
@@ -268,7 +270,7 @@ select option:disabled {
     font-size: 14px;
     font-weight: 650;
     line-height: 1.15;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -519,6 +521,11 @@ select option:disabled {
 .sc-project-link:hover {
     background: color-mix(in srgb, var(--color-foreground) 8%, var(--color-muted));
     color: var(--color-foreground);
+    box-shadow: inset 0 1px 0 var(--sc-control-highlight);
+}
+
+.sc-project-link:active {
+    box-shadow: var(--sc-field-shadow);
 }
 
 .sc-project-link-short {
@@ -616,7 +623,7 @@ select option:disabled {
     color: var(--color-foreground);
     font-size: 12.5px;
     font-weight: 600;
-    letter-spacing: -0.005em;
+    letter-spacing: 0;
 }
 
 .sc-panel-mark {
@@ -675,9 +682,8 @@ select option:disabled {
     width: 34px;
     height: 34px;
     place-items: center;
-    border: 1px solid var(--color-outline);
-    border-radius: var(--sc-radius);
-    background: color-mix(in srgb, var(--color-card) 80%, transparent);
+    border: 0;
+    background: transparent;
     color: var(--color-steel);
     transition:
         border-color 140ms ease,
@@ -695,6 +701,11 @@ select option:disabled {
     border-color: color-mix(in srgb, var(--color-primary) 70%, transparent);
     background: color-mix(in srgb, var(--color-primary) 8%, var(--color-card));
     outline: none;
+}
+
+.sc-dropzone:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
 }
 
 .sc-dropzone:hover .sc-dropzone-mark,
@@ -747,6 +758,8 @@ select option:disabled {
     margin: 0;
     font-size: 13px;
     font-weight: 600;
+    line-height: 1.5;
+    text-wrap: pretty;
 }
 
 .sc-dropzone-copy,
@@ -811,6 +824,11 @@ select option:disabled {
 
 #fileName {
     font-family: var(--font-sans);
+    font-weight: 600;
+}
+
+#fileFormat {
+    font-weight: 600;
 }
 
 .sc-thumbnail {
@@ -983,7 +1001,9 @@ select option:disabled {
     color: var(--color-muted-foreground);
     transition:
         background-color 120ms ease,
-        color 120ms ease;
+        border-color 120ms ease,
+        color 120ms ease,
+        box-shadow 120ms ease;
 }
 
 .sc-tool,
@@ -993,9 +1013,7 @@ select option:disabled {
 }
 
 .sc-icon-btn {
-    border: 1px solid var(--color-outline);
     border-radius: var(--sc-radius);
-    background: color-mix(in srgb, var(--color-background) 45%, var(--color-card));
 }
 
 .sc-language-toggle {
@@ -1012,10 +1030,16 @@ select option:disabled {
     color: var(--color-foreground);
 }
 
+.sc-tool:active:not(:disabled),
+.sc-icon-btn:active:not(:disabled),
+.sc-rail-nudge:active:not(:disabled),
+.sc-clip-reset:active:not(:disabled) {
+    color: var(--color-primary);
+}
+
 .sc-tool.is-pressed {
     background: color-mix(in srgb, var(--color-primary) 20%, var(--color-card));
     color: var(--color-primary);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 40%, transparent);
 }
 
 .sc-tool:focus-visible,
@@ -1025,7 +1049,6 @@ select option:disabled {
 .sc-primary-btn:focus-visible,
 .sc-secondary-btn:focus-visible,
 .sc-danger-btn:focus-visible,
-.sc-zoom-field:focus-visible,
 .sc-select:focus-visible,
 .sc-filename input:focus-visible {
     outline: 2px solid var(--color-ring);
@@ -1043,34 +1066,52 @@ select option:disabled {
     opacity: 0.38;
 }
 
-.sc-zoom-field {
-    width: 62px;
+.sc-zoom-control {
+    display: flex;
+    flex: 0 0 auto;
     height: 22px;
-    margin: 0 1px 0 4px;
+    margin: 0 4px;
+    gap: 0;
     border: 1px solid var(--color-outline);
-    border-radius: var(--sc-radius-sm) 0 0 var(--sc-radius-sm);
+    border-radius: var(--sc-radius-sm);
     background: var(--color-raised);
-    padding: 0 6px;
+    box-shadow: var(--sc-field-shadow);
+    transition:
+        border-color 120ms ease,
+        box-shadow 120ms ease;
+}
+
+.sc-zoom-control:hover {
+    border-color: var(--color-outline-strong);
+}
+
+.sc-zoom-control:focus-within {
+    border-color: var(--color-primary);
+    outline: 2px solid var(--color-ring);
+    outline-offset: 1px;
+}
+
+.sc-zoom-field {
+    width: 58px;
+    min-width: 0;
+    height: 100%;
+    margin: 0;
+    padding: 0 2px 0 6px;
+    border: 0;
+    border-radius: var(--sc-radius-sm) 0 0 var(--sc-radius-sm);
+    background: transparent;
     font-family: var(--font-mono);
     font-size: 12px;
     font-variant-numeric: tabular-nums;
-    transition: border-color 120ms ease;
-}
-
-.sc-zoom-field:hover:not(:disabled) {
-    border-color: var(--color-outline-strong);
+    text-align: right;
+    outline: none;
 }
 
 .sc-zoom-unit {
     display: grid;
-    height: 22px;
+    height: 100%;
     place-items: center;
-    margin-right: 4px;
-    padding: 0 7px;
-    border: 1px solid var(--color-outline);
-    border-left: 0;
-    border-radius: 0 var(--sc-radius-sm) var(--sc-radius-sm) 0;
-    background: var(--color-muted);
+    padding: 0 6px 0 2px;
     color: var(--color-muted-foreground);
     font-family: var(--font-mono);
     font-size: 11px;
@@ -1102,7 +1143,7 @@ select option:disabled {
     white-space: nowrap;
 }
 
-/* Frosted capsule so the rail stays readable over both black plates and the light stage. */
+/* The translucent rail stays readable over both black plates and the light stage. */
 .sc-layer-rail {
     position: absolute;
     top: 24px;
@@ -1112,8 +1153,8 @@ select option:disabled {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 40px;
-    padding: 14px 0 6px;
+    width: 24px;
+    padding: 10px 0 6px;
     border: 1px solid var(--color-outline-subtle);
     border-radius: var(--sc-radius-pill);
     background: color-mix(in srgb, var(--color-card) 82%, transparent);
@@ -1141,7 +1182,7 @@ select option:disabled {
 }
 
 .sc-layer-slider::-webkit-slider-runnable-track {
-    width: 6px;
+    width: 4px;
     border: 0;
     border-radius: var(--sc-radius-pill);
     background: linear-gradient(
@@ -1158,7 +1199,7 @@ select option:disabled {
     border: 2px solid var(--color-card);
     border-radius: var(--sc-radius-pill);
     background: var(--color-primary);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    box-shadow: var(--sc-control-shadow);
     appearance: none;
     cursor: ns-resize;
     transition: transform 120ms ease;
@@ -1172,31 +1213,32 @@ select option:disabled {
 .sc-layer-slider::-moz-range-track {
     width: 4px;
     border: 0;
-    border-radius: 1px;
+    border-radius: var(--sc-radius-pill);
     background: color-mix(in srgb, var(--color-foreground) 18%, transparent);
 }
 
 .sc-layer-slider::-moz-range-progress {
-    border-radius: 1px;
+    width: 4px;
+    border-radius: var(--sc-radius-pill);
     background: var(--color-primary);
 }
 
 .sc-layer-slider::-moz-range-thumb {
-    width: 20px;
+    width: var(--sc-layer-thumb-size);
     height: var(--sc-layer-thumb-size);
-    border: 1px solid color-mix(in srgb, var(--color-primary) 50%, #000);
-    border-radius: 2px;
+    border: 2px solid var(--color-card);
+    border-radius: var(--sc-radius-pill);
     background: var(--color-primary);
 }
 
 .sc-rail-readout {
     position: absolute;
-    right: calc(100% + 9px);
+    right: calc(100% + 8px);
     z-index: 1;
     display: grid;
-    grid-template-rows: 18px auto 18px;
+    grid-template-rows: 16px auto 16px;
     justify-items: center;
-    gap: 2px;
+    gap: 3px;
     transform: translateY(50%);
     pointer-events: auto;
 }
@@ -1204,12 +1246,14 @@ select option:disabled {
 .sc-rail-copy {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 5px 9px;
+    gap: 8px;
+    padding: 3px 6px;
     border: 1px solid var(--color-outline);
-    border-radius: var(--sc-radius-sm);
+    border-radius: var(--sc-radius);
     background: var(--color-card);
-    box-shadow: var(--sc-shadow-raised);
+    box-shadow:
+        inset 0 1px 0 var(--sc-control-highlight),
+        var(--sc-control-shadow);
 }
 
 .sc-rail-value,
@@ -1222,30 +1266,34 @@ select option:disabled {
 .sc-rail-value {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
     color: var(--color-muted-foreground);
-    font-size: 11px;
+    font-size: 10px;
     line-height: 1.4;
 }
 
 .sc-layer-number-input {
     width: 5ch;
     min-width: 0;
-    height: 24px;
-    padding: 1px 3px;
-    border: 1px solid var(--color-outline-subtle);
+    height: 20px;
+    padding: 1px 2px;
+    border: 1px solid transparent;
     border-radius: 4px;
-    background: color-mix(in srgb, var(--color-raised) 60%, var(--color-card));
+    background: transparent;
     color: var(--color-foreground);
     font-family: var(--font-mono);
     font-size: 12px;
     font-variant-numeric: tabular-nums;
     font-weight: 600;
-    text-align: center;
+    text-align: right;
+    transition:
+        border-color 120ms ease,
+        background-color 120ms ease,
+        box-shadow 120ms ease;
 }
 
 .sc-layer-number-input:hover {
-    border-color: var(--color-outline);
+    border-color: var(--color-outline-subtle);
     background: var(--color-raised);
 }
 
@@ -1259,12 +1307,13 @@ select option:disabled {
 .sc-rail-unit {
     color: var(--color-muted-foreground);
     font-weight: 500;
+    font-size: 9px;
 }
 
 .sc-rail-detail {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     color: var(--color-foreground);
     font-size: 12px;
     line-height: 1.4;
@@ -1272,13 +1321,13 @@ select option:disabled {
 
 .sc-rail-total {
     color: var(--color-muted-foreground);
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .sc-rail-nudge {
     position: relative;
-    width: 36px;
-    height: 18px;
+    width: 28px;
+    height: 16px;
     border-radius: var(--sc-radius-sm);
 }
 
@@ -1293,8 +1342,8 @@ select option:disabled {
 }
 
 .sc-clip-reset {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border-radius: var(--sc-radius-pill);
     opacity: 0.5;
 }
@@ -1359,15 +1408,14 @@ select option:disabled {
     height: 40px;
     margin-bottom: 12px;
     place-items: center;
-    border: 1px solid var(--color-outline-subtle);
-    border-radius: var(--sc-radius);
-    background: color-mix(in srgb, var(--color-muted) 45%, transparent);
+    border: 0;
+    background: transparent;
     color: var(--color-steel);
 }
 
 .sc-empty-mark svg {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
 }
 
 .sc-inspector-body {
@@ -1396,6 +1444,13 @@ select option:disabled {
     font-weight: 600;
 }
 
+.sc-group-title svg {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
+    color: var(--color-steel);
+}
+
 .sc-label {
     display: block;
     margin: 4px 0 4px;
@@ -1414,14 +1469,21 @@ select option:disabled {
     border: 1px solid var(--color-outline);
     border-radius: var(--sc-radius);
     background: color-mix(in srgb, var(--color-background) 35%, var(--color-raised));
+    box-shadow: var(--sc-field-shadow);
     transition:
         border-color 120ms ease,
         box-shadow 120ms ease;
 }
 
+.sc-filename:hover {
+    border-color: var(--color-outline-strong);
+}
+
 .sc-filename:focus-within {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent);
+    box-shadow:
+        var(--sc-field-shadow),
+        0 0 0 2px color-mix(in srgb, var(--color-primary) 16%, transparent);
 }
 
 .sc-filename input {
@@ -1446,6 +1508,7 @@ select option:disabled {
     font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 600;
+    box-shadow: inset 0 1px 0 var(--sc-control-highlight);
 }
 
 /* Native arrow is replaced so selects match the platform field height and radius. */
@@ -1455,13 +1518,14 @@ select option:disabled {
     border: 1px solid var(--color-outline);
     border-radius: var(--sc-radius);
     background-color: color-mix(in srgb, var(--color-background) 35%, var(--color-raised));
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238fa3ad' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238fa3ad' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 9px center;
     background-size: 14px 14px;
     padding: 0 30px 0 10px;
     font-size: 12px;
     appearance: none;
+    box-shadow: var(--sc-field-shadow);
     transition:
         border-color 120ms ease,
         box-shadow 120ms ease;
@@ -1473,7 +1537,9 @@ select option:disabled {
 
 .sc-select:focus-visible {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent);
+    box-shadow:
+        var(--sc-field-shadow),
+        0 0 0 2px color-mix(in srgb, var(--color-primary) 16%, transparent);
     outline: none;
 }
 
@@ -1483,7 +1549,7 @@ select option:disabled {
     margin: 12px 0 0;
     gap: 8px;
     border: 1px solid rgba(217, 119, 6, 0.4);
-    border-radius: 10px;
+    border-radius: var(--sc-radius);
     background: rgba(245, 158, 11, 0.1);
     padding: 9px 10px;
     color: #fde68a;
@@ -1524,12 +1590,13 @@ select option:disabled {
     border-radius: var(--sc-radius);
     font-size: 12.5px;
     font-weight: 650;
-    letter-spacing: 0.01em;
+    letter-spacing: 0;
     transition:
         background-color 120ms ease,
         border-color 120ms ease,
         color 120ms ease,
-        box-shadow 120ms ease;
+        box-shadow 120ms ease,
+        transform 120ms ease;
 }
 
 .sc-primary-btn svg,
@@ -1544,15 +1611,21 @@ select option:disabled {
     border: 1px solid color-mix(in srgb, var(--color-primary) 80%, #000);
     background: var(--color-primary);
     color: var(--color-primary-foreground);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    box-shadow:
+        inset 0 1px 0 var(--sc-control-highlight),
+        var(--sc-control-shadow);
 }
 
 .sc-primary-btn:hover:not(:disabled) {
     background: color-mix(in srgb, var(--color-primary) 90%, #000);
+    border-color: var(--color-primary);
 }
 
-.sc-primary-btn:active:not(:disabled) {
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.28);
+.sc-primary-btn:active:not(:disabled),
+.sc-secondary-btn:active:not(:disabled),
+.sc-danger-btn:active:not(:disabled) {
+    transform: translateY(0.5px);
+    box-shadow: var(--sc-field-shadow);
 }
 
 .sc-primary-btn:disabled {
@@ -1564,6 +1637,7 @@ select option:disabled {
 .sc-danger-btn {
     border: 1px solid var(--color-outline);
     background: transparent;
+    box-shadow: inset 0 1px 0 var(--sc-control-highlight);
 }
 
 .sc-secondary-btn {
@@ -1572,6 +1646,7 @@ select option:disabled {
 }
 
 .sc-secondary-btn:hover {
+    border-color: var(--color-outline-strong);
     background: color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
@@ -1850,7 +1925,7 @@ select option:disabled {
         top: 24px;
         right: 8px;
         bottom: 12px;
-        width: 36px;
+        width: 24px;
         padding-top: 10px;
     }
 }
@@ -1866,11 +1941,11 @@ select option:disabled {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .sc-progress-track div,
-    .sc-tool,
-    .sc-layer-slider,
-    .sc-layer-slider::-webkit-slider-thumb {
-        transition: none;
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+        animation: none !important;
     }
 }
 

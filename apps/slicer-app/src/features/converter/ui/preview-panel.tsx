@@ -348,21 +348,23 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                         >
                             <ZoomOutIcon />
                         </ToolButton>
-                        <input
-                            aria-label={t("preview.zoomPercent")}
-                            className="sc-zoom-field"
-                            disabled={!view.ready}
-                            inputMode="decimal"
-                            value={zoomDraft ?? String(percent)}
-                            onBlur={(event) => commitZoom(event.currentTarget.value)}
-                            onChange={(event) => setZoomDraft(event.currentTarget.value)}
-                            onKeyDown={(event) => {
-                                if (event.key === "Enter") {
-                                    event.currentTarget.blur();
-                                }
-                            }}
-                        />
-                        <span className="sc-zoom-unit">%</span>
+                        <div className="sc-zoom-control">
+                            <input
+                                aria-label={t("preview.zoomPercent")}
+                                className="sc-zoom-field"
+                                disabled={!view.ready}
+                                inputMode="decimal"
+                                value={zoomDraft ?? String(percent)}
+                                onBlur={(event) => commitZoom(event.currentTarget.value)}
+                                onChange={(event) => setZoomDraft(event.currentTarget.value)}
+                                onKeyDown={(event) => {
+                                    if (event.key === "Enter") {
+                                        event.currentTarget.blur();
+                                    }
+                                }}
+                            />
+                            <span className="sc-zoom-unit">%</span>
+                        </div>
                         <ToolButton
                             disabled={!view.ready}
                             label={t("preview.zoomIn")}

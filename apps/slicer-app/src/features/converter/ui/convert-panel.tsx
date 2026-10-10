@@ -9,7 +9,7 @@ import {
 } from "@innovgame/slicer-converter";
 
 import type { ProgressState, StatusState } from "../model/use-converter-controller";
-import { ConvertIcon, ExportIcon } from "./icons";
+import { ConvertIcon, ExportIcon, FileIcon, SlidersIcon } from "./icons";
 
 interface ConvertPanelProps {
     wasmReady: boolean;
@@ -90,7 +90,10 @@ export function ConvertPanel({
             </header>
             <div className={visible ? "sc-inspector-body" : "sc-inspector-body hidden"}>
                 <div className="sc-group">
-                    <p className="sc-group-title">{t("export.output")}</p>
+                    <p className="sc-group-title">
+                        <FileIcon />
+                        {t("export.output")}
+                    </p>
                     <label htmlFor="slicerConverterFileName" className="sc-label">
                         {t("export.fileName")}
                     </label>
@@ -105,7 +108,10 @@ export function ConvertPanel({
                 </div>
 
                 <div className="sc-group" data-tour="export-target">
-                    <p className="sc-group-title">{t("export.target")}</p>
+                    <p className="sc-group-title">
+                        <SlidersIcon />
+                        {t("export.target")}
+                    </p>
                     <label htmlFor="slicerConverterFormat" className="sc-label">
                         {t("common.format")}
                     </label>

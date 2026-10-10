@@ -121,7 +121,9 @@ export function FileSummaryCard({ sourceFile, parsedHeader, onFileSelect }: File
                 <div id="fileInfo" className={fileInfoVisible ? "sc-file-info" : "sc-file-info hidden"}>
                     <dl>
                         <dt>{t("source.file")}</dt>
-                        <dd id="fileName">{sourceFile?.name ?? "-"}</dd>
+                        <dd id="fileName" title={sourceFile?.name}>
+                            {sourceFile?.name ?? "-"}
+                        </dd>
                         <dt>{t("source.size")}</dt>
                         <dd id="fileSize">{sourceFile ? formatBytes(sourceFile.size) : "-"}</dd>
                         <dt>{t("common.format")}</dt>
