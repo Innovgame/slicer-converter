@@ -195,6 +195,7 @@ impl CatalogProfile {
 ///
 /// 从 catalog profiles 构建可序列化的 supported-format entries。输出顺序保留 registry 输入顺序，
 /// 让 UI 调用方可依赖与 Rust registry 一致的 family/profile 排序。
+#[allow(clippy::explicit_auto_deref)]
 pub fn supported_format_infos(
     profiles: &'static [&'static CatalogProfile],
 ) -> Vec<SupportedFormatInfo> {
@@ -227,7 +228,7 @@ pub fn supported_format_infos(
                     .collect(),
                 is_zip: spec.capabilities.is_archive,
                 capabilities: spec.capabilities,
-                specifics: supported_format_specifics(profile),
+                specifics: supported_format_specifics(*profile),
             }
         })
         .collect()
