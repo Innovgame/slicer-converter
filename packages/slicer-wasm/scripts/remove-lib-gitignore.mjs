@@ -1,3 +1,7 @@
 import { rmSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-rmSync(new URL("../lib/.gitignore", import.meta.url), { force: true });
+const libGitignore = join(dirname(fileURLToPath(import.meta.url)), "../lib/.gitignore");
+
+rmSync(libGitignore, { force: true });

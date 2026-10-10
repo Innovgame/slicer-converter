@@ -26,7 +26,7 @@ describe("domain format runtime boundary / domain format 运行期边界", () =>
 
 function extractWasmValueImports(text: string): string[] {
     return Array.from(
-        text.matchAll(/(?:import|export)\s+(?!type\b)([\s\S]*?)\s+from\s+["']@slicer-converter\/wasm["']/g),
+        text.matchAll(/(?:import|export)\s+(?!type\b)([\s\S]*?)\s+from\s+["']@innovgame\/slicer-converter["']/g),
         (match) => match[1]!.trim()
     );
 }

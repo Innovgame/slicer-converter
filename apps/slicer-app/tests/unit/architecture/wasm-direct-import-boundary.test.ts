@@ -95,7 +95,7 @@ function collectSourceFiles(dir: string, result: string[]): void {
 
 function extractWasmValueImportBlocks(text: string): string[] {
     return Array.from(
-        text.matchAll(/(?:import|export)\s+(?!type\b)[\s\S]*?from\s+["']@slicer-converter\/wasm["'];/g),
+        text.matchAll(/(?:import|export)\s+(?!type\b)[\s\S]*?from\s+["']@innovgame\/slicer-converter["'];/g),
         (match) => match[0]
     );
 }
