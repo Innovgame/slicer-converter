@@ -21,7 +21,7 @@ png = "0.18"
 crc32fast = "1"
 zip = { version = "8", default-features = false, features = ["deflate"] }
 thiserror = "2"
-aes = "0.8"
+aes = "0.9"
 cbc = { version = "0.1", features = ["alloc"] }
 sha2 = "0.10"
 
