@@ -152,7 +152,8 @@ export function getSlicerConverterWasmUrl(): URL {
  */
 export async function initSlicerConverterWasm(wasmUrl: SlicerConverterInitInput = defaultWasmUrl): Promise<void> {
     if (!initPromise) {
-        initPromise = initWasm({ module_or_path: wasmUrl })
+        initPromise = loadWasmModule(wasmUrl)
+            .then((moduleOrPath) => initWasm({ module_or_path: moduleOrPath }))
             .then(() => undefined)
             .catch((error: unknown) => {
                 initPromise = null;
@@ -188,6 +189,17 @@ export async function initSlicerConverterWasmWithProgress(
 }
 
 async function streamWasmBytes(wasmUrl: URL, onProgress: (progress: WasmLoadProgress) => void): Promise<Uint8Array> {
+    if (isNodeFileUrl(wasmUrl)) {
+        const bytes = await readNodeFileUrl(wasmUrl);
+        onProgress({
+            phase: "compiling",
+            loadedBytes: bytes.byteLength,
+            totalBytes: bytes.byteLength,
+            percent: 100
+        });
+        return bytes;
+    }
+
     const response = await fetch(wasmUrl);
     if (!response.ok) {
         throw new Error(`Failed to fetch WASM: HTTP ${response.status}`);
@@ -242,4 +254,32 @@ async function streamWasmBytes(wasmUrl: URL, onProgress: (progress: WasmLoadProg
     });
 
     return result;
+}
+
+async function loadWasmModule(input: SlicerConverterInitInput): Promise<InitInput> {
+    const resolved = await input;
+    if (isNodeFileUrl(resolved)) {
+        return readNodeFileUrl(resolved);
+    }
+
+    return resolved;
+}
+
+function isNodeFileUrl(value: unknown): value is URL {
+    return isNodeRuntime() && value instanceof URL && value.protocol === "file:";
+}
+
+function isNodeRuntime(): boolean {
+    const runtime = globalThis as typeof globalThis & {
+        process?: { versions?: { node?: string } };
+    };
+
+    return typeof runtime.process?.versions?.node === "string";
+}
+
+async function readNodeFileUrl(wasmUrl: URL): Promise<Uint8Array> {
+    const { readFile } = await import("node:fs/promises");
+    const { fileURLToPath } = await import("node:url");
+
+    return new Uint8Array(await readFile(fileURLToPath(wasmUrl)));
 }

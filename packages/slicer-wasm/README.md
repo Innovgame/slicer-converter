@@ -17,8 +17,12 @@ Point the `@innovgame` scope at GitHub Packages in `.npmrc`:
 ```
 
 ```ts
-import { convertSlicerFileToBlob, openSlicerDocumentFile } from "slicer-converter";
+import { convertSlicerFileToBlob, initSlicerConverter, openSlicerDocumentFile } from "slicer-converter";
+
+const api = await initSlicerConverter();
 ```
+
+Call `initSlicerConverter()` before other API functions. In Node, the package reads the bundled wasm file directly. In the browser, it loads that file with `fetch`.
 
 The published package includes the compiled JavaScript facade and the release WASM binary. Rust is not required after install.
 

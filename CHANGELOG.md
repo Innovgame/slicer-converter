@@ -4,6 +4,7 @@ This file records changes that users can see. Versions follow repository tags, f
 
 ## Unreleased
 
+- Node can initialise the published package by reading the bundled wasm file. Browser loading still uses `fetch`.
 - The package publishes to GitHub Packages as `@innovgame/slicer-converter`, and to npm as `slicer-converter` when `NPM_TOKEN` is set.
 
 ## 0.1.2
