@@ -1,6 +1,6 @@
 {
     "name": "@innovgame/slicer-converter",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "type": "module",
     "description": "Browser API for opening, previewing, and converting resin slicer files",
     "license": "MIT",

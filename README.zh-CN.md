@@ -11,7 +11,7 @@
 
 ![Slicer File Converter 预览](docs/images/app-preview-2.png)
 
-当前版本 `0.1.1`。CLI 可从 [Releases](https://github.com/Innovgame/slicer-converter/releases) 下载，并用 `SHA256SUMS` 核对。问题可以发到 [Discussions](https://github.com/Innovgame/slicer-converter/discussions)。Creality CXDLP v1、v2、v3 只读。变更见 [CHANGELOG.md](CHANGELOG.md)。
+当前版本 `0.1.2`。CLI 可从 [Releases](https://github.com/Innovgame/slicer-converter/releases) 下载，并用 `SHA256SUMS` 核对。问题可以发到 [Discussions](https://github.com/Innovgame/slicer-converter/discussions)。Creality CXDLP v1、v2、v3 只读。变更见 [CHANGELOG.md](CHANGELOG.md)。
 
 在线测试页：<https://innovgame.github.io/slicer-converter/>。
 

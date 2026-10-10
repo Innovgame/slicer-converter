@@ -4,6 +4,8 @@ This file records changes that users can see. Versions follow repository tags, f
 
 ## Unreleased
 
+## 0.1.2
+
 - GitHub Discussions are enabled.
 - Dependabot checks npm, Cargo, and GitHub Actions weekly.
 - crates.io publishing is wired for tagged releases and waits for `CARGO_REGISTRY_TOKEN`.
