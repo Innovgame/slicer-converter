@@ -11,12 +11,12 @@ describe("domain format runtime boundary / domain format 运行期边界", () =>
         expect(extractWasmValueImports('export { getSupportedFormats } from "@innovgame/slicer-converter";')).toEqual([
             "{ getSupportedFormats }"
         ]);
-        expect(extractWasmValueImports('import type { SupportedFormatInfo } from "@innovgame/slicer-converter";')).toEqual(
-            []
-        );
-        expect(extractWasmValueImports('export type { SupportedFormatInfo } from "@innovgame/slicer-converter";')).toEqual(
-            []
-        );
+        expect(
+            extractWasmValueImports('import type { SupportedFormatInfo } from "@innovgame/slicer-converter";')
+        ).toEqual([]);
+        expect(
+            extractWasmValueImports('export type { SupportedFormatInfo } from "@innovgame/slicer-converter";')
+        ).toEqual([]);
     });
 
     it("does not keep app-local format facts after package sinkdown / package 下沉后不保留 app 本地格式事实", () => {
