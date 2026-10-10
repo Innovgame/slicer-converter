@@ -2,6 +2,13 @@
 
 This file records changes that users can see. Versions follow repository tags, for example `v0.1.0`.
 
+## Unreleased
+
+- GitHub Discussions are enabled.
+- Dependabot checks npm, Cargo, and GitHub Actions weekly.
+- crates.io publishing is wired for tagged releases and waits for `CARGO_REGISTRY_TOKEN`.
+- `@slicer-converter/wasm` stays private until it exports a built package.
+
 ## 0.1.1
 
 - Release assets add macOS Apple Silicon, macOS Intel, and `SHA256SUMS`.

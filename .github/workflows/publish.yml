@@ -1,0 +1,27 @@
+name: Publish packages
+
+on:
+    workflow_dispatch:
+    release:
+        types: [published]
+
+jobs:
+    crates:
+        name: crates.io
+        runs-on: ubuntu-24.04
+        steps:
+            - uses: actions/checkout@v5
+
+            - uses: dtolnay/rust-toolchain@stable
+
+            - name: Publish crates
+              env:
+                  CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+              run: |
+                  if [ -z "${CARGO_REGISTRY_TOKEN}" ]; then
+                      echo "CARGO_REGISTRY_TOKEN is not set. Skipping crates.io publish."
+                      exit 0
+                  fi
+                  cargo publish --manifest-path rust/Cargo.toml -p slicer-converter-core
+                  cargo publish --manifest-path rust/Cargo.toml -p slicer-converter-cli
+                  cargo publish --manifest-path rust/Cargo.toml -p slicer-converter-wasm

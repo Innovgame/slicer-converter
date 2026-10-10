@@ -9,9 +9,11 @@ Resin slicer file converter for MSLA and DLP printers. One Rust format registry 
 
 ![Slicer File Converter preview](docs/images/app-preview-2.png)
 
-Version `0.1.1`. Download CLI binaries from [Releases](https://github.com/Innovgame/slicer-converter/releases) and check them with `SHA256SUMS`. npm and crates.io packages are not published; build the browser package from source. Creality CXDLP v1, v2, and v3 are import-only. See [CHANGELOG.md](CHANGELOG.md).
+Version `0.1.1`. Download CLI binaries from [Releases](https://github.com/Innovgame/slicer-converter/releases) and check them with `SHA256SUMS`. Questions can go to [Discussions](https://github.com/Innovgame/slicer-converter/discussions). Creality CXDLP v1, v2, and v3 are import-only. See [CHANGELOG.md](CHANGELOG.md).
 
 The live test page is at <https://innovgame.github.io/slicer-converter/>.
+
+Install the CLI from Releases. `@slicer-converter/wasm` stays private because its export points at TypeScript source and the wasm binary is built locally. crates.io publishing is set up for tagged releases and runs when `CARGO_REGISTRY_TOKEN` is configured.
 
 ## Contents
 

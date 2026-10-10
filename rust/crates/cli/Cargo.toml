@@ -14,7 +14,7 @@ path = "src/main.rs"
 bench = false
 
 [dependencies]
-slicer-converter-core = { path = "../core" }
+slicer-converter-core = { version = "0.1.0", path = "../core" }
 zip = { version = "8", default-features = false, features = ["deflate"] }
 
 [dev-dependencies]
