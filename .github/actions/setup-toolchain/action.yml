@@ -1,0 +1,73 @@
+name: Setup toolchain
+description: Install Rust, Node, pnpm, and optional wasm-pack for CI jobs
+
+inputs:
+    rust:
+        description: Install the stable Rust toolchain
+        required: false
+        default: "true"
+    wasm:
+        description: Add the wasm32 target and wasm-pack
+        required: false
+        default: "false"
+    node:
+        description: Install Node.js and pnpm dependencies
+        required: false
+        default: "true"
+    build-wasm:
+        description: Build the release WASM package after install
+        required: false
+        default: "false"
+    cache-key:
+        description: Cargo cache key prefix
+        required: false
+        default: cargo
+
+runs:
+    using: composite
+    steps:
+        - name: Install Rust
+          if: inputs.rust == 'true' && inputs.wasm != 'true'
+          uses: dtolnay/rust-toolchain@stable
+
+        - name: Install Rust with wasm32
+          if: inputs.rust == 'true' && inputs.wasm == 'true'
+          uses: dtolnay/rust-toolchain@stable
+          with:
+              targets: wasm32-unknown-unknown
+
+        - name: Cache Cargo
+          if: inputs.rust == 'true'
+          uses: actions/cache@v4
+          with:
+              path: |
+                  ~/.cargo/registry
+                  ~/.cargo/git
+                  rust/target
+              key: ${{ inputs.cache-key }}-${{ runner.os }}-${{ hashFiles('rust/Cargo.lock', 'rust/Cargo.toml') }}
+              restore-keys: ${{ inputs.cache-key }}-${{ runner.os }}-
+
+        - name: Install wasm-pack
+          if: inputs.wasm == 'true'
+          shell: bash
+          run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+        - uses: pnpm/action-setup@v4
+          if: inputs.node == 'true'
+
+        - name: Setup Node
+          if: inputs.node == 'true'
+          uses: actions/setup-node@v4
+          with:
+              node-version: 22
+              cache: pnpm
+
+        - name: Install dependencies
+          if: inputs.node == 'true'
+          shell: bash
+          run: pnpm install --frozen-lockfile
+
+        - name: Build release WASM
+          if: inputs.build-wasm == 'true'
+          shell: bash
+          run: pnpm build:wasm

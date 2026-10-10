@@ -16,7 +16,7 @@ export default defineConfig({
         }
     },
     root: appRoot,
-    base: process.env.GITHUB_ACTIONS ? "/slicer-converter/" : "/",
+    base: process.env.GITHUB_PAGES === "true" ? "/slicer-converter/" : "/",
     build: {
         rollupOptions: {
             input: {

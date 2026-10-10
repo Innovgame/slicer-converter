@@ -24,19 +24,20 @@ pnpm build:app
 
 仓库内置了 Pages workflow：
 
-- [deploy.yml](/Users/recholee/Documents/GitHub/slicer-converter/.github/workflows/deploy.yml)
+- [deploy.yml](../.github/workflows/deploy.yml)
+
+站点地址：`https://innovgame.github.io/slicer-converter/`
 
 关键点：
 
-- Vite 在 GitHub Actions 环境下使用 `base: "/slicer-converter/"`
+- 仓库 Settings → Pages → Source 选择 GitHub Actions
+- 部署工作流设置 `GITHUB_PAGES=true`，Vite 使用 `base: "/slicer-converter/"`
 - Pages job 上传的是 `apps/slicer-app/dist/`
 - 不需要单独手工搬运 `packages/slicer-wasm/lib/`，因为它已经被打进最终构建产物引用链
+- `master` 上的 [CI](../.github/workflows/ci.yml) 成功后会自动部署这次通过的提交
+- 也可以在 Actions 里手动运行 `Deploy to GitHub Pages`
 
-手工触发：
-
-1. 打开 GitHub Actions
-2. 运行 `Deploy to GitHub Pages`
-3. 等待 `build` 和 `deploy` 两个 job 完成
+自动部署只跟随 `master` 的 push 或手动触发的成功 CI，不会在 pull request 的 CI 结束后发布。
 
 ## 非 Pages 静态托管
 
@@ -66,11 +67,11 @@ pnpm build:app
 当前 Vite 配置：
 
 - 本地默认 `/`
-- GitHub Actions 下自动切到 `/slicer-converter/`
+- `GITHUB_PAGES=true` 时切到 `/slicer-converter/`
 
 见：
 
-- [vite.config.ts](/Users/recholee/Documents/GitHub/slicer-converter/apps/slicer-app/vite.config.ts)
+- [vite.config.ts](../apps/slicer-app/vite.config.ts)
 
 如果你部署到自定义子路径，例如 `/tools/slicer-converter/`，需要在构建前设置合适的 `base`，否则会出现：
 

@@ -9,6 +9,7 @@ import type {
     SlicerWorkerPoolState as WorkerPoolState
 } from "@slicer-converter/wasm";
 import { createSlicerDocument } from "@slicer-converter/wasm";
+import type * as SlicerWasm from "@slicer-converter/wasm";
 
 import { anycubicFormatFact } from "../support/format-facts";
 
@@ -22,7 +23,7 @@ vi.mock("../../../src/features/conversion/model/conversion-use-case", () => ({
 }));
 
 vi.mock("@slicer-converter/wasm", async (importOriginal) => ({
-    ...(await importOriginal<typeof import("@slicer-converter/wasm")>()),
+    ...(await importOriginal<typeof SlicerWasm>()),
     diagnoseExport: mocks.diagnoseExport
 }));
 
@@ -103,7 +104,8 @@ describe("useConversionController warnings / 转换 controller warning", () => {
             ]
         });
 
-        const { useConversionController } = await import("../../../src/features/conversion/model/use-conversion-controller");
+        const { useConversionController } =
+            await import("../../../src/features/conversion/model/use-conversion-controller");
         const setStatus = vi.fn();
         const { result } = renderHook(() =>
             useConversionController({
@@ -129,7 +131,9 @@ describe("useConversionController warnings / 转换 controller warning", () => {
         );
 
         expect(result.current.exportWarning).toEqual(
-            expect.stringContaining("Source machine ELEGOO Mars 5 Ultra(1) geometry differs from target machine Photon Zero")
+            expect.stringContaining(
+                "Source machine ELEGOO Mars 5 Ultra(1) geometry differs from target machine Photon Zero"
+            )
         );
 
         await act(async () => {
@@ -138,7 +142,9 @@ describe("useConversionController warnings / 转换 controller warning", () => {
 
         expect(setStatus).toHaveBeenLastCalledWith({
             type: "warning",
-            message: expect.stringContaining("Source machine ELEGOO Mars 5 Ultra(1) geometry differs from target machine Photon Zero")
+            message: expect.stringContaining(
+                "Source machine ELEGOO Mars 5 Ultra(1) geometry differs from target machine Photon Zero"
+            )
         });
         expect(mocks.diagnoseExport).toHaveBeenCalledWith({
             metadata: {

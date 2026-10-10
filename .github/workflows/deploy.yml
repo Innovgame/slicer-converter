@@ -2,6 +2,10 @@ name: Deploy to GitHub Pages
 
 on:
     workflow_dispatch:
+    workflow_run:
+        workflows: ["CI"]
+        types: [completed]
+        branches: [master]
 
 permissions:
     contents: read
@@ -10,46 +14,34 @@ permissions:
 
 concurrency:
     group: pages
-    cancel-in-progress: true
+    cancel-in-progress: false
 
 jobs:
     build:
         name: Build
-        runs-on: ubuntu-latest
+        if: >-
+            github.event_name == 'workflow_dispatch' ||
+            (github.event.workflow_run.conclusion == 'success' &&
+             github.event.workflow_run.head_branch == 'master' &&
+             (github.event.workflow_run.event == 'push' || github.event.workflow_run.event == 'workflow_dispatch'))
+        runs-on: ubuntu-24.04
+        timeout-minutes: 40
         steps:
-            - uses: actions/checkout@v4
-
-            - name: Install Rust stable
-              uses: dtolnay/rust-toolchain@stable
+            - name: Checkout tested commit
+              uses: actions/checkout@v4
               with:
-                  targets: wasm32-unknown-unknown
+                  ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
-            - name: Cache Cargo
-              uses: actions/cache@v4
+            - uses: ./.github/actions/setup-toolchain
               with:
-                  path: |
-                      ~/.cargo/registry
-                      ~/.cargo/git
-                      rust/target
-                  key: cargo-wasm-${{ runner.os }}-${{ hashFiles('rust/Cargo.lock', 'rust/Cargo.toml') }}
-                  restore-keys: cargo-wasm-${{ runner.os }}-
-
-            - name: Install wasm-pack
-              run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-
-            - uses: pnpm/action-setup@v4
-
-            - name: Setup Node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 22
-                  cache: pnpm
-
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
+                  wasm: true
+                  build-wasm: true
+                  cache-key: cargo-pages
 
             - name: Build app
               run: pnpm build:app
+              env:
+                  GITHUB_PAGES: "true"
 
             - name: Setup Pages
               uses: actions/configure-pages@v5
@@ -61,7 +53,12 @@ jobs:
 
     deploy:
         name: Deploy
-        runs-on: ubuntu-latest
+        if: >-
+            github.event_name == 'workflow_dispatch' ||
+            (github.event.workflow_run.conclusion == 'success' &&
+             github.event.workflow_run.head_branch == 'master' &&
+             (github.event.workflow_run.event == 'push' || github.event.workflow_run.event == 'workflow_dispatch'))
+        runs-on: ubuntu-24.04
         needs: build
         environment:
             name: github-pages

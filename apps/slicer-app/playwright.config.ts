@@ -2,6 +2,8 @@ import { defineConfig, devices } from "@playwright/test";
 
 const baseURL = "http://localhost:8080";
 const useExistingServer = process.env.PLAYWRIGHT_USE_EXISTING_SERVER === "1";
+// CI builds release WASM before starting Vite. `pnpm dev` would rebuild it inside predev.
+const isCi = process.env.CI === "true";
 
 export default defineConfig({
     testDir: "./tests/e2e",
@@ -32,9 +34,9 @@ export default defineConfig({
     webServer: useExistingServer
         ? undefined
         : {
-              command: "pnpm dev",
+              command: isCi ? "pnpm exec vite" : "pnpm dev",
               url: baseURL,
-              reuseExistingServer: !process.env.CI,
-              timeout: 60_000
+              reuseExistingServer: !isCi,
+              timeout: isCi ? 180_000 : 60_000
           }
 });

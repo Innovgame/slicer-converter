@@ -1,6 +1,8 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import type * as SlicerWasm from "@slicer-converter/wasm";
+
 const mocks = vi.hoisted(() => ({
     initSlicerConverterWithProgress: vi.fn(),
     getSupportedFormats: vi.fn(() => []),
@@ -10,7 +12,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@slicer-converter/wasm", async (importOriginal) => ({
-    ...(await importOriginal<typeof import("@slicer-converter/wasm")>()),
+    ...(await importOriginal<typeof SlicerWasm>()),
     getSupportedFormats: mocks.getSupportedFormats,
     initSlicerConverterWithProgress: mocks.initSlicerConverterWithProgress,
     initSlicerWorkerPool: mocks.initWorkerPool,

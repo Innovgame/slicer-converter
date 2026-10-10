@@ -8,6 +8,7 @@ import {
     type ResolvedSlicerExportTarget,
     type SupportedFormatInfo
 } from "@slicer-converter/wasm";
+import type * as SlicerWasm from "@slicer-converter/wasm";
 import { openConversionOutputTarget } from "../../../../src/features/conversion/model/conversion-output-target";
 import { formatFact } from "../../support/format-facts";
 
@@ -18,7 +19,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@slicer-converter/wasm", async (importOriginal) => {
-    const actual = await importOriginal<typeof import("@slicer-converter/wasm")>();
+    const actual = await importOriginal<typeof SlicerWasm>();
     return {
         ...actual,
         createBlobOutputSink: mocks.createBlobOutputSink,

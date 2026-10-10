@@ -45,23 +45,23 @@ Resin slicer file converter for MSLA and DLP printers. One Rust format registry 
 
 完整、实时的扩展名列表以 `slicer-converter --help` 和浏览器侧 `getSupportedFormats()` 为准。下表按家族汇总当前 registry。
 
-| 家族 | 扩展名 | 导入 | 导出 |
-| --- | --- | --- | --- |
-| Chitubox CTB | `.ctb` | 支持 | 支持 |
-| Chitubox CBDDLP | `.cbddlp` `.cbddlp-v1` | 支持 | 支持 |
-| Anycubic Photon（Chitubox 兼容文件） | `.photon` | 支持 | 支持 |
-| Chitubox PHZ | `.phz` | 支持 | 支持 |
-| Voxelab FDG | `.fdg` | 支持 | 支持 |
-| Anycubic PhotonS | `.photons` | 支持 | 支持 |
-| Chitubox Zip | `.zip` | 支持 | 支持 |
-| Elegoo GOO | `.goo` | 支持 | 支持 |
-| Phrozen PRZ | `.prz` | 支持 | 支持 |
-| Prusa SL1 / SL1S | `.sl1` `.sl1s` | 支持 | 支持 |
-| Anycubic Photon Workshop | 见下方列表 | 支持 | 支持 |
-| Anycubic Zip | `.pm4u` `.pm7` `.pm7m` `.pwsz` `.pp1` `.pp1m` | 支持 | 支持 |
-| Voxeldance VDT | `.vdt` | 支持 | 支持 |
-| Creality CXDLPv4 | `.cxdlpv4` | 支持 | 支持 |
-| Creality CXDLP v1 / v2 / v3 | `.cxdlp` `.v1.cxdlp` | 支持 | 只读 |
+| 家族                                 | 扩展名                                        | 导入 | 导出 |
+| ------------------------------------ | --------------------------------------------- | ---- | ---- |
+| Chitubox CTB                         | `.ctb`                                        | 支持 | 支持 |
+| Chitubox CBDDLP                      | `.cbddlp` `.cbddlp-v1`                        | 支持 | 支持 |
+| Anycubic Photon（Chitubox 兼容文件） | `.photon`                                     | 支持 | 支持 |
+| Chitubox PHZ                         | `.phz`                                        | 支持 | 支持 |
+| Voxelab FDG                          | `.fdg`                                        | 支持 | 支持 |
+| Anycubic PhotonS                     | `.photons`                                    | 支持 | 支持 |
+| Chitubox Zip                         | `.zip`                                        | 支持 | 支持 |
+| Elegoo GOO                           | `.goo`                                        | 支持 | 支持 |
+| Phrozen PRZ                          | `.prz`                                        | 支持 | 支持 |
+| Prusa SL1 / SL1S                     | `.sl1` `.sl1s`                                | 支持 | 支持 |
+| Anycubic Photon Workshop             | 见下方列表                                    | 支持 | 支持 |
+| Anycubic Zip                         | `.pm4u` `.pm7` `.pm7m` `.pwsz` `.pp1` `.pp1m` | 支持 | 支持 |
+| Voxeldance VDT                       | `.vdt`                                        | 支持 | 支持 |
+| Creality CXDLPv4                     | `.cxdlpv4`                                    | 支持 | 支持 |
+| Creality CXDLP v1 / v2 / v3          | `.cxdlp` `.v1.cxdlp`                          | 支持 | 只读 |
 
 补充：
 
@@ -178,13 +178,13 @@ const result = await convertSlicerFile({
 
 常用 helper：
 
-| Helper | 用途 |
-| --- | --- |
-| `convertSlicerFile` | 转换浏览器 `File` / `Blob` |
-| `openSlicerDocumentFile` | 打开浏览器 `File`，扩展名取自文件名 |
-| `decodeSlicerLayerPreview` | 解码已打开文档的单层预览 |
-| `parseBrowserFileHeader` | 解析文件头 |
-| `getSupportedFormats` | 读取 Rust registry 的格式事实 |
+| Helper                     | 用途                                |
+| -------------------------- | ----------------------------------- |
+| `convertSlicerFile`        | 转换浏览器 `File` / `Blob`          |
+| `openSlicerDocumentFile`   | 打开浏览器 `File`，扩展名取自文件名 |
+| `decodeSlicerLayerPreview` | 解码已打开文档的单层预览            |
+| `parseBrowserFileHeader`   | 解析文件头                          |
+| `getSupportedFormats`      | 读取 Rust registry 的格式事实       |
 
 ## 开发
 
@@ -223,7 +223,9 @@ pnpm fixtures       # 刷新 rust/crates/core/tests/fixtures/ 中的生成样本
 
 Rust 真实文件 fast-path 基准可以设置 `SC_REAL_GOO_PATH`、`SC_REAL_PRZ_PATH`、`SC_REAL_CTB_PATH`。可选的 `SC_REAL_LAYER_LIMIT`，或对应的 `SC_REAL_GOO_LAYER_LIMIT` / `SC_REAL_PRZ_LAYER_LIMIT` / `SC_REAL_CTB_LAYER_LIMIT`，用来限制采样层数。
 
-GitHub Actions 在推送到 `master` 和对应 pull request 上运行。[`.github/workflows/ci.yml`](.github/workflows/ci.yml) 包含静态检查、Rust 测试、WASM、Playwright，以及 `cargo fmt` / `cargo clippy`。
+推送到 `master`，或打开指向 `master` 的 pull request，会运行 [CI](.github/workflows/ci.yml)。CI 包含 lint、Rust 测试与 Clippy、前端和脚本测试、wasm-pack，以及不依赖本机 UVtools 的 Playwright 用例。
+
+`master` 上的 CI 成功后，[Deploy to GitHub Pages](.github/workflows/deploy.yml) 会把测试页发布到 <https://innovgame.github.io/slicer-converter/>。也可以在 Actions 里手动运行这个部署工作流。Pages 的 Source 需要设为 GitHub Actions。
 
 ## 文档
 

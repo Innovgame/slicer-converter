@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createSlicerDocument, type SlicerDocument } from "@slicer-converter/wasm";
+import type * as SlicerWasm from "@slicer-converter/wasm";
 import type {
     ManagedSlicerWorker as ManagedConversionWorker,
     ResolvedSlicerExportTarget,
@@ -16,7 +17,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@slicer-converter/wasm", async (importOriginal) => {
-    const actual = await importOriginal<typeof import("@slicer-converter/wasm")>();
+    const actual = await importOriginal<typeof SlicerWasm>();
     return {
         ...actual,
         convertSlicerFileToBlob: mocks.convertSlicerFileToBlob,
@@ -71,7 +72,9 @@ describe("runConversionUseCase / runConversionUseCase 用例", () => {
                 onProgress: expect.any(Function)
             })
         );
-        expect(mocks.convertSlicerFileToBlob).toHaveBeenCalledWith(expect.not.objectContaining({ output: expect.anything() }));
+        expect(mocks.convertSlicerFileToBlob).toHaveBeenCalledWith(
+            expect.not.objectContaining({ output: expect.anything() })
+        );
         expect(mocks.convertSlicerFileToSink).not.toHaveBeenCalled();
         const onProgress = mocks.convertSlicerFileToBlob.mock.calls[0]?.[0].onProgress as (progress: {
             current: number;
@@ -159,15 +162,17 @@ describe("runConversionUseCase / runConversionUseCase 用例", () => {
     });
 });
 
-async function runUseCase(input: {
-    document?: OpenedDocument;
-    workerPool?: WorkerPoolState<ManagedConversionWorker>;
-    target?: ResolvedSlicerExportTarget;
-    outputFileName?: string;
-    signal?: AbortSignal;
-    updateProgress?: (current: number, total: number, label: string) => void;
-    downloadBlob?: (download: { blob: Blob; downloadName: string }) => void;
-} = {}) {
+async function runUseCase(
+    input: {
+        document?: OpenedDocument;
+        workerPool?: WorkerPoolState<ManagedConversionWorker>;
+        target?: ResolvedSlicerExportTarget;
+        outputFileName?: string;
+        signal?: AbortSignal;
+        updateProgress?: (current: number, total: number, label: string) => void;
+        downloadBlob?: (download: { blob: Blob; downloadName: string }) => void;
+    } = {}
+) {
     const { runConversionUseCase } = await import("../../../../src/features/conversion/model/conversion-use-case");
     return runConversionUseCase({
         document: input.document ?? createRawDocument(),
