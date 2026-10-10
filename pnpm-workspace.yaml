@@ -1,3 +1,7 @@
 packages:
     - "apps/*"
     - "packages/*"
+
+# Dependabot installs the newest matching version. A one-day age gate rejects
+# those versions and fails the npm update job.
+minimumReleaseAge: 0

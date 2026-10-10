@@ -12,3 +12,7 @@ updates:
       directory: /rust
       schedule:
           interval: weekly
+      ignore:
+          - dependency-name: aes
+            update-types:
+                - version-update:semver-major
