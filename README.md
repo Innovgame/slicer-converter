@@ -11,7 +11,7 @@ Resin slicer file converter for MSLA and DLP printers. One Rust format registry 
 
 ![Slicer File Converter preview](docs/images/app-preview-2.png)
 
-Version `0.1.2`. Download CLI binaries from [Releases](https://github.com/Innovgame/slicer-converter/releases) and check them with `SHA256SUMS`. Questions can go to [Discussions](https://github.com/Innovgame/slicer-converter/discussions). Creality CXDLP v1, v2, and v3 are import-only. See [CHANGELOG.md](CHANGELOG.md).
+Version `0.1.3`. Download CLI binaries from [Releases](https://github.com/Innovgame/slicer-converter/releases) and check them with `SHA256SUMS`. Questions can go to [Discussions](https://github.com/Innovgame/slicer-converter/discussions). Creality CXDLP v1, v2, and v3 are import-only. See [CHANGELOG.md](CHANGELOG.md).
 
 The live test page is at <https://innovgame.github.io/slicer-converter/>.
 
