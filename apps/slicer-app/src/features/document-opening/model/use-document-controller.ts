@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { openSlicerDocumentFile, parseBrowserFileHeader, type SlicerDocument } from "@slicer-converter/wasm";
+import { openSlicerDocumentFile, parseBrowserFileHeader, type SlicerDocument } from "@innovgame/slicer-converter";
 import { getErrorMessage } from "../../../shared/lib/errors";
 import type { StatusState } from "../../converter/model/converter-view-state";
 

@@ -17,7 +17,7 @@ describe("slicer format id boundary / slicer format id 边界", () => {
         );
 
         expect(converterControllerSource).toContain("findSlicerExportTargetMatrixSelection");
-        expect(converterControllerSource).toContain("@slicer-converter/wasm");
+        expect(converterControllerSource).toContain("@innovgame/slicer-converter");
         expect(converterControllerSource).not.toContain("asAppSlicerFormatId");
         expect(converterControllerSource).not.toContain("slicer-format-id");
         expect(existsSync(path.join(process.cwd(), "src/infrastructure/wasm/wasm-format-facts.ts"))).toBe(false);

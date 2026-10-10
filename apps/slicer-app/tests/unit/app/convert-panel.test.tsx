@@ -2,9 +2,9 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import type { ParsedHeader } from "@slicer-converter/wasm";
+import type { ParsedHeader } from "@innovgame/slicer-converter";
 import { ConvertPanel } from "../../../src/features/converter/ui/convert-panel";
-import { syncFormatFacts } from "@slicer-converter/wasm";
+import { syncFormatFacts } from "@innovgame/slicer-converter";
 import { ThemeProvider } from "../../../src/app/providers";
 import { anycubicFormatFact, chituboxFormatFact, formatFact } from "../support/format-facts";
 

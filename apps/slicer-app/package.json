@@ -4,9 +4,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "predev": "pnpm --filter @slicer-converter/wasm build",
+        "predev": "pnpm --filter @innovgame/slicer-converter build",
         "dev": "vite",
-        "prebuild": "pnpm --filter @slicer-converter/wasm build",
+        "prebuild": "pnpm --filter @innovgame/slicer-converter build",
         "build": "vite build",
         "preview": "vite preview",
         "test:unit": "node ../../scripts/run-vitest-safe.mjs run --pool=threads",
@@ -20,7 +20,7 @@
         "bench": "playwright test --config=playwright.bench.config.ts"
     },
     "dependencies": {
-        "@slicer-converter/wasm": "workspace:*",
+        "@innovgame/slicer-converter": "workspace:*",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "lucide-react": "^1.54.0",

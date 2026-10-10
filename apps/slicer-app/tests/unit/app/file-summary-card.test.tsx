@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { syncFormatFacts } from "@slicer-converter/wasm";
+import { syncFormatFacts } from "@innovgame/slicer-converter";
 
 import { FileSummaryCard } from "../../../src/features/converter/ui/file-summary-card";
 import { ThemeProvider } from "../../../src/app/providers";

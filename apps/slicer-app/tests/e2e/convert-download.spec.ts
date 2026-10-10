@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 
 import { expect, test, type Page } from "@playwright/test";
-import { inflateRaw } from "@slicer-converter/wasm";
+import { inflateRaw } from "@innovgame/slicer-converter";
 
 import { loadFixtureFile } from "../support/fixture-files";
 import { getCompressedData, parseZipDirectory } from "../../../../tests/support/zip-inspection";

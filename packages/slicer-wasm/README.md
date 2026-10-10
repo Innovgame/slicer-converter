@@ -1,15 +1,21 @@
-# @slicer-converter/wasm
+# @innovgame/slicer-converter
 
 Browser TypeScript API for opening, previewing, and converting resin slicer files with the Rust/WASM converter.
 
 ## Install
 
 ```bash
-npm install @slicer-converter/wasm
+npm install @innovgame/slicer-converter
+```
+
+Point the `@innovgame` scope at GitHub Packages in `.npmrc`:
+
+```text
+@innovgame:registry=https://npm.pkg.github.com
 ```
 
 ```ts
-import { convertSlicerFileToBlob, openSlicerDocumentFile } from "@slicer-converter/wasm";
+import { convertSlicerFileToBlob, openSlicerDocumentFile } from "@innovgame/slicer-converter";
 ```
 
 The published package includes the compiled JavaScript facade and the release WASM binary. Rust is not required after install.
@@ -17,13 +23,13 @@ The published package includes the compiled JavaScript facade and the release WA
 In this repository, build both artifacts before publishing or packing:
 
 ```bash
-pnpm --filter @slicer-converter/wasm build
+pnpm --filter @innovgame/slicer-converter build
 ```
 
 ## Open A File
 
 ```ts
-import { openSlicerDocumentFile, parseBrowserFileHeader } from "@slicer-converter/wasm";
+import { openSlicerDocumentFile, parseBrowserFileHeader } from "@innovgame/slicer-converter";
 
 const document = await openSlicerDocumentFile({
     file,
@@ -38,7 +44,7 @@ console.log(document.parsedHeader.format, document.parsedHeader.layers.length);
 ## Convert A File
 
 ```ts
-import { convertSlicerFileToBlob } from "@slicer-converter/wasm";
+import { convertSlicerFileToBlob } from "@innovgame/slicer-converter";
 
 const result = await convertSlicerFileToBlob({
     file,
@@ -66,7 +72,7 @@ import {
     syncFormatFacts,
     type ManagedSlicerWorker,
     type SlicerConversionProgress
-} from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
 
 export async function convertGeneratedGoo(input: {
     gooBlob: Blob;
@@ -123,7 +129,7 @@ export async function convertGeneratedGoo(input: {
 Build the package before using a local link:
 
 ```powershell
-pnpm --filter @slicer-converter/wasm build
+pnpm --filter @innovgame/slicer-converter build
 ```
 
 ## Advanced Output
@@ -131,7 +137,7 @@ pnpm --filter @slicer-converter/wasm build
 Use `convertSlicerFileToSink()` when the caller owns the output sink:
 
 ```ts
-import { convertSlicerFileToSink, createBufferedOutputSink, openFileSystemSink } from "@slicer-converter/wasm";
+import { convertSlicerFileToSink, createBufferedOutputSink, openFileSystemSink } from "@innovgame/slicer-converter";
 
 const fileSystemSink = await openFileSystemSink({ suggestedName: "plate.ctb" });
 const output = createBufferedOutputSink(fileSystemSink);
@@ -151,7 +157,7 @@ For lower-level control, `convertSlicerFile()` remains available and returns `bl
 ## Preview Layers
 
 ```ts
-import { createSlicerPreviewSession } from "@slicer-converter/wasm";
+import { createSlicerPreviewSession } from "@innovgame/slicer-converter";
 
 const session = createSlicerPreviewSession({ document });
 const payload = await session.buildDispatchPayload({
@@ -169,7 +175,7 @@ The preview session builds worker payloads for raw encoded layers and ZIP/archiv
 ## Worker Runtime
 
 ```ts
-import { createSlicerWorkerRuntime, startSlicerWorkerEntryRuntime } from "@slicer-converter/wasm";
+import { createSlicerWorkerRuntime, startSlicerWorkerEntryRuntime } from "@innovgame/slicer-converter";
 
 const runtime = createSlicerWorkerRuntime({
     postMessage: (message, transfer) => self.postMessage(message, transfer ?? []),
@@ -198,7 +204,7 @@ import {
     createInstrumentedPatchableOutputSink,
     parseZipDirectory,
     snapshotOutputSinkStats
-} from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
 
 const directory = parseZipDirectory(bytes);
 const { sink, stats } = createInstrumentedPatchableOutputSink(outputSink);
@@ -218,7 +224,7 @@ import {
     listExportTargetOptions,
     listImportableFileExtensions,
     validateBrowserFormatBehaviors
-} from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
 ```
 
 Use these helpers for UI option lists and browser format validation. Format behavior, archive layout, manifest/config fields, and layer codec behavior should stay aligned with UVTools before changing them.

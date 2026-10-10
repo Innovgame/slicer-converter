@@ -9,7 +9,7 @@ import {
     type ManagedSlicerWorker as ManagedConversionWorker,
     type SlicerWorkerPoolState as WorkerPoolState,
     type WasmLoadProgress
-} from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
 
 import type { StatusState } from "../../features/converter/model/converter-view-state";
 import { getErrorMessage } from "../../shared/lib/errors";

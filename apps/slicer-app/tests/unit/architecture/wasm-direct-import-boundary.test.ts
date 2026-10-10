@@ -63,8 +63,8 @@ describe("wasm direct import boundary / wasm direct import 边界", () => {
             const imports = findImportSpecifiers(source).filter(
                 (specifier) =>
                     specifier.includes("packages/slicer-wasm/src") ||
-                    specifier.includes("@slicer-converter/wasm/src") ||
-                    specifier.includes("@slicer-converter/wasm/browser")
+                    specifier.includes("@innovgame/slicer-converter/src") ||
+                    specifier.includes("@innovgame/slicer-converter/browser")
             );
 
             return imports.length > 0 ? [{ file: relativePath(file), imports }] : [];

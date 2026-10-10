@@ -1,4 +1,4 @@
-import type { SupportedFormatCapabilities, SupportedFormatInfo } from "@slicer-converter/wasm";
+import type { SupportedFormatCapabilities, SupportedFormatInfo } from "@innovgame/slicer-converter";
 
 /**
  * @zh 测试用 `IMPORT_EXPORT_CAPABILITIES` capabilities fixture。

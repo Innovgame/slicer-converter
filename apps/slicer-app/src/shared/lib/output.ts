@@ -1,4 +1,4 @@
-import type { ExportTargetFormat } from "@slicer-converter/wasm";
+import type { ExportTargetFormat } from "@innovgame/slicer-converter";
 
 /**
  * @zh 根据源文件名和目标格式构建下载文件名。

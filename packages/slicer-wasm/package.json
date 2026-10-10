@@ -1,5 +1,5 @@
 {
-    "name": "@slicer-converter/wasm",
+    "name": "@innovgame/slicer-converter",
     "version": "0.1.1",
     "type": "module",
     "description": "Browser API for opening, previewing, and converting resin slicer files",
@@ -25,7 +25,7 @@
         }
     },
     "publishConfig": {
-        "access": "public"
+        "registry": "https://npm.pkg.github.com"
     },
     "scripts": {
         "build": "wasm-pack build ../../rust/crates/wasm --target web --release --out-dir ../../../packages/slicer-wasm/lib --out-name slicer_converter && node scripts/remove-lib-gitignore.mjs && tsc -p tsconfig.build.json",

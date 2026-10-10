@@ -5,16 +5,16 @@ import { describe, expect, it } from "vitest";
 
 describe("domain format runtime boundary / domain format 运行期边界", () => {
     it("detects WASM package value imports and re-exports / 检测 WASM package value imports 和 re-exports", () => {
-        expect(extractWasmValueImports('import { getSupportedFormats } from "@slicer-converter/wasm";')).toEqual([
+        expect(extractWasmValueImports('import { getSupportedFormats } from "@innovgame/slicer-converter";')).toEqual([
             "{ getSupportedFormats }"
         ]);
-        expect(extractWasmValueImports('export { getSupportedFormats } from "@slicer-converter/wasm";')).toEqual([
+        expect(extractWasmValueImports('export { getSupportedFormats } from "@innovgame/slicer-converter";')).toEqual([
             "{ getSupportedFormats }"
         ]);
-        expect(extractWasmValueImports('import type { SupportedFormatInfo } from "@slicer-converter/wasm";')).toEqual(
+        expect(extractWasmValueImports('import type { SupportedFormatInfo } from "@innovgame/slicer-converter";')).toEqual(
             []
         );
-        expect(extractWasmValueImports('export type { SupportedFormatInfo } from "@slicer-converter/wasm";')).toEqual(
+        expect(extractWasmValueImports('export type { SupportedFormatInfo } from "@innovgame/slicer-converter";')).toEqual(
             []
         );
     });

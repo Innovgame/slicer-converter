@@ -7,8 +7,8 @@ import {
     type PatchableSlicerOutputSink,
     type ResolvedSlicerExportTarget,
     type SupportedFormatInfo
-} from "@slicer-converter/wasm";
-import type * as SlicerWasm from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
+import type * as SlicerWasm from "@innovgame/slicer-converter";
 import { openConversionOutputTarget } from "../../../../src/features/conversion/model/conversion-output-target";
 import { formatFact } from "../../support/format-facts";
 
@@ -18,7 +18,7 @@ const mocks = vi.hoisted(() => ({
     openFileSystemSink: vi.fn()
 }));
 
-vi.mock("@slicer-converter/wasm", async (importOriginal) => {
+vi.mock("@innovgame/slicer-converter", async (importOriginal) => {
     const actual = await importOriginal<typeof SlicerWasm>();
     return {
         ...actual,
@@ -178,7 +178,7 @@ describe("openConversionOutputTarget / 转换输出目标", () => {
         const source = await readFile("src/features/conversion/model/conversion-output-target.ts", "utf8");
 
         expect(source).toContain("openFileSystemSink");
-        expect(source).toContain('@slicer-converter/wasm";');
+        expect(source).toContain('@innovgame/slicer-converter";');
         expect(source).not.toContain("../../infrastructure/output/file-system-output-sink");
     });
 });

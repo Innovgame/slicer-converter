@@ -1,13 +1,13 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import type * as SlicerWasm from "@slicer-converter/wasm";
+import type * as SlicerWasm from "@innovgame/slicer-converter";
 
 const mocks = vi.hoisted(() => ({
     openSlicerDocumentFile: vi.fn()
 }));
 
-vi.mock("@slicer-converter/wasm", async (importOriginal) => ({
+vi.mock("@innovgame/slicer-converter", async (importOriginal) => ({
     ...(await importOriginal<typeof SlicerWasm>()),
     openSlicerDocumentFile: mocks.openSlicerDocumentFile
 }));

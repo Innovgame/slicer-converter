@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { findSlicerExportTargetMatrixSelection, type ParsedHeader } from "@slicer-converter/wasm";
+import { findSlicerExportTargetMatrixSelection, type ParsedHeader } from "@innovgame/slicer-converter";
 
 import type { PreviewImageState, ProgressState, StatusState } from "./converter-view-state";
 import { useRuntimeController } from "../../../app/runtime/use-runtime-controller";

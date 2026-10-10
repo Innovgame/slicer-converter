@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { usePreviewController } from "../../../src/features/preview";
-import type { SlicerWorkerResponse as WorkerResponse } from "@slicer-converter/wasm";
+import type { SlicerWorkerResponse as WorkerResponse } from "@innovgame/slicer-converter";
 
 class PreviewErrorWorker extends EventTarget {
     busy = false;

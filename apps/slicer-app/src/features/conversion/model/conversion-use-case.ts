@@ -7,7 +7,7 @@ import {
     type SlicerConversionProgress,
     type SlicerConversionResult,
     type SlicerWorkerPoolState as WorkerPoolState
-} from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
 
 import { buildConversionStatusMessage } from "./conversion-status-message";
 import { openConversionOutputTarget } from "./conversion-output-target";

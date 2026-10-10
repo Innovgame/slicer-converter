@@ -173,7 +173,7 @@ cargo clippy --manifest-path rust/Cargo.toml --all-targets --all-features -- -D 
 
 ```bash
 pnpm test:app
-pnpm --filter @slicer-converter/wasm test:unit
+pnpm --filter @innovgame/slicer-converter test:unit
 cargo test --manifest-path rust/Cargo.toml
 ```
 

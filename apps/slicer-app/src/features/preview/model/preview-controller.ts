@@ -1,4 +1,4 @@
-import type { FileMetadata } from "@slicer-converter/wasm";
+import type { FileMetadata } from "@innovgame/slicer-converter";
 
 /**
  * @zh 将元数据中第一张缩略图渲染到抛入的 canvas 上。

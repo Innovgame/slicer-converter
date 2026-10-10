@@ -343,8 +343,8 @@ class FakeZipWorker extends EventTarget {
     // ...
 }
 
-vi.mock("@slicer-converter/wasm", async () => {
-    const actual = await vi.importActual<typeof SlicerWasmModule>("@slicer-converter/wasm");
+vi.mock("@innovgame/slicer-converter", async () => {
+    const actual = await vi.importActual<typeof SlicerWasmModule>("@innovgame/slicer-converter");
     return { ...actual, crc32_bytes: mocks.crc32Bytes };
 });
 ```

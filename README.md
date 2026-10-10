@@ -15,10 +15,14 @@ Version `0.1.1`. Download CLI binaries from [Releases](https://github.com/Innovg
 
 The live test page is at <https://innovgame.github.io/slicer-converter/>.
 
-Install the CLI from Releases. `@slicer-converter/wasm` is published to npm from the same tag when `NPM_TOKEN` is set:
+Install the CLI from Releases. `@innovgame/slicer-converter` is published to GitHub Packages from the same tag. Add this to `.npmrc`, then install:
+
+```text
+@innovgame:registry=https://npm.pkg.github.com
+```
 
 ```bash
-npm install @slicer-converter/wasm
+npm install @innovgame/slicer-converter
 ```
 
 ## Contents
@@ -160,7 +164,7 @@ Tagged releases publish Windows, Linux glibc, Linux musl, and macOS Apple Silico
 
 ## Browser API
 
-`@slicer-converter/wasm` is the browser entry. Prefer the typed helpers. The wasm-bindgen ABI, including `parse_header`, `decode_layer`, and `encode_layer`, stays at the Rust and WASM boundary.
+`@innovgame/slicer-converter` is the browser entry. Prefer the typed helpers. The wasm-bindgen ABI, including `parse_header`, `decode_layer`, and `encode_layer`, stays at the Rust and WASM boundary.
 
 ```ts
 import {
@@ -168,7 +172,7 @@ import {
     decodeSlicerLayerPreview,
     openSlicerDocumentFile,
     parseBrowserFileHeader
-} from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
 
 const document = await openSlicerDocumentFile({
     file,

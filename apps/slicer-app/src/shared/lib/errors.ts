@@ -5,4 +5,4 @@ export {
     isSlicerWorkerError as isAppError,
     toSlicerWorkerError as toAppError,
     toSlicerWorkerErrorMessage as toWorkerErrorMessage
-} from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";

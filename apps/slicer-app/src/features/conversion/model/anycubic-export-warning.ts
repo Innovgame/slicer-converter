@@ -1,4 +1,4 @@
-import type { ExportDiagnosticReport } from "@slicer-converter/wasm";
+import type { ExportDiagnosticReport } from "@innovgame/slicer-converter";
 
 /**
  * @zh 从 Rust 导出诊断报告中提取第一条可展示 warning。

@@ -7,7 +7,7 @@ import {
     prepareZipEntryWithTimings,
     slicerLayerCodecRuntime,
     startSlicerWorkerEntryRuntime
-} from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
 
 const workerScope = self as DedicatedWorkerGlobalScope;
 

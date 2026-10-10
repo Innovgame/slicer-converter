@@ -11,7 +11,7 @@
         "baseUrl": ".",
         "paths": {
             "@/*": ["apps/slicer-app/src/*"],
-            "@slicer-converter/wasm": ["packages/slicer-wasm/src/index.ts"]
+            "@innovgame/slicer-converter": ["packages/slicer-wasm/src/index.ts"]
         }
     },
     "include": ["apps/**/*.ts", "apps/**/*.tsx", "packages/**/*.ts", "packages/**/*.tsx"],

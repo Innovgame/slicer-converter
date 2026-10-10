@@ -13,7 +13,7 @@ export default defineConfig({
     resolve: {
         alias: {
             "@": path.resolve(appRoot, "src"),
-            "@slicer-converter/wasm": path.resolve(projectRoot, "packages/slicer-wasm/src/index.ts")
+            "@innovgame/slicer-converter": path.resolve(projectRoot, "packages/slicer-wasm/src/index.ts")
         }
     },
     root: appRoot,

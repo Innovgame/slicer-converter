@@ -7,9 +7,9 @@ import type {
     ParsedHeader,
     ResolvedSlicerExportTarget,
     SlicerWorkerPoolState as WorkerPoolState
-} from "@slicer-converter/wasm";
-import { createSlicerDocument } from "@slicer-converter/wasm";
-import type * as SlicerWasm from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
+import { createSlicerDocument } from "@innovgame/slicer-converter";
+import type * as SlicerWasm from "@innovgame/slicer-converter";
 
 import { anycubicFormatFact } from "../support/format-facts";
 
@@ -22,7 +22,7 @@ vi.mock("../../../src/features/conversion/model/conversion-use-case", () => ({
     runConversionUseCase: mocks.runConversionUseCase
 }));
 
-vi.mock("@slicer-converter/wasm", async (importOriginal) => ({
+vi.mock("@innovgame/slicer-converter", async (importOriginal) => ({
     ...(await importOriginal<typeof SlicerWasm>()),
     diagnoseExport: mocks.diagnoseExport
 }));
@@ -58,7 +58,7 @@ describe("useConversionController warnings / 转换 controller warning", () => {
     });
 
     it("warns after exporting to a mismatched Anycubic machine target / 导出到不匹配 Anycubic 机器目标后提示 warning", async () => {
-        const { syncFormatFacts } = await import("@slicer-converter/wasm");
+        const { syncFormatFacts } = await import("@innovgame/slicer-converter");
         syncFormatFacts([
             anycubicFormatFact({
                 machine_id: "PhotonZero",

@@ -9,7 +9,7 @@ import {
     type SlicerWorkerPreviewDoneMessage as WorkerPreviewDoneMessage,
     type SlicerWorkerResponse as WorkerResponse,
     type SlicerWorkerPoolState as WorkerPoolState
-} from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
 
 import { getErrorMessage } from "../../../shared/lib/errors";
 import type { PreviewImageState, StatusState } from "../../converter/model/converter-view-state";

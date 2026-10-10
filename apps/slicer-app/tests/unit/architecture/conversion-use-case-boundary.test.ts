@@ -74,7 +74,7 @@ describe("conversion use case boundary / 转换 use case 边界", () => {
         expect(useCaseSource).toContain("outputTarget.mode");
         expect(useCaseSource).not.toContain("outputTarget.sink.streaming");
         expect(outputTargetSource).toContain("openFileSystemSink");
-        expect(outputTargetSource).toContain("@slicer-converter/wasm");
+        expect(outputTargetSource).toContain("@innovgame/slicer-converter");
         expect(outputTargetSource).not.toContain("../../infrastructure/output/file-system-output-sink");
         expect(outputTargetSource).toContain("createBufferedOutputSink");
         expect(outputTargetSource).toContain('mode: "streaming"');
@@ -92,7 +92,7 @@ describe("conversion use case boundary / 转换 use case 边界", () => {
         expect(existsSync("src/domain/conversion/conversion-target.ts")).toBe(false);
         expect(hookSource).not.toContain("resolveSlicerExportTarget");
         expect(hookSource).toContain("conversionTarget: ResolvedSlicerExportTarget | null");
-        expect(hookSource).toContain("@slicer-converter/wasm");
+        expect(hookSource).toContain("@innovgame/slicer-converter");
         expect(hookSource).toContain("./conversion-use-case");
     });
 });

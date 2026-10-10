@@ -43,7 +43,7 @@ rust/
 
 ```text
 React / TypeScript UI
--> @slicer-converter/wasm browser facade
+-> @innovgame/slicer-converter browser facade
 -> wasm-bindgen exports
 -> rust/src/lib.rs
 -> Rust core: formats + transcode
@@ -247,7 +247,7 @@ fn run() -> Result<(), String> {
 React hook
 -> Worker pool
 -> worker handler
--> @slicer-converter/wasm
+-> @innovgame/slicer-converter
 -> rust/src/lib.rs
 -> Rust core
 ```
@@ -515,7 +515,7 @@ FormatSpec 负责 decode/encode，转码引擎负责调度 fast path 或 fallbac
 
 ```text
 React/Worker 负责什么时候调用、并发多少层、怎么组装下载；
-@slicer-converter/wasm 负责把 TS 调用转成 WASM 调用；
+@innovgame/slicer-converter 负责把 TS 调用转成 WASM 调用；
 rust/src/lib.rs 负责把 WASM API 参数转成 Rust core 参数；
 formats 和 transcode 才是真正的格式转换核心。
 ```

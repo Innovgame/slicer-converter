@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
-import type { ParsedHeader } from "@slicer-converter/wasm";
+import type { ParsedHeader } from "@innovgame/slicer-converter";
 
 import type { PreviewLayerInteraction } from "../../preview";
 import type { PreviewImageState } from "../model/use-converter-controller";

@@ -949,7 +949,7 @@ interface TaskMessage {
 
 ```typescript
 // worker.ts
-import { decode_layer, encode_layer, initSlicerConverter } from "@slicer-converter/wasm";
+import { decode_layer, encode_layer, initSlicerConverter } from "@innovgame/slicer-converter";
 
 let ready = false;
 

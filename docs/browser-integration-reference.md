@@ -1,6 +1,6 @@
 # Browser Integration Reference
 
-本文记录 slicer-converter 浏览器侧集成边界。推荐外部调用方优先使用 package 根入口 `@slicer-converter/wasm`，不要直接依赖 `apps/slicer-app` 内部文件。
+本文记录 slicer-converter 浏览器侧集成边界。推荐外部调用方优先使用 package 根入口 `@innovgame/slicer-converter`，不要直接依赖 `apps/slicer-app` 内部文件。
 
 ## 1. 推荐入口
 
@@ -9,7 +9,7 @@
 - `packages/slicer-wasm/src/index.ts`
 - `packages/slicer-wasm/src/api.ts`
 
-`@slicer-converter/wasm` 的根入口保持兼容导出：初始化 API、document opening、conversion、preview、worker runtime、archive/output helper、format helper 和 runtime adapter 都继续从 root 暴露。内部源码已按模块分组，但调用方不需要改成深路径导入。
+`@innovgame/slicer-converter` 的根入口保持兼容导出：初始化 API、document opening、conversion、preview、worker runtime、archive/output helper、format helper 和 runtime adapter 都继续从 root 暴露。内部源码已按模块分组，但调用方不需要改成深路径导入。
 
 初始化函数：
 
@@ -21,7 +21,7 @@
 常用示例：
 
 ```ts
-import { convertSlicerFile, decodeSlicerLayerPreview, openSlicerDocument } from "@slicer-converter/wasm";
+import { convertSlicerFile, decodeSlicerLayerPreview, openSlicerDocument } from "@innovgame/slicer-converter";
 
 const document = await openSlicerDocument({ file, extension: "goo", parseHeader });
 const preview = await decodeSlicerLayerPreview({

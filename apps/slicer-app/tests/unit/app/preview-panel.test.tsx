@@ -3,7 +3,7 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import type { ParsedHeader } from "@slicer-converter/wasm";
+import type { ParsedHeader } from "@innovgame/slicer-converter";
 import { PreviewPanel } from "../../../src/features/converter/ui/preview-panel";
 
 const parsedHeader = {

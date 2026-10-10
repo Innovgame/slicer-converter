@@ -708,7 +708,7 @@ describe("browser module structure / 浏览器模块结构", () => {
                 const source = readFileSync(filePath, "utf8");
                 const imports = findImportSpecifiers(source);
                 const forbiddenImports = imports.flatMap((specifier) => {
-                    if (specifier === "@slicer-converter/wasm") {
+                    if (specifier === "@innovgame/slicer-converter") {
                         return [specifier];
                     }
 

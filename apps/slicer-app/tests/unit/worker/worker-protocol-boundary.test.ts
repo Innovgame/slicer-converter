@@ -39,7 +39,7 @@ describe("worker protocol type boundary / worker 协议类型边界", () => {
     });
 
     it("exposes runtime worker protocol sentinels from the package / 从 package 暴露 runtime worker protocol sentinels", async () => {
-        const protocol = await import("@slicer-converter/wasm");
+        const protocol = await import("@innovgame/slicer-converter");
 
         expect(protocol.SLICER_WORKER_REQUEST_TYPES).toContain("decode-encode");
         expect(protocol.SLICER_WORKER_REQUEST_TYPES).toContain("decode-preview");
@@ -50,7 +50,7 @@ describe("worker protocol type boundary / worker 协议类型边界", () => {
     });
 
     it("keeps protocol sentinels in sync with message type literals / protocol sentinels 与 message type literals 保持同步", async () => {
-        const protocol = await import("@slicer-converter/wasm");
+        const protocol = await import("@innovgame/slicer-converter");
         const protocolSource = await readFile(
             path.join(process.cwd(), "../../packages/slicer-wasm/src/browser/worker/protocol.ts"),
             "utf8"

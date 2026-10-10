@@ -7,7 +7,7 @@ import {
     type SlicerFormatId,
     type SlicerWorkerPoolState as WorkerPoolState,
     diagnoseExport
-} from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
 
 import type { ProgressState, StatusState } from "../../converter/model/converter-view-state";
 import { getErrorMessage } from "../../../shared/lib/errors";

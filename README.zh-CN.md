@@ -15,10 +15,16 @@
 
 在线测试页：<https://innovgame.github.io/slicer-converter/>。
 
-CLI 从 Releases 安装。`@slicer-converter/wasm` 会在同一个标签发布时发到 npm，前提是配置了 `NPM_TOKEN`：
+CLI 从 Releases 安装。`@innovgame/slicer-converter` 会在同一个标签发布时发到 GitHub Packages。先在 `.npmrc` 里写上：
+
+```text
+@innovgame:registry=https://npm.pkg.github.com
+```
+
+然后安装：
 
 ```bash
-npm install @slicer-converter/wasm
+npm install @innovgame/slicer-converter
 ```
 
 ## 目录
@@ -160,7 +166,7 @@ macOS 二进制需要在 macOS 上构建。Intel 与 Apple Silicon 分别产出 
 
 ## 浏览器 API
 
-`@slicer-converter/wasm` 是浏览器侧入口。优先使用 typed helper。底层 wasm-bindgen ABI，例如 `parse_header`、`decode_layer`、`encode_layer`，保留在 Rust/WASM 边界。
+`@innovgame/slicer-converter` 是浏览器侧入口。优先使用 typed helper。底层 wasm-bindgen ABI，例如 `parse_header`、`decode_layer`、`encode_layer`，保留在 Rust/WASM 边界。
 
 ```ts
 import {
@@ -168,7 +174,7 @@ import {
     decodeSlicerLayerPreview,
     openSlicerDocumentFile,
     parseBrowserFileHeader
-} from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
 
 const document = await openSlicerDocumentFile({
     file,

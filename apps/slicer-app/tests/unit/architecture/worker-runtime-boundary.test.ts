@@ -37,6 +37,6 @@ describe("worker runtime package boundary / worker runtime package 边界", () =
 
         expect(packageJson.exports).not.toHaveProperty("./browser-worker");
         expect(appEntry).toContain("startSlicerWorkerEntryRuntime");
-        expect(appEntry).toContain("@slicer-converter/wasm");
+        expect(appEntry).toContain("@innovgame/slicer-converter");
     });
 });

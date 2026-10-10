@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { listImportableFileExtensions, type ParsedHeader } from "@slicer-converter/wasm";
+import { listImportableFileExtensions, type ParsedHeader } from "@innovgame/slicer-converter";
 
 import { formatBytes } from "../../../shared/lib/format";
 import { renderThumbnail } from "../../preview";

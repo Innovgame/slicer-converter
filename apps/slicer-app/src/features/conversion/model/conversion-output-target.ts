@@ -6,7 +6,7 @@ import {
     type FileSystemOutputSinkDiagnostic,
     type PatchableSlicerOutputSink as PatchableOutputSink,
     type ResolvedSlicerExportTarget
-} from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
 
 import { buildDownloadFilename } from "../../../shared/lib/output";
 

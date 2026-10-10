@@ -158,7 +158,7 @@ cargo check --manifest-path rust/Cargo.toml --benches
 
 # TS / app
 pnpm typecheck
-pnpm --filter @slicer-converter/wasm test:unit
+pnpm --filter @innovgame/slicer-converter test:unit
 pnpm --filter @slicer-converter/slicer-app test:unit
 ```
 

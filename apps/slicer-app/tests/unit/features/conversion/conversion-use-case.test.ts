@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { createSlicerDocument, type SlicerDocument } from "@slicer-converter/wasm";
-import type * as SlicerWasm from "@slicer-converter/wasm";
+import { createSlicerDocument, type SlicerDocument } from "@innovgame/slicer-converter";
+import type * as SlicerWasm from "@innovgame/slicer-converter";
 import type {
     ManagedSlicerWorker as ManagedConversionWorker,
     ResolvedSlicerExportTarget,
     SlicerWorkerPoolState as WorkerPoolState
-} from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
 import { formatFact } from "../../support/format-facts";
 
 type OpenedDocument = SlicerDocument;
@@ -16,7 +16,7 @@ const mocks = vi.hoisted(() => ({
     convertSlicerFileToSink: vi.fn()
 }));
 
-vi.mock("@slicer-converter/wasm", async (importOriginal) => {
+vi.mock("@innovgame/slicer-converter", async (importOriginal) => {
     const actual = await importOriginal<typeof SlicerWasm>();
     return {
         ...actual,
@@ -242,7 +242,7 @@ function restorePicker(): void {
 }
 
 async function syncFormatFactsForTest(): Promise<void> {
-    const { syncFormatFacts } = await import("@slicer-converter/wasm");
+    const { syncFormatFacts } = await import("@innovgame/slicer-converter");
     syncFormatFacts([
         formatFact({
             name: "ctb",

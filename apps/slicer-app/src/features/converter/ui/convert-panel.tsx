@@ -2,7 +2,7 @@ import {
     findSlicerExportTargetMatrixSelection,
     listSlicerExportTargetMatrix,
     type ParsedHeader
-} from "@slicer-converter/wasm";
+} from "@innovgame/slicer-converter";
 
 import type { ProgressState, StatusState } from "../model/use-converter-controller";
 
