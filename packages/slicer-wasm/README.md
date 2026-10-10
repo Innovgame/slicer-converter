@@ -5,8 +5,10 @@ Browser TypeScript API for opening, previewing, and converting resin slicer file
 ## Install
 
 ```bash
-npm install @innovgame/slicer-converter
+npm install @rekorlee/slicer-converter
 ```
+
+GitHub Packages uses a different name. Add this to `.npmrc`, then install `@innovgame/slicer-converter`:
 
 Point the `@innovgame` scope at GitHub Packages in `.npmrc`:
 

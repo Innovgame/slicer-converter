@@ -37,8 +37,19 @@ fi
 
 npm_status=0
 if [ -n "${NPM_TOKEN:-}" ]; then
+    npm_name="@rekorlee/slicer-converter"
+    package_json="$package_dir/package.json"
+    backup="$(mktemp)"
+    cp "$package_json" "$backup"
+    restore_package_json() {
+        mv "$backup" "$package_json"
+    }
+    trap restore_package_json EXIT
+    node -e "const fs=require('node:fs'); const path=process.argv[1]; const pkg=JSON.parse(fs.readFileSync(path, 'utf8')); pkg.name=process.argv[2]; fs.writeFileSync(path, JSON.stringify(pkg, null, 4) + '\n');" "$package_json" "$npm_name"
     printf '%s\n' "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >"$HOME/.npmrc"
-    publish_or_skip_existing "https://registry.npmjs.org" "npm" --access public || npm_status=$?
+    name="$npm_name" publish_or_skip_existing "https://registry.npmjs.org" "npm" --access public || npm_status=$?
+    restore_package_json
+    trap - EXIT
 else
     echo "NPM_TOKEN is not set. Skipping npm."
 fi

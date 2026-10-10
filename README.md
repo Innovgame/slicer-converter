@@ -15,7 +15,7 @@ Version `0.1.2`. Download CLI binaries from [Releases](https://github.com/Innovg
 
 The live test page is at <https://innovgame.github.io/slicer-converter/>.
 
-Install the CLI from Releases. The same tag publishes `@innovgame/slicer-converter` to GitHub Packages, and also to npm when `NPM_TOKEN` is configured. For GitHub Packages, add this to `.npmrc`, then install:
+Install the CLI from Releases. The same tag publishes `@innovgame/slicer-converter` to GitHub Packages. npm receives the same build as `@rekorlee/slicer-converter` when `NPM_TOKEN` is configured. For GitHub Packages, add this to `.npmrc`, then install:
 
 ```text
 @innovgame:registry=https://npm.pkg.github.com
@@ -23,6 +23,12 @@ Install the CLI from Releases. The same tag publishes `@innovgame/slicer-convert
 
 ```bash
 npm install @innovgame/slicer-converter
+```
+
+On npm, install the personal-scope package instead:
+
+```bash
+npm install @rekorlee/slicer-converter
 ```
 
 ## Contents
