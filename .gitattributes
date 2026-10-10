@@ -1,0 +1,53 @@
+# Auto-detect text files and normalize line endings.
+* text=auto
+
+# Source files use LF.
+*.ts text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.rs text eol=lf
+*.toml text eol=lf
+*.lock text eol=lf
+
+# Repository config files use LF.
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.editorconfig text eol=lf
+.prettierrc text eol=lf
+.prettierignore text eol=lf
+eslint.config.mjs text eol=lf
+package.json text eol=lf
+pnpm-workspace.yaml text eol=lf
+pnpm-lock.yaml text eol=lf
+tsconfig.json text eol=lf
+tsconfig.base.json text eol=lf
+tsconfig.node.json text eol=lf
+
+# Shell scripts use LF.
+*.sh text eol=lf
+
+# Windows shell scripts use CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary assets are never line-normalized.
+*.wasm binary
+*.ctb binary
+*.goo binary
+*.sl1 binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary

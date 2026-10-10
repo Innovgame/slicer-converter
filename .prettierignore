@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+rust/target/
+packages/slicer-wasm/lib/
+apps/slicer-app/dist/
+rust/data/
+*.wasm
+*.ctb
+*.goo
+*.sl1

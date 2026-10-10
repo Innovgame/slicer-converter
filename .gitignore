@@ -1,0 +1,53 @@
+# Build outputs
+target/
+rust/target/
+packages/slicer-wasm/lib/
+apps/slicer-app/dist/
+
+# Dependencies
+node_modules/
+dist/
+.pnpm-store/
+
+# Build artifacts
+*.o
+*.tsbuildinfo
+*.d.ts.map
+
+# Tool caches
+.vite/
+.turbo/
+.tmp/
+.codegraph/
+.cache/chromedriver/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# IDE & editor
+.idea/
+*.code-workspace
+*.sublime-workspace
+*.suo
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Testing
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+blob-report/

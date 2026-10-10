@@ -1,0 +1,21 @@
+{
+    "name": "@slicer-converter/wasm",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "description": "Rust/WASM package for slicer-converter",
+    "files": [
+        "src",
+        "lib"
+    ],
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "scripts": {
+        "build": "wasm-pack build ../../rust/crates/wasm --target web --release --out-dir ../../../packages/slicer-wasm/lib --out-name slicer_converter",
+        "test:unit": "node ../../scripts/run-vitest-safe.mjs run --pool=threads"
+    },
+    "devDependencies": {
+        "vitest": "^4.1.4"
+    }
+}

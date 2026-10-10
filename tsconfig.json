@@ -1,0 +1,17 @@
+{
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "lib": ["ES2024", "DOM", "DOM.Iterable"],
+        "jsx": "react-jsx",
+        "types": ["node"],
+        "noEmit": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["apps/slicer-app/src/*"]
+        }
+    },
+    "include": ["apps/**/*.ts", "apps/**/*.tsx", "packages/**/*.ts", "packages/**/*.tsx"],
+    "exclude": ["**/dist/**", "**/node_modules/**", "packages/slicer-wasm/lib/**", "rust/target/**", "rust/data/**"]
+}

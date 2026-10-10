@@ -1,0 +1,39 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+const appRoot = path.dirname(fileURLToPath(import.meta.url));
+const projectRoot = path.resolve(appRoot, "../..");
+
+export default defineConfig({
+    plugins: [react(), tailwindcss()],
+    resolve: {
+        alias: {
+            "@": path.resolve(appRoot, "src")
+        }
+    },
+    root: appRoot,
+    base: process.env.GITHUB_ACTIONS ? "/slicer-converter/" : "/",
+    build: {
+        rollupOptions: {
+            input: {
+                main: path.resolve(appRoot, "index.html")
+            }
+        }
+    },
+    server: {
+        port: 8080,
+        fs: {
+            allow: [projectRoot]
+        }
+    },
+    preview: {
+        port: 8080
+    },
+    worker: {
+        format: "es"
+    }
+});

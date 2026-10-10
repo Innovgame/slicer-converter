@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "ES2024",
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "useDefineForClassFields": true,
+        "noFallthroughCasesInSwitch": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true,
+        "verbatimModuleSyntax": true
+    }
+}

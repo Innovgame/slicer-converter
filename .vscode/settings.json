@@ -1,0 +1,12 @@
+{
+    "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+    "eslint.problems.shortenToSingleLine": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "ts.validate.enable": true,
+    "js.validate.enable": true,
+    "ts.preferences.preferTypeOnlyAutoImports": true,
+    "rust-analyzer.linkedProjects": ["rust/Cargo.toml"],
+    "rust-analyzer.cargo.targetDir": "target/rust-analyzer"
+}

@@ -1,0 +1,213 @@
+name: CI
+
+on:
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+env:
+    CARGO_TERM_COLOR: always
+
+jobs:
+    # ── check: fast gate ─────────────────────────────────────────────
+    check:
+        name: check
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Rust stable
+              uses: dtolnay/rust-toolchain@stable
+
+            - name: Cache Cargo
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      rust/target
+                  key: cargo-${{ runner.os }}-${{ hashFiles('rust/Cargo.lock', 'rust/Cargo.toml') }}
+                  restore-keys: cargo-${{ runner.os }}-
+
+            - uses: pnpm/action-setup@v4
+
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Install wasm-pack
+              run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+            - name: Build wasm for core checks
+              run: pnpm build:wasm:all
+
+            - name: Run typecheck
+              run: pnpm typecheck
+
+            - name: Run cargo fmt check
+              run: cargo fmt --check --manifest-path rust/Cargo.toml
+
+            - name: Run cargo clippy
+              run: cargo clippy --manifest-path rust/Cargo.toml --all-targets --all-features -- -D warnings
+
+            - name: Run rust tests
+              run: pnpm test:rust
+
+            - name: Run benchmark threshold gate
+              run: pnpm benchmark:ci
+
+            - name: Run app unit coverage
+              run: pnpm test:app:coverage
+
+            - name: Upload app coverage artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: app-coverage-html
+                  path: apps/slicer-app/coverage
+                  if-no-files-found: error
+
+            - name: Run wasm package unit tests
+              run: pnpm test:wasm:unit
+
+    # ── lint: static checks ─────────────────────────────────────────
+    lint:
+        name: lint
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: pnpm/action-setup@v4
+
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Run lint
+              run: pnpm lint
+
+            - name: Run format check
+              run: pnpm format:check
+
+    # ── wasm: extended contract tests ──────────────────────────────
+    wasm:
+        name: wasm
+        runs-on: ubuntu-latest
+        needs: check
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Rust stable
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  targets: wasm32-unknown-unknown
+
+            - name: Cache Cargo
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      rust/target
+                  key: cargo-wasm-${{ runner.os }}-${{ hashFiles('rust/Cargo.lock', 'rust/Cargo.toml') }}
+                  restore-keys: cargo-wasm-${{ runner.os }}-
+
+            - name: Install wasm-pack
+              run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+            - uses: pnpm/action-setup@v4
+
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Run wasm node runner tests
+              run: pnpm test:wasm
+
+    rust-bench:
+        name: Rust Benchmarks
+        runs-on: ubuntu-latest
+        continue-on-error: true
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Rust stable
+              uses: dtolnay/rust-toolchain@stable
+
+            - name: Cache Cargo
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      rust/target
+                  key: cargo-bench-${{ runner.os }}-${{ hashFiles('rust/Cargo.lock', 'rust/Cargo.toml') }}
+                  restore-keys: cargo-bench-${{ runner.os }}-
+
+            - name: Run Rust benchmarks
+              run: cargo bench --manifest-path rust/Cargo.toml -- --output-format bencher
+
+    # ── e2e: browser regression tests ──────────────────────────────
+    e2e:
+        name: e2e
+        runs-on: ubuntu-latest
+        needs: check
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Rust stable
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  targets: wasm32-unknown-unknown
+
+            - name: Cache Cargo
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      rust/target
+                  key: cargo-wasm-${{ runner.os }}-${{ hashFiles('rust/Cargo.lock', 'rust/Cargo.toml') }}
+                  restore-keys: cargo-wasm-${{ runner.os }}-
+
+            - name: Install wasm-pack
+              run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+            - uses: pnpm/action-setup@v4
+
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Build wasm for browser tests
+              run: pnpm build:wasm
+
+            - name: Install Playwright browsers
+              run: pnpm --filter @slicer-converter/slicer-app exec playwright install --with-deps chromium firefox
+
+            - name: Run app e2e tests
+              run: pnpm test:app:e2e

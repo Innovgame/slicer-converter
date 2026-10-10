@@ -1,0 +1,47 @@
+{
+    "name": "@slicer-converter/slicer-app",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "predev": "pnpm --filter @slicer-converter/wasm build",
+        "dev": "vite",
+        "prebuild": "pnpm --filter @slicer-converter/wasm build",
+        "build": "vite build",
+        "preview": "vite preview",
+        "test:unit": "node ../../scripts/run-vitest-safe.mjs run --pool=threads",
+        "test:unit:coverage": "node ../../scripts/run-vitest-safe.mjs run --pool=threads --coverage",
+        "test:e2e": "playwright test",
+        "test:e2e:uvtools": "playwright test tests/e2e/uvtools-compat.spec.ts --project=chromium",
+        "test:e2e:roundtrip": "node ../../scripts/clean-roundtrip-downloads.mjs && playwright test tests/e2e/roundtrip.spec.ts --project=chromium --grep @sample && node ../../scripts/collect-roundtrip-compat-report.mjs",
+        "test:e2e:roundtrip:real": "node ../../scripts/clean-roundtrip-downloads.mjs && playwright test tests/e2e/roundtrip.spec.ts --project=chromium --grep @real --workers=4 && node ../../scripts/collect-roundtrip-compat-report.mjs",
+        "test:e2e:roundtrip:real:smoke": "node ../../scripts/clean-roundtrip-downloads.mjs && playwright test tests/e2e/roundtrip.spec.ts --project=chromium --grep @smoke --workers=2 && node ../../scripts/collect-roundtrip-compat-report.mjs",
+        "test:e2e:roundtrip:real:headed": "node ../../scripts/clean-roundtrip-downloads.mjs && playwright test tests/e2e/roundtrip.spec.ts --project=chromium --grep @real --workers=4 --headed && node ../../scripts/collect-roundtrip-compat-report.mjs",
+        "bench": "playwright test --config=playwright.bench.config.ts"
+    },
+    "dependencies": {
+        "@slicer-converter/wasm": "workspace:*",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "lucide-react": "^1.54.0",
+        "radix-ui": "^1.7.0",
+        "react": "^19.2.5",
+        "react-dom": "^19.2.5",
+        "tailwind-merge": "^3.7.0"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.59.1",
+        "@tailwindcss/vite": "^4.2.2",
+        "@testing-library/jest-dom": "^6.9.1",
+        "@testing-library/react": "^16.3.2",
+        "@testing-library/user-event": "^14.6.1",
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
+        "@vitejs/plugin-react": "^6.0.1",
+        "@vitest/coverage-v8": "^4.1.4",
+        "jsdom": "^29.0.2",
+        "tailwindcss": "^4.2.2",
+        "vite": "^8.0.3",
+        "vitest": "^4.1.4"
+    }
+}

@@ -1,0 +1,397 @@
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+
+import type { ParsedHeader } from "@slicer-converter/wasm";
+
+import type { PreviewLayerInteraction } from "../../preview";
+import type { PreviewImageState } from "../model/use-converter-controller";
+import {
+    ChevronDownIcon,
+    ChevronUpIcon,
+    GridIcon,
+    LayersIcon,
+    MaximizeIcon,
+    RotateCcwIcon,
+    ScanIcon,
+    ZoomInIcon,
+    ZoomOutIcon
+} from "./icons";
+import {
+    EMPTY_LAYER_VIEW,
+    formatLayerHeight,
+    layerPixelToMm,
+    layerTopMm,
+    LayerViewport,
+    type LayerPlate,
+    type LayerViewportState
+} from "./layer-viewport";
+
+interface PreviewPanelProps {
+    parsedHeader: ParsedHeader | null;
+    selectedLayer: number;
+    previewImage: PreviewImageState | null;
+    onPreviewLayerChange(layerIndex: number, interaction?: PreviewLayerInteraction): Promise<void>;
+}
+
+/**
+ * @zh 切片层图视口：铺满的画布、缩放工具条、像素读数和纵向层轨。
+ * @en Slice layer viewport: filled canvas, zoom toolbar, pixel readout and vertical layer rail.
+ */
+export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPreviewLayerChange }: PreviewPanelProps) {
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const viewportRef = useRef<LayerViewport | null>(null);
+    const sliderDraggingRef = useRef(false);
+    const pendingDragLayerRef = useRef<number | null>(null);
+    const dragFrameRef = useRef<number | null>(null);
+    const [view, setView] = useState<LayerViewportState>(EMPTY_LAYER_VIEW);
+    const [zoomDraft, setZoomDraft] = useState<string | null>(null);
+    const totalLayers = parsedHeader?.layers.length ?? 0;
+    const visible = totalLayers > 0;
+    const plate = plateFrom(parsedHeader, previewImage);
+    const sliderMax = Math.max(totalLayers - 1, 0);
+    const railPosition = sliderMax === 0 ? 0 : (selectedLayer / sliderMax) * 100;
+    const readoutPosition = Math.min(92, Math.max(8, railPosition));
+    const percent = Math.round(view.zoom * 1000) / 10;
+
+    const cancelPendingDragFrame = (): void => {
+        if (dragFrameRef.current !== null) {
+            cancelAnimationFrame(dragFrameRef.current);
+            dragFrameRef.current = null;
+        }
+        pendingDragLayerRef.current = null;
+    };
+
+    const queueDraggingLayer = (layerIndex: number): void => {
+        pendingDragLayerRef.current = layerIndex;
+        if (dragFrameRef.current !== null) {
+            return;
+        }
+
+        dragFrameRef.current = requestAnimationFrame(() => {
+            dragFrameRef.current = null;
+            const pendingLayer = pendingDragLayerRef.current;
+            pendingDragLayerRef.current = null;
+            if (pendingLayer !== null && sliderDraggingRef.current) {
+                void onPreviewLayerChange(pendingLayer, "dragging");
+            }
+        });
+    };
+
+    const commitSelectedLayer = (layerIndex: number): void => {
+        if (!sliderDraggingRef.current) {
+            return;
+        }
+        const committedLayer = pendingDragLayerRef.current ?? layerIndex;
+        sliderDraggingRef.current = false;
+        cancelPendingDragFrame();
+        void onPreviewLayerChange(committedLayer, "committed");
+    };
+
+    const nudgeLayer = (delta: number): void => {
+        const next = selectedLayer + delta;
+        if (next < 0 || next > sliderMax) {
+            return;
+        }
+        void onPreviewLayerChange(next, "committed");
+    };
+
+    const commitZoom = (text: string): void => {
+        const value = Number(text);
+        if (Number.isFinite(value) && value > 0) {
+            viewportRef.current?.setZoom(value / 100);
+        }
+        setZoomDraft(null);
+    };
+
+    useEffect(() => cancelPendingDragFrame, []);
+
+    useLayoutEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) {
+            return;
+        }
+        const viewport = new LayerViewport(canvas, setView);
+        viewportRef.current = viewport;
+        return () => {
+            viewport.dispose();
+            viewportRef.current = null;
+        };
+    }, []);
+
+    useLayoutEffect(() => {
+        const viewport = viewportRef.current;
+        if (!viewport) {
+            return;
+        }
+        viewport.resize();
+        if (previewImage && previewImage.layerIndex === selectedLayer) {
+            viewport.setImage({
+                bitmap: previewImage.bitmap,
+                bitmapWidth: previewImage.width,
+                bitmapHeight: previewImage.height,
+                layerIndex: selectedLayer,
+                plate
+            });
+            return;
+        }
+        if (!previewImage) {
+            viewport.clear();
+        }
+    }, [
+        plate.mirrorX,
+        plate.mirrorY,
+        plate.nativeHeight,
+        plate.nativeWidth,
+        plate.platformHeight,
+        plate.platformWidth,
+        previewImage,
+        selectedLayer,
+        visible
+    ]);
+
+    return (
+        <div className="sc-viewport-fill">
+            {visible ? null : (
+                <div className="sc-slice-empty">
+                    <div className="sc-empty-mark">
+                        <LayersIcon />
+                    </div>
+                    <p className="sc-empty-title">Layer preview</p>
+                    <p className="sc-empty-copy">Open a slicer file to inspect exposure layers.</p>
+                </div>
+            )}
+            <section
+                id="previewCard"
+                className={visible ? "sc-slice" : "sc-slice is-collapsed"}
+                data-slice-layer-view=""
+            >
+                <div className="sc-slice-stage">
+                    <div className="sc-canvas-surface">
+                        <canvas
+                            id="previewCanvas"
+                            ref={canvasRef}
+                            aria-label="Layer preview"
+                            className="sc-slice-canvas"
+                            tabIndex={0}
+                            title="Scroll to zoom, drag to pan. 0 fits the window, 1 is 1:1 pixels."
+                        />
+                        {view.error ? <p className="sc-slice-error">{view.error}</p> : null}
+                    </div>
+                    <div className="sc-layer-rail" aria-label="Layer height" data-layer-rail="">
+                        <div className="sc-layer-rail-stage">
+                            <label className="sc-sr" htmlFor="layerSlider">
+                                Layer
+                            </label>
+                            <input
+                                id="layerSlider"
+                                aria-label="Layer height"
+                                aria-orientation="vertical"
+                                className="sc-layer-slider"
+                                disabled={!visible}
+                                max={sliderMax}
+                                min="0"
+                                style={{ "--layer-fill": `${railPosition}%` } as CSSProperties}
+                                type="range"
+                                value={selectedLayer}
+                                onPointerDown={(event) => {
+                                    sliderDraggingRef.current = true;
+                                    void onPreviewLayerChange(
+                                        Number.parseInt(event.currentTarget.value, 10),
+                                        "dragging"
+                                    );
+                                }}
+                                onPointerUp={(event) =>
+                                    commitSelectedLayer(Number.parseInt(event.currentTarget.value, 10))
+                                }
+                                onPointerCancel={(event) =>
+                                    commitSelectedLayer(Number.parseInt(event.currentTarget.value, 10))
+                                }
+                                onBlur={(event) => commitSelectedLayer(Number.parseInt(event.currentTarget.value, 10))}
+                                onChange={(event) => {
+                                    const layerIndex = Number.parseInt(event.target.value, 10);
+                                    if (sliderDraggingRef.current) {
+                                        queueDraggingLayer(layerIndex);
+                                        return;
+                                    }
+                                    void onPreviewLayerChange(layerIndex, "committed");
+                                }}
+                            />
+                            <div className="sc-rail-readout" data-clip-end="current" style={{ bottom: `${readoutPosition}%` }}>
+                                <button
+                                    aria-label="Increase layer"
+                                    className="sc-rail-nudge"
+                                    disabled={!visible || selectedLayer >= sliderMax}
+                                    type="button"
+                                    onClick={() => nudgeLayer(1)}
+                                >
+                                    <ChevronUpIcon />
+                                </button>
+                                <span className="sc-rail-copy">
+                                    <span className="sc-rail-value">
+                                        {formatLayerHeight(
+                                            layerTopMm(selectedLayer, parsedHeader?.metadata.layer_height_mm)
+                                        )}{" "}
+                                        mm
+                                    </span>
+                                    <span className="sc-rail-detail">
+                                        <span id="layerNum" className="sc-sr">
+                                            {selectedLayer}
+                                        </span>
+                                        <span>
+                                            {selectedLayer + 1} / {totalLayers} 层
+                                        </span>
+                                    </span>
+                                </span>
+                                <button
+                                    aria-label="Decrease layer"
+                                    className="sc-rail-nudge"
+                                    disabled={!visible || selectedLayer <= 0}
+                                    type="button"
+                                    onClick={() => nudgeLayer(-1)}
+                                >
+                                    <ChevronDownIcon />
+                                </button>
+                            </div>
+                        </div>
+                        <button
+                            aria-label="Reset to first layer"
+                            className="sc-clip-reset"
+                            disabled={!visible || selectedLayer === 0}
+                            type="button"
+                            onClick={() => void onPreviewLayerChange(0, "committed")}
+                        >
+                            <RotateCcwIcon />
+                        </button>
+                    </div>
+                </div>
+                <div className="sc-slice-chrome">
+                    <div aria-label="Layer view" className="sc-slice-toolbar" role="toolbar">
+                        <ToolButton
+                            disabled={!view.ready}
+                            label="Fit window"
+                            onClick={() => viewportRef.current?.fit()}
+                        >
+                            <MaximizeIcon />
+                        </ToolButton>
+                        <ToolButton
+                            disabled={!view.ready}
+                            label="1:1 pixels"
+                            onClick={() => viewportRef.current?.setZoom(1)}
+                        >
+                            <ScanIcon />
+                        </ToolButton>
+                        <ToolButton
+                            disabled={!view.ready}
+                            label="Zoom out"
+                            onClick={() => viewportRef.current?.zoomBy(0.5)}
+                        >
+                            <ZoomOutIcon />
+                        </ToolButton>
+                        <input
+                            aria-label="Zoom percent"
+                            className="sc-zoom-field"
+                            disabled={!view.ready}
+                            inputMode="decimal"
+                            value={zoomDraft ?? String(percent)}
+                            onBlur={(event) => commitZoom(event.currentTarget.value)}
+                            onChange={(event) => setZoomDraft(event.currentTarget.value)}
+                            onKeyDown={(event) => {
+                                if (event.key === "Enter") {
+                                    event.currentTarget.blur();
+                                }
+                            }}
+                        />
+                        <span className="sc-zoom-unit">%</span>
+                        <ToolButton
+                            disabled={!view.ready}
+                            label="Zoom in"
+                            onClick={() => viewportRef.current?.zoomBy(2)}
+                        >
+                            <ZoomInIcon />
+                        </ToolButton>
+                        <button
+                            aria-label="Pixel grid"
+                            aria-pressed={view.grid}
+                            className={view.grid ? "sc-tool is-pressed" : "sc-tool"}
+                            disabled={!view.ready}
+                            title="Pixel grid"
+                            type="button"
+                            onClick={() => viewportRef.current?.setGrid(!view.grid)}
+                        >
+                            <GridIcon />
+                        </button>
+                    </div>
+                    <div className="sc-pixel-status">
+                        <span>{resolutionText(plate, view)}</span>
+                        <span className="sc-pixel-readout">{pixelReadout(plate, view.pixel)}</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    );
+}
+
+function ToolButton({
+    children,
+    disabled,
+    label,
+    onClick
+}: {
+    children: ReactNode;
+    disabled: boolean;
+    label: string;
+    onClick(): void;
+}) {
+    return (
+        <button
+            aria-label={label}
+            className="sc-tool"
+            disabled={disabled}
+            title={label}
+            type="button"
+            onClick={onClick}
+        >
+            {children}
+        </button>
+    );
+}
+
+function plateFrom(header: ParsedHeader | null, preview: PreviewImageState | null): LayerPlate {
+    return {
+        nativeWidth: header?.metadata.resolution_x || preview?.width || 256,
+        nativeHeight: header?.metadata.resolution_y || preview?.height || 256,
+        platformWidth: header?.metadata.display_width_mm || 0,
+        platformHeight: header?.metadata.display_height_mm || 0,
+        mirrorX: Boolean(header?.metadata.mirror_x),
+        mirrorY: Boolean(header?.metadata.mirror_y)
+    };
+}
+
+function resolutionText(plate: LayerPlate, view: LayerViewportState): string {
+    if (plate.nativeWidth < 1 || plate.nativeHeight < 1) {
+        return "\u00a0";
+    }
+    const size =
+        plate.platformWidth > 0 && plate.platformHeight > 0
+            ? ` · ${formatMm(plate.platformWidth)} × ${formatMm(plate.platformHeight)} mm`
+            : "";
+    const preview = view.ready && !view.settled ? " · preview" : "";
+    return `${plate.nativeWidth} × ${plate.nativeHeight}${size}${preview}`;
+}
+
+function pixelReadout(plate: LayerPlate, pixel: LayerViewportState["pixel"]): string {
+    if (!pixel) {
+        return "X — × Y — · —.00 × —.00 mm · grey —";
+    }
+    const mm = layerPixelToMm(plate, pixel.x, pixel.y);
+    const mmText = mm ? `${formatMm(mm.x)} × ${formatMm(mm.y)} mm` : "—.00 × —.00 mm";
+    const grey = pixel.grey === undefined ? "—" : String(pixel.grey);
+    return `X ${pixel.x} × Y ${pixel.y} · ${mmText} · grey ${grey}`;
+}
+
+function formatMm(value: number): string {
+    return value.toLocaleString("en-US", {
+        useGrouping: false,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}

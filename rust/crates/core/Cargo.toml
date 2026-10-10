@@ -1,0 +1,39 @@
+[package]
+name = "slicer-converter-core"
+version = "0.1.0"
+edition = "2021"
+description = "Core MSLA/DLP slicer file format conversion engine"
+license = "MIT"
+
+[lib]
+name = "slicer_converter_core"
+crate-type = ["rlib"]
+bench = false
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+binrw = "0.15"
+png = "0.18"
+crc32fast = "1"
+zip = { version = "8", default-features = false, features = ["deflate"] }
+thiserror = "2"
+aes = "0.8"
+cbc = { version = "0.1", features = ["alloc"] }
+sha2 = "0.10"
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+flate2 = "1"
+
+[[bench]]
+name = "codec_bench"
+harness = false
+
+[[bench]]
+name = "preview_bench"
+harness = false
+
+[[bench]]
+name = "transcode_fast_path_bench"
+harness = false
