@@ -167,4 +167,4 @@ Worker
 
 这份文档可作为“对外说明 / 交付摘要”版本使用；若要继续实施剩余工作，请参考更细的执行计划：
 
-- `docs/superpowers/plans/2026-04-14-zip-optimization-remaining-work.md`
+- `docs/internal/superpowers/plans/2026-04-14-zip-optimization-remaining-work.md`

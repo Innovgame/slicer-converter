@@ -2,6 +2,12 @@
 
 This file records changes that users can see. Versions follow repository tags, for example `v0.1.0`.
 
+## 0.1.1
+
+- Release assets add macOS Apple Silicon, macOS Intel, and `SHA256SUMS`.
+- `examples/sample.ctb` is a tiny file for a first CLI conversion.
+- Maintainer notes moved under `docs/internal/`.
+
 ## 0.1.0
 
 First public snapshot.

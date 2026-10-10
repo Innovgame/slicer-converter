@@ -9,7 +9,7 @@ Resin slicer file converter for MSLA and DLP printers. One Rust format registry 
 
 ![Slicer File Converter preview](docs/images/app-preview-2.png)
 
-Version `0.1.0`. Download CLI binaries from [Releases](https://github.com/Innovgame/slicer-converter/releases). npm and crates.io packages are not published; build the browser package from source. Creality CXDLP v1, v2, and v3 are import-only. See [CHANGELOG.md](CHANGELOG.md).
+Version `0.1.1`. Download CLI binaries from [Releases](https://github.com/Innovgame/slicer-converter/releases) and check them with `SHA256SUMS`. npm and crates.io packages are not published; build the browser package from source. Creality CXDLP v1, v2, and v3 are import-only. See [CHANGELOG.md](CHANGELOG.md).
 
 The live test page is at <https://innovgame.github.io/slicer-converter/>.
 
@@ -108,6 +108,9 @@ Binaries:
 - Linux / macOS: `rust/target/release/slicer-converter`
 
 ```bash
+# Try the included fixture first.
+slicer-converter --input examples/sample.ctb --output sample.sl1
+
 # Source format comes from file bytes. Target format comes from the output name.
 slicer-converter --input sample.goo --output sample.ctb
 
@@ -145,7 +148,7 @@ One platform:
 
 macOS binaries are built on macOS. Intel and Apple Silicon produce `x86_64-apple-darwin` and `aarch64-apple-darwin`. Use `lipo` on macOS when you need a universal binary.
 
-Tagged releases also publish Windows, Linux glibc, and Linux musl binaries through [Release](.github/workflows/release.yml).
+Tagged releases publish Windows, Linux glibc, Linux musl, macOS Apple Silicon, and macOS Intel binaries through [Release](.github/workflows/release.yml). Each release includes `SHA256SUMS`.
 
 ## Browser API
 
@@ -234,6 +237,7 @@ After CI succeeds on `master`, [Deploy to GitHub Pages](.github/workflows/deploy
 
 ## Documentation
 
+- [Documentation index](docs/README.md)
 - [Troubleshooting / FAQ](docs/troubleshooting-faq.md)
 - [Deployment runbook](docs/deployment-runbook.md)
 - [Browser integration reference](docs/browser-integration-reference.md)

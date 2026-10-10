@@ -437,7 +437,7 @@ flowchart TB
 
 > **验收口径勘误（2026-04-17）**：`ZipStreamAssembler` 落地后，`finalizeWallMs` 的含义从"整段 assemble 耗时"变为"从 assembler 构造到 sink 结束"，与 layer 阶段高度重叠。§4 "Assemble wall-clock ≤ 1.0s" 目标统一按新增的 `finalizeOnlyWallMs`（`finalize()` 入口到 `sink.finish()` 完成）计量。`finalizeWallMs` 保留为 `totalWallMs` 的向后兼容别名，不再作为验收指标。
 >
-> **峰值内存验收通道**：bench harness 在 Playwright headless 里无法触发 `showSaveFilePicker`，必定走 `BlobOutputSink`，因此 115.5 MB 的测量结果不能证伪"生产路径 O(workers × chunk)"。有效验证路径：(1) 桌面 Chromium 手动跑 `pnpm bench:app`，允许用户选择保存位置，sink 自动升为 `StreamOutputSink`；或 (2) Task 3 引入的 `StreamingResponseSink` 被主线程选中时（当前尚未接入选择链，属 T3.1 之外的后续 sink 层工作）。详见 [docs/superpowers/plans/2026-04-17-t3-1-tail-finalize-metric-and-sink.md](superpowers/plans/2026-04-17-t3-1-tail-finalize-metric-and-sink.md)。
+> **峰值内存验收通道**：bench harness 在 Playwright headless 里无法触发 `showSaveFilePicker`，必定走 `BlobOutputSink`，因此 115.5 MB 的测量结果不能证伪"生产路径 O(workers × chunk)"。有效验证路径：(1) 桌面 Chromium 手动跑 `pnpm bench:app`，允许用户选择保存位置，sink 自动升为 `StreamOutputSink`；或 (2) Task 3 引入的 `StreamingResponseSink` 被主线程选中时（当前尚未接入选择链，属 T3.1 之外的后续 sink 层工作）。详见 [docs/internal/superpowers/plans/2026-04-17-t3-1-tail-finalize-metric-and-sink.md](internal/superpowers/plans/2026-04-17-t3-1-tail-finalize-metric-and-sink.md)。
 
 **每项优化上前必须**：
 

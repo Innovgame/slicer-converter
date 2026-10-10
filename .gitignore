@@ -1,3 +1,6 @@
+# Local agent plans. Not part of the public docs.
+docs/internal/superpowers/
+
 # Build outputs
 target/
 rust/target/

@@ -28,6 +28,14 @@ jobs:
                       target: x86_64-unknown-linux-musl
                       asset_name: slicer-converter-linux-x86_64-musl
                       binary_name: slicer-converter
+                    - os: macos-latest
+                      target: aarch64-apple-darwin
+                      asset_name: slicer-converter-macos-aarch64
+                      binary_name: slicer-converter
+                    - os: macos-13
+                      target: x86_64-apple-darwin
+                      asset_name: slicer-converter-macos-x86_64
+                      binary_name: slicer-converter
         steps:
             - uses: actions/checkout@v5
 
@@ -68,12 +76,14 @@ jobs:
                   GH_TOKEN: ${{ github.token }}
               run: |
                   shopt -s nullglob
-                  assets=(dist/*)
-                  if [ ${#assets[@]} -eq 0 ]; then
+                  cd dist
+                  binaries=(slicer-converter-*)
+                  if [ ${#binaries[@]} -eq 0 ]; then
                       echo "No release assets found" >&2
                       exit 1
                   fi
-                  gh release create "${GITHUB_REF_NAME}" "${assets[@]}" \
+                  sha256sum "${binaries[@]}" > SHA256SUMS
+                  gh release create "${GITHUB_REF_NAME}" "${binaries[@]}" SHA256SUMS \
                       --repo "${GITHUB_REPOSITORY}" \
                       --title "${GITHUB_REF_NAME}" \
-                      --notes "Binaries built from ${GITHUB_SHA}. Includes Windows x64, Linux glibc x64, and Linux musl x64. npm and crates.io packages are not published. See CHANGELOG.md."
+                      --notes "Binaries built from ${GITHUB_SHA}. Includes Windows x64, Linux glibc x64, Linux musl x64, macOS Apple Silicon, and macOS Intel. Verify downloads with SHA256SUMS. npm and crates.io packages are not published. See CHANGELOG.md."
