@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { LayersIcon } from "./icons";
 import { ProjectLinks } from "./project-links";
 import { ThemeToggle } from "./theme-toggle";
+import { LanguageToggle } from "./language-toggle";
 
 interface AppShellProps {
     title: string;
@@ -36,6 +37,7 @@ export function AppShell({ title, documentStatus, documentLoaded, source, viewer
                 <div className="sc-header-actions">
                     <ProjectLinks />
                     <ThemeToggle />
+                    <LanguageToggle />
                 </div>
             </header>
             <div className="sc-body">

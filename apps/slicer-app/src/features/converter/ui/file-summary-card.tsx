@@ -1,3 +1,5 @@
+import { useTranslation } from "../../../shared/i18n/i18n";
+
 import { useEffect, useRef, useState } from "react";
 
 import { listImportableFileExtensions, type ParsedHeader } from "@innovgame/slicer-converter";
@@ -17,6 +19,7 @@ interface FileSummaryCardProps {
  * @en Source column: drop target, format summary and thumbnail.
  */
 export function FileSummaryCard({ sourceFile, parsedHeader, onFileSelect }: FileSummaryCardProps) {
+    const { t } = useTranslation();
     const [dragging, setDragging] = useState(false);
     const dragDepthRef = useRef(0);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -35,8 +38,8 @@ export function FileSummaryCard({ sourceFile, parsedHeader, onFileSelect }: File
     const accept = importableExtensions.join(",");
     const supportText =
         importableExtensions.length > 0
-            ? `Supports ${importableExtensions.join(", ")} or click to browse`
-            : "Load WASM to discover supported slicer files";
+            ? t("source.supports", { extensions: importableExtensions.join(", ") })
+            : t("source.loadingFormats");
     const layerCount = parsedHeader ? parsedHeader.layers.length : null;
 
     return (
@@ -45,14 +48,16 @@ export function FileSummaryCard({ sourceFile, parsedHeader, onFileSelect }: File
                 <span aria-hidden="true" className="sc-panel-mark">
                     <FileIcon />
                 </span>
-                <h2>Source</h2>
-                {layerCount !== null ? <span className="sc-panel-meta">{layerCount} layers</span> : null}
+                <h2>{t("source.title")}</h2>
+                {layerCount !== null ? (
+                    <span className="sc-panel-meta">{t("source.layerCount", { count: layerCount })}</span>
+                ) : null}
             </header>
             <div className="sc-panel-body">
                 <div
                     id="dropZone"
                     role="button"
-                    aria-label="Drop slicer file or browse"
+                    aria-label={t("source.browse")}
                     tabIndex={0}
                     onClick={() => fileInputRef.current?.click()}
                     onKeyDown={(event) => {
@@ -92,11 +97,7 @@ export function FileSummaryCard({ sourceFile, parsedHeader, onFileSelect }: File
                         <UploadIcon />
                     </span>
                     <p className="sc-dropzone-title">
-                        {dragging
-                            ? "Release to upload your slicer file"
-                            : sourceFile
-                              ? "Replace the current file"
-                              : "Drag and drop a slicer file here"}
+                        {dragging ? t("source.release") : sourceFile ? t("source.replace") : t("source.drop")}
                     </p>
                     <p className="sc-dropzone-copy" title={supportText}>
                         {supportText}
@@ -119,17 +120,17 @@ export function FileSummaryCard({ sourceFile, parsedHeader, onFileSelect }: File
 
                 <div id="fileInfo" className={fileInfoVisible ? "sc-file-info" : "sc-file-info hidden"}>
                     <dl>
-                        <dt>File</dt>
+                        <dt>{t("source.file")}</dt>
                         <dd id="fileName">{sourceFile?.name ?? "-"}</dd>
-                        <dt>Size</dt>
+                        <dt>{t("source.size")}</dt>
                         <dd id="fileSize">{sourceFile ? formatBytes(sourceFile.size) : "-"}</dd>
-                        <dt>Format</dt>
+                        <dt>{t("common.format")}</dt>
                         <dd id="fileFormat">{parsedHeader?.format.toUpperCase() ?? "-"}</dd>
-                        <dt>Resolution</dt>
+                        <dt>{t("source.resolution")}</dt>
                         <dd id="fileRes">
                             {metadata ? `${metadata.resolution_x || "?"} × ${metadata.resolution_y || "?"}` : "-"}
                         </dd>
-                        <dt>Layers</dt>
+                        <dt>{t("source.layers")}</dt>
                         <dd id="fileLayers">{parsedHeader?.layers.length ?? "-"}</dd>
                     </dl>
                     <div id="thumbnailContainer" ref={thumbnailContainerRef} className="sc-thumbnail hidden">

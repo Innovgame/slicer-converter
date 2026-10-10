@@ -1,3 +1,5 @@
+import { useTranslation } from "../../shared/i18n/i18n";
+
 import {
     AppShell,
     ConvertPanel,
@@ -12,12 +14,13 @@ import {
  * @en Converter page. Composes workbench slots and does not own conversion or preview requests.
  */
 export function ConverterPage() {
+    const { t } = useTranslation();
     const controller = useConverterController();
 
     return (
         <AppShell
-            title="Slicer File Converter"
-            documentStatus={controller.sourceFile?.name ?? "No file open"}
+            title={t("app.title")}
+            documentStatus={controller.sourceFile?.name ?? t("app.noFile")}
             documentLoaded={controller.sourceFile !== null}
             source={
                 <FileSummaryCard

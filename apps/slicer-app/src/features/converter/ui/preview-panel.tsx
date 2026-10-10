@@ -1,3 +1,5 @@
+import { useTranslation } from "../../../shared/i18n/i18n";
+
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import type { ParsedHeader } from "@innovgame/slicer-converter";
@@ -37,6 +39,7 @@ interface PreviewPanelProps {
  * @en Slice layer viewport: filled canvas, zoom toolbar, pixel readout and vertical layer rail.
  */
 export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPreviewLayerChange }: PreviewPanelProps) {
+    const { t } = useTranslation();
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const viewportRef = useRef<LayerViewport | null>(null);
     const sliderDraggingRef = useRef(false);
@@ -188,10 +191,8 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                     <div className="sc-empty-mark">
                         <LayersIcon />
                     </div>
-                    <p className="sc-empty-title">Layer preview</p>
-                    <p className="sc-empty-copy">
-                        Open a slicer file to inspect exposure layers. Drop files in the Source column to start.
-                    </p>
+                    <p className="sc-empty-title">{t("preview.title")}</p>
+                    <p className="sc-empty-copy">{t("preview.empty")}</p>
                 </div>
             )}
             <section
@@ -204,21 +205,21 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                         <canvas
                             id="previewCanvas"
                             ref={canvasRef}
-                            aria-label="Layer preview"
+                            aria-label={t("preview.title")}
                             className="sc-slice-canvas"
                             tabIndex={0}
-                            title="Scroll to zoom, drag to pan. 0 fits the window, 1 is 1:1 pixels."
+                            title={t("preview.canvasHelp")}
                         />
-                        {view.error ? <p className="sc-slice-error">{view.error}</p> : null}
+                        {view.error ? <p className="sc-slice-error">{t("preview.imageError")}</p> : null}
                     </div>
-                    <div className="sc-layer-rail" aria-label="Layer height" data-layer-rail="">
+                    <div className="sc-layer-rail" aria-label={t("preview.layerHeight")} data-layer-rail="">
                         <div className="sc-layer-rail-stage">
                             <label className="sc-sr" htmlFor="layerSlider">
-                                Layer
+                                {t("preview.layer")}
                             </label>
                             <input
                                 id="layerSlider"
-                                aria-label="Layer height"
+                                aria-label={t("preview.layerHeight")}
                                 aria-orientation="vertical"
                                 className="sc-layer-slider"
                                 disabled={!visible}
@@ -259,7 +260,7 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                                 }}
                             >
                                 <button
-                                    aria-label="Increase layer"
+                                    aria-label={t("preview.increase")}
                                     className="sc-rail-nudge"
                                     disabled={!visible || displayedLayer >= sliderMax}
                                     type="button"
@@ -273,12 +274,12 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                                             {displayedLayer}
                                         </span>
                                         <input
-                                            aria-label="Layer number"
+                                            aria-label={t("preview.layerNumber")}
                                             className="sc-layer-number-input"
                                             disabled={!visible}
                                             inputMode="numeric"
                                             type="text"
-                                            title={`Enter a layer number from 1 to ${totalLayers}`}
+                                            title={t("preview.jumpHelp", { count: totalLayers })}
                                             value={layerDraft ?? String(displayedLayer + 1)}
                                             onFocus={(event) => event.currentTarget.select()}
                                             onChange={(event) => setLayerDraft(event.currentTarget.value)}
@@ -295,7 +296,7 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                                         />
                                         <span className="sc-rail-total">/ {totalLayers}</span>
                                     </span>
-                                    <span className="sc-rail-value" aria-label="Layer Z height">
+                                    <span className="sc-rail-value" aria-label={t("preview.zHeight")}>
                                         {formatLayerHeight(
                                             layerTopMm(displayedLayer, parsedHeader?.metadata.layer_height_mm)
                                         )}
@@ -303,7 +304,7 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                                     </span>
                                 </span>
                                 <button
-                                    aria-label="Decrease layer"
+                                    aria-label={t("preview.decrease")}
                                     className="sc-rail-nudge"
                                     disabled={!visible || displayedLayer <= 0}
                                     type="button"
@@ -314,7 +315,7 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                             </div>
                         </div>
                         <button
-                            aria-label="Reset to first layer"
+                            aria-label={t("preview.reset")}
                             className="sc-clip-reset"
                             disabled={!visible || displayedLayer === 0}
                             type="button"
@@ -325,30 +326,30 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                     </div>
                 </div>
                 <div className="sc-slice-chrome">
-                    <div aria-label="Layer view" className="sc-slice-toolbar" role="toolbar">
+                    <div aria-label={t("preview.toolbar")} className="sc-slice-toolbar" role="toolbar">
                         <ToolButton
                             disabled={!view.ready}
-                            label="Fit window"
+                            label={t("preview.fit")}
                             onClick={() => viewportRef.current?.fit()}
                         >
                             <MaximizeIcon />
                         </ToolButton>
                         <ToolButton
                             disabled={!view.ready}
-                            label="1:1 pixels"
+                            label={t("preview.actualPixels")}
                             onClick={() => viewportRef.current?.setZoom(1)}
                         >
                             <ScanIcon />
                         </ToolButton>
                         <ToolButton
                             disabled={!view.ready}
-                            label="Zoom out"
+                            label={t("preview.zoomOut")}
                             onClick={() => viewportRef.current?.zoomBy(0.5)}
                         >
                             <ZoomOutIcon />
                         </ToolButton>
                         <input
-                            aria-label="Zoom percent"
+                            aria-label={t("preview.zoomPercent")}
                             className="sc-zoom-field"
                             disabled={!view.ready}
                             inputMode="decimal"
@@ -364,17 +365,17 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                         <span className="sc-zoom-unit">%</span>
                         <ToolButton
                             disabled={!view.ready}
-                            label="Zoom in"
+                            label={t("preview.zoomIn")}
                             onClick={() => viewportRef.current?.zoomBy(2)}
                         >
                             <ZoomInIcon />
                         </ToolButton>
                         <button
-                            aria-label="Pixel grid"
+                            aria-label={t("preview.grid")}
                             aria-pressed={view.grid}
                             className={view.grid ? "sc-tool is-pressed" : "sc-tool"}
                             disabled={!view.ready}
-                            title="Pixel grid"
+                            title={t("preview.grid")}
                             type="button"
                             onClick={() => viewportRef.current?.setGrid(!view.grid)}
                         >
@@ -382,8 +383,8 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                         </button>
                     </div>
                     <div className="sc-pixel-status">
-                        <span>{resolutionText(plate, view)}</span>
-                        <span className="sc-pixel-readout">{pixelReadout(plate, view.pixel)}</span>
+                        <span>{resolutionText(plate, view, t("preview.interactive"))}</span>
+                        <span className="sc-pixel-readout">{pixelReadout(plate, view.pixel, t("preview.grey"))}</span>
                     </div>
                 </div>
             </section>
@@ -427,7 +428,7 @@ function plateFrom(header: ParsedHeader | null, preview: PreviewImageState | nul
     };
 }
 
-function resolutionText(plate: LayerPlate, view: LayerViewportState): string {
+function resolutionText(plate: LayerPlate, view: LayerViewportState, previewLabel: string): string {
     if (plate.nativeWidth < 1 || plate.nativeHeight < 1) {
         return "\u00a0";
     }
@@ -435,18 +436,18 @@ function resolutionText(plate: LayerPlate, view: LayerViewportState): string {
         plate.platformWidth > 0 && plate.platformHeight > 0
             ? ` · ${formatMm(plate.platformWidth)} × ${formatMm(plate.platformHeight)} mm`
             : "";
-    const preview = view.ready && !view.settled ? " · preview" : "";
+    const preview = view.ready && !view.settled ? ` · ${previewLabel}` : "";
     return `${plate.nativeWidth} × ${plate.nativeHeight}${size}${preview}`;
 }
 
-function pixelReadout(plate: LayerPlate, pixel: LayerViewportState["pixel"]): string {
+function pixelReadout(plate: LayerPlate, pixel: LayerViewportState["pixel"], greyLabel: string): string {
     if (!pixel) {
-        return "X — × Y — · —.00 × —.00 mm · grey —";
+        return `X — × Y — · —.00 × —.00 mm · ${greyLabel} —`;
     }
     const mm = layerPixelToMm(plate, pixel.x, pixel.y);
     const mmText = mm ? `${formatMm(mm.x)} × ${formatMm(mm.y)} mm` : "—.00 × —.00 mm";
     const grey = pixel.grey === undefined ? "—" : String(pixel.grey);
-    return `X ${pixel.x} × Y ${pixel.y} · ${mmText} · grey ${grey}`;
+    return `X ${pixel.x} × Y ${pixel.y} · ${mmText} · ${greyLabel} ${grey}`;
 }
 
 function formatMm(value: number): string {

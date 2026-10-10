@@ -1,0 +1,115 @@
+{
+    "app": {
+        "title": "切片文件转换器",
+        "noFile": "未打开文件"
+    },
+    "source": {
+        "title": "源文件",
+        "file": "文件",
+        "size": "大小",
+        "resolution": "分辨率",
+        "layers": "层数",
+        "browse": "拖入切片文件或浏览文件",
+        "release": "松开以打开切片文件",
+        "replace": "替换当前文件",
+        "drop": "将切片文件拖到这里",
+        "loadingFormats": "加载后显示支持的切片格式",
+        "supports": "支持 {{extensions}}，或点击浏览文件",
+        "layerCount": "{{count}} 层"
+    },
+    "common": {
+        "format": "格式"
+    },
+    "export": {
+        "title": "导出",
+        "output": "输出文件",
+        "target": "目标格式",
+        "fileName": "文件名",
+        "suffix": "扩展名",
+        "version": "版本",
+        "convert": "转换",
+        "cancel": "取消",
+        "retry": "重试转换",
+        "from": "源格式 {{format}}",
+        "empty": "打开切片文件后选择目标格式。"
+    },
+    "progress": {
+        "converting": "正在转换…",
+        "opening": "正在打开文件…",
+        "zipPreparing": "正在转换并准备 ZIP 图层…",
+        "finalizing": "正在完成归档…",
+        "complete": "转换完成。",
+        "assembling": "正在组装文件…",
+        "layer": "正在转换图层 {{current}}/{{total}}…",
+        "zipLayer": "正在转换并准备 ZIP 图层 {{current}}/{{total}}…"
+    },
+    "status": {
+        "cancelled": "转换已取消。",
+        "loading": "正在加载 WASM…",
+        "initializing": "WASM 已加载，正在初始化处理线程…",
+        "compiling": "正在编译 WASM 模块…",
+        "notReady": "WASM 尚未加载，无法解析文件。",
+        "parsed": "已解析 {{format}}：{{count}} 层，{{resolution}}",
+        "ready": "就绪：已预热 {{workers}} 个处理线程，按需扩展至 {{max}} 个。",
+        "loadingProgress": "正在加载 WASM… {{progress}}",
+        "loadError": "WASM 加载失败：{{detail}}",
+        "parseError": "解析失败：{{detail}}",
+        "convertError": "转换失败：{{detail}}",
+        "decodeError": "图层解码失败：{{detail}}",
+        "converted": "已将 {{count}} 层转换为 {{format}}，用时 {{duration}}。输出 {{output}}。{{diagnostics}}",
+        "disk": "直接写入磁盘",
+        "workers": "并行处理",
+        "streamedWorkers": "并行处理（直接写入）",
+        "setup": "准备",
+        "layers": "图层处理",
+        "workerSum": "线程累计",
+        "assemble": "组装",
+        "finalize": "收尾",
+        "geometryWarning": "警告：源设备 {{source}} 的尺寸与目标设备 {{target}}（{{extension}}）不同。导出将继续，不对图层重采样。源分辨率为 {{sourceResolution}}，平台 {{sourceSize}} mm；目标分辨率为 {{targetResolution}}，平台 {{targetSize}} mm。UVTools 可能提示像素非正方形或图像比例不正确，打印模型可能出现比例拉伸。",
+        "photonsKeepWarning": "警告：PhotonS 导出保留源图层像素，但将平台尺寸从 {{sourceSize}} mm 改为 {{targetSize}} mm。UVTools 可能提示图像比例变化。",
+        "photonsResampleWarning": "警告：PhotonS 导出将图层从 {{sourceResolution}} 重采样至 {{targetResolution}}，平台尺寸改为 {{targetSize}} mm，源平台为 {{sourceSize}} mm。最近邻重采样可能改变边缘和打印比例。",
+        "manualTarget": "使用手动 {{format}} 目标：{{target}}"
+    },
+    "preview": {
+        "title": "图层预览",
+        "empty": "打开切片文件以查看曝光图层。将文件拖入源文件栏即可开始。",
+        "canvasHelp": "滚轮缩放，拖动平移。按 0 适应窗口，按 1 以原始像素显示。",
+        "layerHeight": "图层高度",
+        "layer": "图层",
+        "layerNumber": "层数",
+        "zHeight": "图层 Z 高度",
+        "jumpHelp": "输入 1～{{count}} 的层数后按 Enter 跳转",
+        "increase": "上一层（增加层数）",
+        "decrease": "下一层（减少层数）",
+        "reset": "返回第一层",
+        "toolbar": "图层视图",
+        "fit": "适应窗口",
+        "actualPixels": "原始像素",
+        "zoomOut": "缩小",
+        "zoomIn": "放大",
+        "zoomPercent": "缩放比例",
+        "grid": "像素网格",
+        "imageError": "无法显示图层图像",
+        "interactive": "预览",
+        "grey": "灰度"
+    },
+    "links": {
+        "title": "项目链接",
+        "github": "GitHub",
+        "githubHelp": "打开 slicer-converter GitHub 仓库",
+        "bug": "报告问题",
+        "bugShort": "问题",
+        "idea": "功能建议",
+        "ideaShort": "建议"
+    },
+    "theme": {
+        "toLight": "切换到浅色主题",
+        "toDark": "切换到深色主题",
+        "currentLight": "当前主题：浅色",
+        "currentDark": "当前主题：深色"
+    },
+    "language": {
+        "toChinese": "切换到中文",
+        "toEnglish": "Switch to English"
+    }
+}

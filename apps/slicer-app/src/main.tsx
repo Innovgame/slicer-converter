@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { ThemeProvider } from "./app/providers";
+import { LanguageProvider } from "./shared/i18n/language-provider";
 import { ConverterPage } from "./app/routes/converter-page";
 import "./styles.css";
 
@@ -14,7 +15,9 @@ if (!root) {
 createRoot(root).render(
     <StrictMode>
         <ThemeProvider>
-            <ConverterPage />
+            <LanguageProvider>
+                <ConverterPage />
+            </LanguageProvider>
         </ThemeProvider>
     </StrictMode>
 );

@@ -1,3 +1,5 @@
+import { useTranslation } from "../../../shared/i18n/i18n";
+
 import { BugIcon, GitHubIcon, IdeaIcon } from "./icons";
 import { PROJECT_LINKS } from "./project-link-targets";
 
@@ -12,8 +14,9 @@ const LINK_ICONS = {
  * @en Header links for the project and feedback. They sit in one tool well, open in a new tab, and do not change the current conversion.
  */
 export function ProjectLinks() {
+    const { t } = useTranslation();
     return (
-        <nav className="sc-project-links" aria-label="Project">
+        <nav className="sc-project-links" aria-label={t("links.title")}>
             {PROJECT_LINKS.map((link) => {
                 const LinkIcon = LINK_ICONS[link.id];
                 return (
@@ -23,12 +26,14 @@ export function ProjectLinks() {
                         href={link.href}
                         target="_blank"
                         rel="noreferrer noopener"
-                        aria-label={link.ariaLabel}
-                        title={link.label}
+                        aria-label={t(link.id === "github" ? "links.githubHelp" : `links.${link.id}`)}
+                        title={t(`links.${link.id}`)}
                     >
                         <LinkIcon />
-                        <span className="sc-project-link-label">{link.label}</span>
-                        <span className="sc-project-link-short">{link.shortLabel}</span>
+                        <span className="sc-project-link-label">{t(`links.${link.id}`)}</span>
+                        <span className="sc-project-link-short">
+                            {t(link.id === "github" ? "links.github" : `links.${link.id}Short`)}
+                        </span>
                     </a>
                 );
             })}

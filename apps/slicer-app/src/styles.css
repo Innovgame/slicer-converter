@@ -827,6 +827,12 @@ select option:disabled {
     background: color-mix(in srgb, var(--color-background) 45%, var(--color-card));
 }
 
+.sc-language-toggle {
+    width: 32px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
 .sc-tool:hover:not(:disabled),
 .sc-icon-btn:hover,
 .sc-rail-nudge:hover:not(:disabled),

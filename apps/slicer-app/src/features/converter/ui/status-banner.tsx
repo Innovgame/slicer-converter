@@ -1,3 +1,7 @@
+import { translateRuntimeMessage } from "../../../shared/i18n/runtime-messages";
+
+import { useTranslation } from "../../../shared/i18n/i18n";
+
 import type { StatusState } from "../model/use-converter-controller";
 
 interface StatusBannerProps {
@@ -10,6 +14,7 @@ interface StatusBannerProps {
  * @en Status-bar line. The node stays mounted when empty so page tests and e2e can find it.
  */
 export function StatusBanner({ id, status }: StatusBannerProps) {
+    const { t } = useTranslation();
     const tone =
         status?.type === "error"
             ? "status-error"
@@ -21,7 +26,7 @@ export function StatusBanner({ id, status }: StatusBannerProps) {
 
     return (
         <div id={id} className={`sc-status-message ${tone}${status ? "" : " hidden"}`}>
-            {status?.message ?? ""}
+            {translateRuntimeMessage(t, status?.message ?? "")}
         </div>
     );
 }

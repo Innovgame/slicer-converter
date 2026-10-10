@@ -1,0 +1,116 @@
+{
+    "app": {
+        "title": "Slicer File Converter",
+        "noFile": "No file open"
+    },
+    "source": {
+        "title": "Source",
+        "file": "File",
+        "size": "Size",
+        "resolution": "Resolution",
+        "layers": "Layers",
+        "browse": "Drop slicer file or browse",
+        "release": "Release to upload your slicer file",
+        "replace": "Replace the current file",
+        "drop": "Drag and drop a slicer file here",
+        "loadingFormats": "Load WASM to discover supported slicer files",
+        "supports": "Supports {{extensions}} or click to browse",
+        "layerCount_one": "{{count}} layer",
+        "layerCount_other": "{{count}} layers"
+    },
+    "common": {
+        "format": "Format"
+    },
+    "export": {
+        "title": "Export",
+        "output": "Output",
+        "target": "Target",
+        "fileName": "File name",
+        "suffix": "Suffix",
+        "version": "Version",
+        "convert": "Convert",
+        "cancel": "Cancel",
+        "retry": "Retry failed conversion",
+        "from": "from {{format}}",
+        "empty": "Open a slicer file to choose a target format."
+    },
+    "progress": {
+        "converting": "Converting...",
+        "opening": "Opening file...",
+        "zipPreparing": "Converting and preparing ZIP layers...",
+        "finalizing": "Finalizing archive...",
+        "complete": "Conversion complete.",
+        "assembling": "Assembling file...",
+        "layer": "Converting layer {{current}}/{{total}}...",
+        "zipLayer": "Converting and preparing ZIP layers {{current}}/{{total}}..."
+    },
+    "status": {
+        "cancelled": "Conversion cancelled.",
+        "loading": "Loading WASM...",
+        "initializing": "WASM loaded. Initializing worker pool...",
+        "compiling": "Compiling WASM module...",
+        "notReady": "WASM not loaded - cannot parse file.",
+        "parsed": "Parsed {{format}}: {{count}} layers, {{resolution}}",
+        "ready": "Ready - prewarmed {{workers}} worker(s), scales up to {{max}} on demand.",
+        "loadingProgress": "Loading WASM... {{progress}}",
+        "loadError": "Failed to load WASM: {{detail}}",
+        "parseError": "Parse error: {{detail}}",
+        "convertError": "Convert error: {{detail}}",
+        "decodeError": "Layer decode error: {{detail}}",
+        "converted": "Converted {{count}} layers to {{format}} in {{duration}}. Output {{output}}. {{diagnostics}}",
+        "disk": "streamed to disk",
+        "workers": "workers",
+        "streamedWorkers": "workers (streamed)",
+        "setup": "setup",
+        "layers": "layers",
+        "workerSum": "worker sum",
+        "assemble": "assemble",
+        "finalize": "finalize-only",
+        "geometryWarning": "Warning: Source machine {{source}} geometry differs from target machine {{target}} ({{extension}}). Export continues without layer resampling. Source is {{sourceResolution}} at {{sourceSize}} mm; target profile is {{targetResolution}} at {{targetSize}} mm. UVTools may report non-square pixels or an incorrect image ratio, and the model may print with stretched proportions.",
+        "photonsKeepWarning": "Warning: PhotonS export keeps the source layer pixels but rewrites the bed size from {{sourceSize}} mm to {{targetSize}} mm. UVTools may report a changed image ratio.",
+        "photonsResampleWarning": "Warning: PhotonS export resamples layers from {{sourceResolution}} to {{targetResolution}} and rewrites the bed size to {{targetSize}} mm. Source bed is {{sourceSize}} mm. Nearest-neighbor resampling can change edges and printed proportions.",
+        "manualTarget": "Using manual {{format}} target: {{target}}"
+    },
+    "preview": {
+        "title": "Layer preview",
+        "empty": "Open a slicer file to inspect exposure layers. Drop files in the Source column to start.",
+        "canvasHelp": "Scroll to zoom, drag to pan. 0 fits the window, 1 is 1:1 pixels.",
+        "layerHeight": "Layer height",
+        "layer": "Layer",
+        "layerNumber": "Layer number",
+        "zHeight": "Layer Z height",
+        "jumpHelp": "Enter a layer number from 1 to {{count}}",
+        "increase": "Increase layer",
+        "decrease": "Decrease layer",
+        "reset": "Reset to first layer",
+        "toolbar": "Layer view",
+        "fit": "Fit window",
+        "actualPixels": "1:1 pixels",
+        "zoomOut": "Zoom out",
+        "zoomIn": "Zoom in",
+        "zoomPercent": "Zoom percent",
+        "grid": "Pixel grid",
+        "imageError": "Layer image could not be shown",
+        "interactive": "preview",
+        "grey": "grey"
+    },
+    "links": {
+        "title": "Project",
+        "github": "GitHub",
+        "githubHelp": "Open the slicer-converter GitHub repository",
+        "bug": "Report a bug",
+        "bugShort": "Bug",
+        "idea": "Request a feature",
+        "ideaShort": "Idea"
+    },
+    "theme": {
+        "toLight": "Switch to light theme",
+        "toDark": "Switch to dark theme",
+        "currentLight": "Current theme: light",
+        "currentDark": "Current theme: dark"
+    },
+    "language": {
+        "toChinese": "Switch to Chinese",
+        "toEnglish": "Switch to English"
+    }
+}

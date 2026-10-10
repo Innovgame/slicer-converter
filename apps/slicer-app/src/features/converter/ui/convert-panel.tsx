@@ -1,3 +1,7 @@
+import { translateRuntimeMessage } from "../../../shared/i18n/runtime-messages";
+
+import { useTranslation } from "../../../shared/i18n/i18n";
+
 import {
     findSlicerExportTargetMatrixSelection,
     listSlicerExportTargetMatrix,
@@ -48,6 +52,7 @@ export function ConvertPanel({
     onConvert,
     onCancel
 }: ConvertPanelProps) {
+    const { t } = useTranslation();
     const visible = parsedHeader !== null;
     const actionsDisabled = !wasmReady || !parsedHeader || converting;
     const showRetry = status?.type === "error" && !actionsDisabled;
@@ -71,21 +76,23 @@ export function ConvertPanel({
                 <div className="sc-empty-mark">
                     <ExportIcon />
                 </div>
-                <p className="sc-empty-title">Export</p>
-                <p className="sc-empty-copy">Open a slicer file to choose a target format.</p>
+                <p className="sc-empty-title">{t("export.title")}</p>
+                <p className="sc-empty-copy">{t("export.empty")}</p>
             </div>
             <header className={visible ? "sc-panel-header" : "sc-panel-header hidden"}>
                 <span aria-hidden="true" className="sc-panel-mark">
                     <ExportIcon />
                 </span>
-                <h2>Export</h2>
-                {sourceFormat ? <span className="sc-panel-meta">from {sourceFormat.toUpperCase()}</span> : null}
+                <h2>{t("export.title")}</h2>
+                {sourceFormat ? (
+                    <span className="sc-panel-meta">{t("export.from", { format: sourceFormat.toUpperCase() })}</span>
+                ) : null}
             </header>
             <div className={visible ? "sc-inspector-body" : "sc-inspector-body hidden"}>
                 <div className="sc-group">
-                    <p className="sc-group-title">Output</p>
+                    <p className="sc-group-title">{t("export.output")}</p>
                     <label htmlFor="slicerConverterFileName" className="sc-label">
-                        File name
+                        {t("export.fileName")}
                     </label>
                     <div className="sc-filename">
                         <input
@@ -98,9 +105,9 @@ export function ConvertPanel({
                 </div>
 
                 <div className="sc-group">
-                    <p className="sc-group-title">Target</p>
+                    <p className="sc-group-title">{t("export.target")}</p>
                     <label htmlFor="slicerConverterFormat" className="sc-label">
-                        Format
+                        {t("common.format")}
                     </label>
                     <select
                         id="slicerConverterFormat"
@@ -116,7 +123,7 @@ export function ConvertPanel({
                     </select>
 
                     <label htmlFor="slicerConverterSuffix" className="sc-label">
-                        Suffix
+                        {t("export.suffix")}
                     </label>
                     <select
                         id="slicerConverterSuffix"
@@ -134,7 +141,7 @@ export function ConvertPanel({
                     {hasSlicerConverterVersionOptions ? (
                         <>
                             <label htmlFor="slicerConverterVersion" className="sc-label">
-                                Version
+                                {t("export.version")}
                             </label>
                             <select
                                 id="slicerConverterVersion"
@@ -154,7 +161,7 @@ export function ConvertPanel({
 
                 {exportWarning ? (
                     <p id="exportGeometryWarning" className="sc-warning">
-                        {exportWarning}
+                        {translateRuntimeMessage(t, exportWarning)}
                     </p>
                 ) : null}
             </div>
@@ -167,25 +174,25 @@ export function ConvertPanel({
                     className="sc-primary-btn"
                 >
                     <ConvertIcon />
-                    Convert
+                    {t("export.convert")}
                 </button>
 
                 {showRetry ? (
                     <button type="button" id="retryBtn" onClick={() => void onConvert()} className="sc-secondary-btn">
-                        Retry failed conversion
+                        {t("export.retry")}
                     </button>
                 ) : null}
 
                 <div id="progressContainer" className={progress ? "sc-progress" : "sc-progress hidden"}>
                     <div className="sc-progress-meta">
-                        <span id="progressLabel">{progress?.label ?? "Converting..."}</span>
+                        <span id="progressLabel">{translateRuntimeMessage(t, progress?.label ?? "Converting...")}</span>
                         <span id="progressPct">{progress ? `${progress.percent}%` : "0%"}</span>
                     </div>
                     <div className="sc-progress-track">
                         <div id="progressBar" style={{ width: `${progress?.percent ?? 0}%` }} />
                     </div>
                     <button type="button" id="cancelBtn" onClick={onCancel} className="sc-danger-btn">
-                        Cancel
+                        {t("export.cancel")}
                     </button>
                 </div>
             </footer>
