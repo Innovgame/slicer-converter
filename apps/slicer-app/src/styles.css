@@ -1,44 +1,63 @@
 @import "tailwindcss";
 
-/* Graphite / porcelain workbench tokens. Cyan is reserved for the primary action. */
+/*
+ * Machine-shop resin tokens. The palette is taken from the printer itself: warm graphite
+ * for the frame, cool steel for readouts, and the 405 nm cure lamp amber as the single
+ * action colour. Cyan is gone on purpose; amber is the only thing that glows.
+ */
 @theme {
-    --color-background: #111416;
-    --color-foreground: #f4f7f7;
-    --color-card: #1b1f21;
-    --color-muted: #262b2e;
-    --color-muted-foreground: #a7b0b4;
-    --color-primary: #3ec6d6;
-    --color-primary-foreground: #062126;
-    --color-secondary: #262b2e;
-    --color-secondary-foreground: #f4f7f7;
-    --color-destructive: #e36a6a;
-    --color-border: rgba(255, 255, 255, 0.12);
-    --color-input: rgba(255, 255, 255, 0.14);
-    --color-popover: #1b1f21;
-    --color-popover-foreground: #f4f7f7;
-    --color-card-foreground: #f4f7f7;
-    --color-ring: #67d5e2;
+    --color-background: #121110;
+    --color-foreground: #f2eeea;
+    --color-card: #1a1917;
+    --color-muted: #262421;
+    --color-muted-foreground: #a49e96;
+    --color-primary: #f0a02a;
+    --color-primary-foreground: #221905;
+    --color-secondary: #262421;
+    --color-secondary-foreground: #f2eeea;
+    --color-destructive: #e4645c;
+    --color-border: rgba(255, 255, 255, 0.1);
+    --color-input: rgba(255, 255, 255, 0.13);
+    --color-popover: #1a1917;
+    --color-popover-foreground: #f2eeea;
+    --color-card-foreground: #f2eeea;
+    --color-ring: #f0a02a;
 
-    --color-accent: #3ec6d6;
-    --color-accent-strong: #7fe0ea;
-    --color-surface: #1b1f21;
-    --color-raised: #23282b;
-    --color-surface-hover: #2c3236;
-    --color-outline: rgba(255, 255, 255, 0.14);
-    --color-outline-subtle: rgba(255, 255, 255, 0.08);
-    --color-outline-strong: rgba(255, 255, 255, 0.28);
-    --color-dim: rgba(244, 247, 247, 0.72);
-    --color-subtle: rgba(244, 247, 247, 0.56);
+    --color-accent: #f0a02a;
+    --color-accent-strong: #ffc766;
+    --color-surface: #1a1917;
+    --color-raised: #232120;
+    --color-surface-hover: #2e2b28;
+    --color-outline: rgba(255, 255, 255, 0.12);
+    --color-outline-subtle: rgba(255, 255, 255, 0.065);
+    --color-outline-strong: rgba(255, 255, 255, 0.24);
+    --color-dim: rgba(242, 238, 234, 0.72);
+    --color-subtle: rgba(242, 238, 234, 0.52);
+    /* Steel is the cold counterweight to the amber: readouts, units, secondary meta. */
+    --color-steel: #8fa3ad;
 
-    --font-sans: Inter, "Segoe UI", system-ui, sans-serif;
-    --font-mono: "Cascadia Mono", Consolas, ui-monospace, monospace;
+    --font-sans: "Segoe UI Variable Text", "Segoe UI", Inter, system-ui, sans-serif;
+    --font-mono: "Cascadia Mono", "Cascadia Code", Consolas, ui-monospace, monospace;
 }
 
 :root {
     color-scheme: dark;
-    --sc-radius: 6px;
-    --sc-header-height: 48px;
+    --sc-radius: 5px;
+    --sc-radius-sm: 4px;
+    --sc-radius-pill: 999px;
+    --sc-header-height: 52px;
     --sc-status-height: 28px;
+    --sc-panel-header-height: 38px;
+    --sc-gap: 12px;
+    /* Stage behind the layer plate: a machined bed, not a dotted field. */
+    --sc-stage-a: #191c1e;
+    --sc-stage-b: #0d0f10;
+    --sc-stage-dot: rgba(255, 255, 255, 0.055);
+    --sc-stage-plate-ring: rgba(255, 255, 255, 0.14);
+    --sc-shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.035) inset;
+    --sc-shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.45);
+    --sc-shadow-pop: 0 12px 34px rgba(0, 0, 0, 0.5);
+    --sc-primary-glow: 0 0 0 1px rgba(240, 160, 42, 0.35), 0 6px 20px rgba(240, 160, 42, 0.2);
 }
 
 *,
@@ -56,11 +75,12 @@ body,
 body {
     margin: 0;
     overflow: auto;
-    background: var(--color-background);
+    background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-size: 13px;
-    line-height: 1.4;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
 }
 
 button,
@@ -85,47 +105,87 @@ button:disabled {
 
 select {
     color-scheme: dark;
-    background-color: #23282b;
-    color: #f4f7f7;
+    background-color: var(--color-raised, #1e2427);
+    color: var(--color-foreground, #eef3f4);
 }
 
 select option {
-    background-color: #23282b;
-    color: #f4f7f7;
+    background-color: var(--color-raised, #1e2427);
+    color: var(--color-foreground, #eef3f4);
 }
 
 select option:disabled {
-    color: rgba(244, 247, 247, 0.38);
+    color: rgba(238, 243, 244, 0.38);
+}
+
+::selection {
+    background: color-mix(in srgb, var(--color-primary) 34%, transparent);
+}
+
+/* Rounded floating thumb: inset by a transparent border so it reads as a pill. */
+::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    border: 4px solid transparent;
+    border-radius: var(--sc-radius-pill);
+    background: color-mix(in srgb, var(--color-foreground) 20%, transparent);
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--color-foreground) 34%, transparent);
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
 }
 
 [data-theme="light"] {
     color-scheme: light;
-    --color-background: #f3f5f5;
-    --color-foreground: #111416;
-    --color-card: #ffffff;
-    --color-muted: #e7ecec;
-    --color-muted-foreground: #5d686c;
-    --color-primary: #0e7c8a;
-    --color-primary-foreground: #ffffff;
-    --color-secondary: #e7ecec;
-    --color-secondary-foreground: #111416;
-    --color-destructive: #b91c1c;
-    --color-border: rgba(17, 20, 22, 0.12);
-    --color-input: rgba(17, 20, 22, 0.14);
-    --color-popover: #ffffff;
-    --color-popover-foreground: #111416;
-    --color-card-foreground: #111416;
-    --color-ring: #0e7c8a;
-    --color-accent: #0e7c8a;
-    --color-accent-strong: #0a6672;
-    --color-surface: #ffffff;
-    --color-raised: #f7f9f9;
-    --color-surface-hover: #e7ecec;
-    --color-outline: rgba(17, 20, 22, 0.14);
-    --color-outline-subtle: rgba(17, 20, 22, 0.08);
-    --color-outline-strong: rgba(17, 20, 22, 0.24);
-    --color-dim: rgba(17, 20, 22, 0.72);
-    --color-subtle: rgba(17, 20, 22, 0.56);
+    --color-background: #eceae6;
+    --color-foreground: #1a1816;
+    --color-card: #faf9f7;
+    --color-muted: #e4e1db;
+    --color-muted-foreground: #605b54;
+    --color-primary: #b4700b;
+    --color-primary-foreground: #fffaf0;
+    --color-secondary: #e4e1db;
+    --color-secondary-foreground: #1a1816;
+    --color-destructive: #b3261e;
+    --color-border: rgba(26, 24, 22, 0.13);
+    --color-input: rgba(26, 24, 22, 0.15);
+    --color-popover: #faf9f7;
+    --color-popover-foreground: #1a1816;
+    --color-card-foreground: #1a1816;
+    --color-ring: #b4700b;
+    --color-accent: #b4700b;
+    --color-accent-strong: #8a5406;
+    --color-surface: #faf9f7;
+    --color-raised: #f2f0ec;
+    --color-surface-hover: #e4e1db;
+    --color-outline: rgba(26, 24, 22, 0.15);
+    --color-outline-subtle: rgba(26, 24, 22, 0.085);
+    --color-outline-strong: rgba(26, 24, 22, 0.26);
+    --color-dim: rgba(26, 24, 22, 0.72);
+    --color-subtle: rgba(26, 24, 22, 0.54);
+    --color-steel: #4a5a63;
+
+    --sc-stage-a: #e3e1dc;
+    --sc-stage-b: #cfccc6;
+    --sc-stage-dot: rgba(26, 24, 22, 0.09);
+    --sc-stage-plate-ring: rgba(26, 24, 22, 0.14);
+    --sc-shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.85) inset;
+    --sc-shadow-raised: 0 1px 2px rgba(26, 24, 22, 0.09);
+    --sc-shadow-pop: 0 12px 34px rgba(26, 24, 22, 0.16);
+    --sc-primary-glow: 0 0 0 1px rgba(180, 112, 11, 0.3), 0 6px 18px rgba(180, 112, 11, 0.18);
 }
 
 [data-theme="light"] body {
@@ -136,17 +196,17 @@ select option:disabled {
 [data-theme="light"] select,
 [data-theme="light"] select option {
     color-scheme: light;
-    background-color: #ffffff;
-    color: #111416;
+    background-color: var(--color-raised);
+    color: var(--color-foreground);
 }
 
 [data-theme="light"] select option:disabled {
-    color: rgba(17, 20, 22, 0.38);
+    color: rgba(16, 22, 26, 0.38);
 }
 
 .sc-workbench {
     display: grid;
-    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) minmax(248px, 312px);
+    grid-template-columns: minmax(232px, 288px) minmax(0, 1fr) minmax(260px, 320px);
     grid-template-rows: var(--sc-header-height) minmax(0, 1fr) var(--sc-status-height);
     width: 100%;
     height: 100%;
@@ -163,33 +223,52 @@ select option:disabled {
     align-items: center;
     min-width: 0;
     height: var(--sc-header-height);
-    padding: 0 12px 0 8px;
+    padding: 0 14px 0 12px;
     border-bottom: 1px solid var(--color-outline-subtle);
-    background: var(--color-card);
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-foreground) 4%, var(--color-card)),
+        var(--color-card)
+    );
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
 }
 
 .sc-brand {
     display: flex;
     align-items: center;
     min-width: 0;
-    gap: 10px;
+    gap: 11px;
 }
 
 .sc-brand-mark {
+    position: relative;
     display: grid;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     flex: 0 0 auto;
     place-items: center;
-    border: 1px solid var(--color-outline);
-    border-radius: var(--sc-radius);
-    background: var(--color-muted);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 32%, var(--color-outline));
+    border-radius: 10px;
+    background: linear-gradient(
+        150deg,
+        color-mix(in srgb, var(--color-primary) 22%, var(--color-muted)),
+        var(--color-muted)
+    );
     color: var(--color-primary);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.3),
+        0 6px 16px rgba(0, 0, 0, 0.28);
+}
+
+.sc-brand-mark svg {
+    width: 18px;
+    height: 18px;
 }
 
 .sc-brand-copy {
     display: grid;
     min-width: 0;
+    gap: 2px;
 }
 
 .sc-product-name {
@@ -197,18 +276,42 @@ select option:disabled {
     overflow: hidden;
     font-size: 14px;
     font-weight: 650;
-    line-height: 1.2;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .sc-document-status {
+    display: flex;
+    align-items: center;
     margin: 0;
     overflow: hidden;
+    gap: 6px;
     color: var(--color-muted-foreground);
     font-size: 11px;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.sc-document-status::before {
+    width: 6px;
+    height: 6px;
+    flex: 0 0 auto;
+    border-radius: var(--sc-radius-pill);
+    background: currentColor;
+    content: "";
+    opacity: 0.55;
+}
+
+.sc-document-status.is-loaded {
+    color: color-mix(in srgb, var(--color-primary) 58%, var(--color-muted-foreground));
+}
+
+.sc-document-status.is-loaded::before {
+    background: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent);
+    opacity: 1;
 }
 
 .sc-header-actions {
@@ -222,21 +325,22 @@ select option:disabled {
 .sc-project-links {
     display: flex;
     align-items: center;
-    height: 28px;
-    padding: 2px;
+    height: 32px;
+    padding: 3px;
     gap: 2px;
     border: 1px solid var(--color-outline);
     border-radius: var(--sc-radius);
-    background: var(--color-muted);
+    background: color-mix(in srgb, var(--color-background) 55%, var(--color-card));
+    box-shadow: var(--sc-shadow-panel);
 }
 
 .sc-project-link {
     display: inline-flex;
     align-items: center;
-    height: 22px;
-    padding: 0 8px;
+    height: 24px;
+    padding: 0 9px;
     gap: 6px;
-    border-radius: 4px;
+    border-radius: var(--sc-radius-sm);
     color: var(--color-muted-foreground);
     font-size: 12px;
     font-weight: 500;
@@ -284,9 +388,14 @@ select option:disabled {
 
 .sc-source,
 .sc-inspector {
+    display: flex;
+    flex-direction: column;
+    /* Row 2 / 4 spans the status bar; the cap keeps panel chrome above it instead of overflowing onto it. */
+    max-height: calc(100vh - var(--sc-header-height) - var(--sc-status-height));
     grid-row: 2 / 4;
     min-width: 0;
     min-height: 0;
+    overflow: hidden;
     background: var(--color-card);
 }
 
@@ -312,6 +421,7 @@ select option:disabled {
     flex-direction: column;
     height: 100%;
     min-height: 0;
+    overflow: hidden;
 }
 
 .sc-inspector-panel.is-collapsed,
@@ -323,9 +433,15 @@ select option:disabled {
     display: flex;
     align-items: center;
     flex: 0 0 auto;
-    height: 36px;
+    height: var(--sc-panel-header-height);
     padding: 0 12px;
+    gap: 8px;
     border-bottom: 1px solid var(--color-outline-subtle);
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-foreground) 3%, var(--color-card)),
+        var(--color-card)
+    );
 }
 
 .sc-panel-header h2,
@@ -335,37 +451,135 @@ select option:disabled {
     font-weight: 650;
 }
 
+.sc-panel-header h2 {
+    color: var(--color-foreground);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+}
+
+.sc-panel-mark {
+    display: grid;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    place-items: center;
+    color: var(--color-steel);
+}
+
+.sc-panel-mark svg {
+    width: 14px;
+    height: 14px;
+}
+
+.sc-panel-meta {
+    margin-left: auto;
+    color: var(--color-steel);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+}
+
 .sc-panel-body,
 .sc-inspector-body {
     min-height: 0;
     overflow: auto;
-    padding: 12px;
+    padding: 14px;
 }
 
 .sc-panel-body {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
 }
 
 .sc-dropzone {
-    border: 1px dashed var(--color-outline);
+    display: grid;
+    justify-items: center;
+    gap: 9px;
+    border: 1px dashed color-mix(in srgb, var(--color-foreground) 24%, transparent);
     border-radius: var(--sc-radius);
-    background: color-mix(in srgb, var(--color-muted) 55%, transparent);
-    padding: 18px 14px;
+    background: color-mix(in srgb, var(--color-muted) 34%, transparent);
+    padding: 22px 16px;
     text-align: center;
     transition:
-        border-color 120ms ease,
-        background-color 120ms ease;
+        border-color 140ms ease,
+        background-color 140ms ease,
+        transform 140ms ease;
+}
+
+.sc-dropzone-mark {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border: 1px solid var(--color-outline);
+    border-radius: var(--sc-radius);
+    background: color-mix(in srgb, var(--color-card) 80%, transparent);
+    color: var(--color-steel);
+    transition:
+        border-color 140ms ease,
+        color 140ms ease;
+}
+
+.sc-dropzone-mark svg {
+    width: 17px;
+    height: 17px;
 }
 
 .sc-dropzone:hover,
 .sc-dropzone:focus-visible,
 .sc-dropzone.is-dragging {
-    border-color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary) 12%, var(--color-card));
+    border-color: color-mix(in srgb, var(--color-primary) 70%, transparent);
+    background: color-mix(in srgb, var(--color-primary) 8%, var(--color-card));
     outline: none;
+}
+
+.sc-dropzone:hover .sc-dropzone-mark,
+.sc-dropzone.is-dragging .sc-dropzone-mark {
+    border-color: color-mix(in srgb, var(--color-primary) 50%, var(--color-outline));
+    color: var(--color-primary);
+}
+
+[data-theme="light"] .sc-dropzone:hover,
+[data-theme="light"] .sc-dropzone:focus-visible,
+[data-theme="light"] .sc-dropzone.is-dragging {
+    background: color-mix(in srgb, var(--color-primary) 6%, var(--color-card));
+}
+
+.sc-dropzone.is-dragging {
+    transform: translateY(-1px);
+}
+
+/* Once a file is loaded the drop zone shrinks to one row so the summary leads the column. */
+.sc-dropzone.is-compact {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 11px;
+    border-style: solid;
+    text-align: left;
+}
+
+.sc-dropzone.is-compact .sc-dropzone-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: var(--sc-radius-sm);
+}
+
+.sc-dropzone.is-compact .sc-dropzone-mark svg {
+    width: 14px;
+    height: 14px;
+}
+
+.sc-dropzone.is-compact .sc-dropzone-title {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.sc-dropzone.is-compact .sc-dropzone-copy {
+    display: none;
 }
 
 .sc-dropzone-title {
@@ -376,7 +590,7 @@ select option:disabled {
 
 .sc-dropzone-copy,
 .sc-empty-copy {
-    margin: 6px 0 0;
+    margin: 0;
     color: var(--color-muted-foreground);
     font-size: 12px;
 }
@@ -385,22 +599,31 @@ select option:disabled {
     display: -webkit-box;
     overflow: hidden;
     font-size: 11px;
-    line-height: 1.45;
+    line-height: 1.5;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
+}
+
+.sc-file-info {
+    display: grid;
+    gap: 12px;
 }
 
 .sc-file-info dl {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
-    gap: 0 12px;
+    align-items: baseline;
     margin: 0;
+    border: 1px solid var(--color-outline-subtle);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--color-muted) 26%, transparent);
+    padding: 2px 10px;
     font-size: 12px;
 }
 
 .sc-file-info dt,
 .sc-file-info dd {
-    padding: 7px 0;
+    padding: 8px 0;
     border-bottom: 1px solid var(--color-outline-subtle);
 }
 
@@ -411,12 +634,14 @@ select option:disabled {
 
 .sc-file-info dt {
     color: var(--color-muted-foreground);
+    font-size: 11.5px;
 }
 
 .sc-file-info dd {
     margin: 0;
     overflow: hidden;
     font-family: var(--font-mono);
+    font-size: 12px;
     font-variant-numeric: tabular-nums;
     text-align: right;
     text-overflow: ellipsis;
@@ -427,10 +652,12 @@ select option:disabled {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 4px;
-    padding: 10px;
+    padding: 14px;
+    border: 1px solid var(--color-outline-subtle);
     border-radius: var(--sc-radius);
-    background: color-mix(in srgb, var(--color-muted) 65%, transparent);
+    background:
+        radial-gradient(circle at 1px 1px, var(--sc-stage-dot) 1px, transparent 0) 0 0 / 10px 10px,
+        color-mix(in srgb, var(--color-muted) 38%, transparent);
 }
 
 .sc-thumbnail canvas {
@@ -440,8 +667,10 @@ select option:disabled {
     height: auto;
     max-height: 168px;
     margin-inline: auto;
-    border-radius: 4px;
-    box-shadow: 0 0 0 1px var(--color-outline);
+    border-radius: 2px;
+    box-shadow:
+        0 0 0 1px var(--sc-stage-plate-ring),
+        var(--sc-shadow-raised);
 }
 
 .sc-viewer-column {
@@ -487,13 +716,36 @@ select option:disabled {
     min-height: 0;
 }
 
+/* Machined bed: a dot field over a vertical fall-off. */
 .sc-canvas-surface {
     position: relative;
     flex: 1 1 0;
     min-width: 0;
     min-height: 0;
     overflow: hidden;
-    background: color-mix(in srgb, var(--color-muted) 78%, var(--color-foreground) 22%);
+    background:
+        radial-gradient(circle at 1px 1px, var(--sc-stage-dot) 1px, transparent 0) 0 0 / 22px 22px,
+        linear-gradient(180deg, var(--sc-stage-a), var(--sc-stage-b));
+}
+
+/* Corner ticks mark the build area the way a machine bed is scribed. */
+.sc-canvas-surface::before {
+    position: absolute;
+    z-index: 1;
+    inset: 12px;
+    color: var(--color-foreground);
+    background:
+        linear-gradient(currentColor, currentColor) left top / 1px 10px no-repeat,
+        linear-gradient(currentColor, currentColor) left top / 10px 1px no-repeat,
+        linear-gradient(currentColor, currentColor) right top / 1px 10px no-repeat,
+        linear-gradient(currentColor, currentColor) right top / 10px 1px no-repeat,
+        linear-gradient(currentColor, currentColor) left bottom / 1px 10px no-repeat,
+        linear-gradient(currentColor, currentColor) left bottom / 10px 1px no-repeat,
+        linear-gradient(currentColor, currentColor) right bottom / 1px 10px no-repeat,
+        linear-gradient(currentColor, currentColor) right bottom / 10px 1px no-repeat;
+    content: "";
+    opacity: 0.16;
+    pointer-events: none;
 }
 
 .sc-slice-canvas {
@@ -530,11 +782,15 @@ select option:disabled {
     display: flex;
     flex: 0 0 auto;
     align-items: center;
-    gap: 8px;
-    min-height: 36px;
-    padding: 4px 8px 4px 4px;
+    gap: 12px;
+    min-height: 38px;
+    padding: 3px 10px 3px 8px;
     border-top: 1px solid var(--color-outline-subtle);
-    background: var(--color-card);
+    background: linear-gradient(
+        180deg,
+        var(--color-card),
+        color-mix(in srgb, var(--color-background) 30%, var(--color-card))
+    );
 }
 
 .sc-slice-toolbar {
@@ -543,6 +799,10 @@ select option:disabled {
     align-items: center;
     gap: 2px;
     min-height: 28px;
+    padding: 2px;
+    border: 1px solid var(--color-outline-subtle);
+    border-radius: var(--sc-radius);
+    background: color-mix(in srgb, var(--color-background) 45%, var(--color-card));
 }
 
 .sc-tool,
@@ -553,15 +813,24 @@ select option:disabled {
     place-items: center;
     padding: 0;
     border: 0;
-    border-radius: var(--sc-radius);
+    border-radius: var(--sc-radius-sm);
     background: transparent;
     color: var(--color-muted-foreground);
+    transition:
+        background-color 120ms ease,
+        color 120ms ease;
 }
 
 .sc-tool,
 .sc-icon-btn {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
+}
+
+.sc-icon-btn {
+    border: 1px solid var(--color-outline);
+    border-radius: var(--sc-radius);
+    background: color-mix(in srgb, var(--color-background) 45%, var(--color-card));
 }
 
 .sc-tool:hover:not(:disabled),
@@ -573,8 +842,9 @@ select option:disabled {
 }
 
 .sc-tool.is-pressed {
-    background: color-mix(in srgb, var(--color-primary) 18%, var(--color-card));
+    background: color-mix(in srgb, var(--color-primary) 20%, var(--color-card));
     color: var(--color-primary);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 40%, transparent);
 }
 
 .sc-tool:focus-visible,
@@ -603,27 +873,32 @@ select option:disabled {
 }
 
 .sc-zoom-field {
-    width: 64px;
-    height: 28px;
-    margin-left: 4px;
+    width: 62px;
+    height: 22px;
+    margin: 0 1px 0 4px;
     border: 1px solid var(--color-outline);
-    border-radius: var(--sc-radius) 0 0 var(--sc-radius);
+    border-radius: var(--sc-radius-sm) 0 0 var(--sc-radius-sm);
     background: var(--color-raised);
     padding: 0 6px;
     font-family: var(--font-mono);
     font-size: 12px;
     font-variant-numeric: tabular-nums;
+    transition: border-color 120ms ease;
+}
+
+.sc-zoom-field:hover:not(:disabled) {
+    border-color: var(--color-outline-strong);
 }
 
 .sc-zoom-unit {
     display: grid;
-    height: 28px;
+    height: 22px;
     place-items: center;
     margin-right: 4px;
-    padding: 0 6px;
+    padding: 0 7px;
     border: 1px solid var(--color-outline);
     border-left: 0;
-    border-radius: 0 var(--sc-radius) var(--sc-radius) 0;
+    border-radius: 0 var(--sc-radius-sm) var(--sc-radius-sm) 0;
     background: var(--color-muted);
     color: var(--color-muted-foreground);
     font-family: var(--font-mono);
@@ -636,11 +911,16 @@ select option:disabled {
     flex-direction: column;
     align-items: flex-end;
     justify-content: center;
+    overflow: hidden;
     min-width: 0;
+    padding: 2px 8px;
+    border: 1px solid var(--color-outline-subtle);
+    border-radius: var(--sc-radius);
+    background: color-mix(in srgb, var(--color-background) 45%, var(--color-card));
     color: var(--color-muted-foreground);
     font-family: var(--font-mono);
     font-size: 11px;
-    line-height: 14px;
+    line-height: 15px;
     font-variant-numeric: tabular-nums;
 }
 
@@ -651,16 +931,22 @@ select option:disabled {
     white-space: nowrap;
 }
 
+/* Frosted capsule so the rail stays readable over both black plates and the light stage. */
 .sc-layer-rail {
     position: absolute;
-    top: 168px;
-    right: 16px;
-    bottom: 52px;
+    top: 24px;
+    right: 14px;
+    bottom: 18px;
     z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 16px;
+    width: 40px;
+    padding: 14px 0 6px;
+    border: 1px solid var(--color-outline-subtle);
+    border-radius: var(--sc-radius-pill);
+    background: color-mix(in srgb, var(--color-card) 82%, transparent);
+    backdrop-filter: blur(10px);
     pointer-events: none;
 }
 
@@ -686,58 +972,61 @@ select option:disabled {
 .sc-layer-slider::-webkit-slider-runnable-track {
     width: 6px;
     border: 0;
-    border-radius: var(--sc-radius);
+    border-radius: var(--sc-radius-pill);
     background: linear-gradient(
         to top,
         var(--color-primary) var(--layer-fill, 0%),
-        var(--color-border) var(--layer-fill, 0%)
+        color-mix(in srgb, var(--color-foreground) 18%, transparent) var(--layer-fill, 0%)
     );
 }
 
 .sc-layer-slider::-webkit-slider-thumb {
-    width: 12px;
-    height: 12px;
-    margin-left: -3px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--sc-radius);
-    background: var(--color-card);
+    width: 14px;
+    height: 14px;
+    margin-left: -4px;
+    border: 2px solid var(--color-card);
+    border-radius: var(--sc-radius-pill);
+    background: var(--color-primary);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
     appearance: none;
     cursor: ns-resize;
+    transition: transform 120ms ease;
 }
 
 .sc-layer-slider:hover::-webkit-slider-thumb,
 .sc-layer-slider:focus-visible::-webkit-slider-thumb {
-    border-color: var(--color-primary);
-    background: var(--color-primary);
+    transform: scale(1.15);
 }
 
 .sc-layer-slider::-moz-range-track {
-    width: 6px;
+    width: 4px;
     border: 0;
-    border-radius: var(--sc-radius);
-    background: var(--color-border);
+    border-radius: 1px;
+    background: color-mix(in srgb, var(--color-foreground) 18%, transparent);
 }
 
 .sc-layer-slider::-moz-range-progress {
+    border-radius: 1px;
     background: var(--color-primary);
 }
 
 .sc-layer-slider::-moz-range-thumb {
-    width: 12px;
-    height: 12px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--sc-radius);
-    background: var(--color-card);
+    width: 20px;
+    height: 9px;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 50%, #000);
+    border-radius: 2px;
+    background: var(--color-primary);
 }
 
+/* A readout pill follows the thumb; the nudges are invisible until the rail is hovered or focused. */
 .sc-rail-readout {
     position: absolute;
-    right: calc(100% + 6px);
+    right: calc(100% + 4px);
     z-index: 1;
     display: grid;
-    grid-template-rows: 14px auto 14px;
+    grid-template-rows: 18px auto 18px;
     justify-items: end;
-    min-width: 36px;
+    min-width: 40px;
     transform: translateY(50%);
     pointer-events: auto;
 }
@@ -745,6 +1034,12 @@ select option:disabled {
 .sc-rail-copy {
     display: grid;
     justify-items: end;
+    padding: 4px 8px;
+    border: 1px solid var(--color-outline-subtle);
+    border-radius: var(--sc-radius);
+    background: color-mix(in srgb, var(--color-card) 88%, transparent);
+    box-shadow: var(--sc-shadow-raised);
+    backdrop-filter: blur(10px);
 }
 
 .sc-rail-value,
@@ -755,30 +1050,48 @@ select option:disabled {
 }
 
 .sc-rail-value {
+    color: var(--color-foreground);
+    font-size: 11.5px;
+    font-weight: 650;
+    line-height: 1.25;
+}
+
+.sc-rail-unit {
     color: var(--color-muted-foreground);
-    font-size: 11px;
-    font-weight: 600;
-    line-height: 1.2;
+    font-weight: 500;
 }
 
 .sc-rail-detail {
     color: var(--color-muted-foreground);
-    font-size: 11px;
-    line-height: 1.4;
+    font-size: 10.5px;
+    line-height: 1.35;
 }
 
 .sc-rail-nudge,
 .sc-clip-reset {
-    width: 14px;
-    height: 14px;
-    border-radius: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: var(--sc-radius-pill);
+    opacity: 0.5;
 }
 
 .sc-clip-reset {
-    width: 18px;
-    height: 18px;
-    margin-top: 6px;
+    margin-top: 10px;
     pointer-events: auto;
+}
+
+.sc-layer-rail:hover .sc-rail-nudge,
+.sc-layer-rail:hover .sc-clip-reset,
+.sc-rail-nudge:focus-visible {
+    opacity: 1;
+}
+
+.sc-rail-nudge:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--color-foreground) 12%, transparent);
+}
+
+.sc-clip-reset:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--color-foreground) 12%, transparent);
 }
 
 .sc-rail-nudge svg,
@@ -804,30 +1117,76 @@ select option:disabled {
     width: 100%;
     min-height: 100%;
     padding: 24px;
+    gap: 2px;
     text-align: center;
 }
 
+.sc-slice-empty {
+    background: radial-gradient(circle at 1px 1px, var(--sc-stage-dot) 1px, transparent 0) 0 0 / 22px 22px;
+}
+
+/* Empty states stay steel-grey: amber is reserved for the one real action. */
 .sc-empty-mark {
     display: grid;
     width: 40px;
     height: 40px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     place-items: center;
-    border: 1px solid var(--color-outline);
+    border: 1px solid var(--color-outline-subtle);
     border-radius: var(--sc-radius);
-    background: var(--color-card);
-    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-muted) 45%, transparent);
+    color: var(--color-steel);
+}
+
+.sc-empty-mark svg {
+    width: 18px;
+    height: 18px;
 }
 
 .sc-inspector-body {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
+    gap: 2px;
+}
+
+/* Groups are divided by a rule, not boxed into another card. */
+.sc-group {
+    display: grid;
+    gap: 8px;
+    padding: 0 0 14px;
+    border-bottom: 1px solid var(--color-outline-subtle);
+}
+
+.sc-group:last-of-type {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.sc-group + .sc-group {
+    padding-top: 14px;
+}
+
+.sc-group-title {
+    display: flex;
+    align-items: center;
+    margin: 0 0 2px;
+    gap: 7px;
+    color: var(--color-steel);
+    font-size: 11.5px;
+    font-weight: 600;
+}
+
+.sc-group-title::after {
+    height: 1px;
+    flex: 1 1 auto;
+    background: var(--color-outline-subtle);
+    content: "";
 }
 
 .sc-label {
     display: block;
-    margin: 12px 0 4px;
+    margin: 4px 0 4px;
     color: var(--color-muted-foreground);
     font-size: 11px;
 }
@@ -838,11 +1197,19 @@ select option:disabled {
 
 .sc-filename {
     display: flex;
-    height: 32px;
+    height: 34px;
     overflow: hidden;
     border: 1px solid var(--color-outline);
     border-radius: var(--sc-radius);
-    background: var(--color-raised);
+    background: color-mix(in srgb, var(--color-background) 35%, var(--color-raised));
+    transition:
+        border-color 120ms ease,
+        box-shadow 120ms ease;
+}
+
+.sc-filename:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent);
 }
 
 .sc-filename input {
@@ -850,7 +1217,7 @@ select option:disabled {
     flex: 1 1 auto;
     border: 0;
     background: transparent;
-    padding: 0 8px;
+    padding: 0 10px;
     font-family: var(--font-mono);
     font-size: 12px;
     outline: none;
@@ -860,36 +1227,68 @@ select option:disabled {
     display: grid;
     flex: 0 0 auto;
     place-items: center;
-    border-left: 1px solid var(--color-outline);
-    padding: 0 8px;
-    color: var(--color-muted-foreground);
+    border-left: 1px solid var(--color-outline-subtle);
+    background: color-mix(in srgb, var(--color-foreground) 6%, transparent);
+    padding: 0 10px;
+    color: var(--color-steel);
     font-family: var(--font-mono);
     font-size: 12px;
+    font-weight: 600;
 }
 
+/* Native arrow is replaced so selects match the platform field height and radius. */
 .sc-select {
-    height: 32px;
+    height: 34px;
     width: 100%;
     border: 1px solid var(--color-outline);
     border-radius: var(--sc-radius);
-    background-color: var(--color-raised);
-    padding: 0 8px;
+    background-color: color-mix(in srgb, var(--color-background) 35%, var(--color-raised));
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238fa3ad' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 9px center;
+    background-size: 14px 14px;
+    padding: 0 30px 0 10px;
     font-size: 12px;
+    appearance: none;
+    transition:
+        border-color 120ms ease,
+        box-shadow 120ms ease;
+}
+
+.sc-select:hover {
+    border-color: var(--color-outline-strong);
+}
+
+.sc-select:focus-visible {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent);
+    outline: none;
 }
 
 .sc-warning {
+    display: flex;
+    align-items: flex-start;
     margin: 12px 0 0;
-    border: 1px solid rgba(217, 119, 6, 0.45);
-    border-radius: var(--sc-radius);
-    background: rgba(245, 158, 11, 0.12);
-    padding: 8px;
+    gap: 8px;
+    border: 1px solid rgba(217, 119, 6, 0.4);
+    border-radius: 10px;
+    background: rgba(245, 158, 11, 0.1);
+    padding: 9px 10px;
     color: #fde68a;
     font-size: 12px;
+    line-height: 1.5;
+}
+
+.sc-warning::before {
+    flex: 0 0 auto;
+    content: "!";
+    font-weight: 700;
+    line-height: 1.5;
 }
 
 [data-theme="light"] .sc-warning {
     color: #92400e;
-    background: rgba(245, 158, 11, 0.12);
+    background: rgba(245, 158, 11, 0.14);
 }
 
 .sc-inspector-actions {
@@ -897,27 +1296,63 @@ select option:disabled {
     flex: 0 0 auto;
     gap: 8px;
     border-top: 1px solid var(--color-outline-subtle);
-    padding: 12px;
+    background: color-mix(in srgb, var(--color-background) 25%, var(--color-card));
+    padding: 8px 10px;
 }
 
 .sc-primary-btn,
 .sc-secondary-btn,
 .sc-danger-btn {
-    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
     width: 100%;
+    gap: 8px;
     border-radius: var(--sc-radius);
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 650;
+    letter-spacing: 0.01em;
+    transition:
+        background-color 120ms ease,
+        border-color 120ms ease,
+        color 120ms ease,
+        box-shadow 120ms ease;
 }
 
+.sc-primary-btn svg,
+.sc-secondary-btn svg,
+.sc-danger-btn svg {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 auto;
+}
+
+/* The cure lamp: the one surface on the page that glows. */
 .sc-primary-btn {
-    border: 0;
-    background: var(--color-primary);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 55%, #000);
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-accent-strong) 58%, var(--color-primary)),
+        color-mix(in srgb, var(--color-primary) 92%, #000)
+    );
     color: var(--color-primary-foreground);
+    box-shadow:
+        var(--sc-primary-glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+.sc-primary-btn:hover:not(:disabled) {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--color-accent-strong) 88%, #fff), var(--color-primary));
+}
+
+.sc-primary-btn:active:not(:disabled) {
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.28);
 }
 
 .sc-primary-btn:disabled {
-    opacity: 0.45;
+    opacity: 0.4;
+    box-shadow: none;
 }
 
 .sc-secondary-btn,
@@ -927,14 +1362,22 @@ select option:disabled {
 }
 
 .sc-secondary-btn {
-    color: var(--color-primary);
-    border-color: color-mix(in srgb, var(--color-primary) 55%, var(--color-outline));
+    color: color-mix(in srgb, var(--color-primary) 82%, var(--color-foreground));
+    border-color: color-mix(in srgb, var(--color-primary) 38%, var(--color-outline));
+}
+
+.sc-secondary-btn:hover {
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 .sc-danger-btn {
     color: #f0a8a8;
-    border-color: rgba(248, 113, 113, 0.45);
+    border-color: rgba(248, 113, 113, 0.4);
     background: rgba(239, 68, 68, 0.12);
+}
+
+.sc-danger-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
 }
 
 [data-theme="light"] .sc-danger-btn {
@@ -943,7 +1386,7 @@ select option:disabled {
 
 .sc-progress {
     display: grid;
-    gap: 8px;
+    gap: 9px;
 }
 
 .sc-progress-meta {
@@ -954,35 +1397,73 @@ select option:disabled {
     font-size: 12px;
 }
 
+.sc-progress-meta span:last-child {
+    color: var(--color-foreground);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+}
+
+/* Square-edged and segmented: a machine readout, not a soft progress pill. */
 .sc-progress-track {
-    height: 6px;
+    height: 8px;
     overflow: hidden;
-    border-radius: 999px;
-    background: var(--color-muted);
+    border: 1px solid var(--color-outline-subtle);
+    border-radius: 2px;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 7px,
+            color-mix(in srgb, var(--color-background) 70%, transparent) 7px 8px
+        ),
+        color-mix(in srgb, var(--color-foreground) 10%, transparent);
 }
 
 .sc-progress-track div {
     height: 100%;
-    background: var(--color-primary);
+    border-radius: 1px;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 7px,
+            color-mix(in srgb, var(--color-primary-foreground) 30%, transparent) 7px 8px
+        ),
+        linear-gradient(
+            90deg,
+            color-mix(in srgb, var(--color-primary) 70%, var(--color-accent-strong)),
+            var(--color-primary)
+        );
+    box-shadow: 0 0 10px color-mix(in srgb, var(--color-primary) 40%, transparent);
+    transition: width 180ms ease;
 }
 
 .sc-status-bar {
     display: flex;
-    grid-column: 2;
+    grid-column: 1 / -1;
     grid-row: 3;
     align-items: center;
     min-width: 0;
     height: var(--sc-status-height);
     border-top: 1px solid var(--color-outline-subtle);
-    background: var(--color-card);
+    background: color-mix(in srgb, var(--color-background) 60%, var(--color-card));
     padding: 0 12px;
     padding-bottom: env(safe-area-inset-bottom);
+    font-family: var(--font-mono);
+}
+
+.sc-status-bar::before {
+    width: 5px;
+    height: 5px;
+    flex: 0 0 auto;
+    margin-right: 9px;
+    background: var(--color-steel);
+    content: "";
 }
 
 .sc-status-message {
     min-width: 0;
     overflow: hidden;
-    font-size: 12px;
+    font-size: 11.5px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -1030,9 +1511,9 @@ select option:disabled {
     }
 
     .sc-layer-rail {
-        top: 24px;
-        right: 10px;
-        bottom: 16px;
+        top: 18px;
+        right: 12px;
+        bottom: 14px;
     }
 }
 
@@ -1106,29 +1587,6 @@ select option:disabled {
         border-left: 0;
     }
 
-    .sc-rail-toggle,
-    .sc-sheet-close,
-    .sc-side-scrim {
-        display: none;
-    }
-
-    .sc-side-sheet {
-        position: static;
-        width: auto;
-        height: auto;
-        visibility: visible;
-        background: transparent;
-        box-shadow: none;
-        pointer-events: auto;
-    }
-
-    .sc-source .sc-side-sheet,
-    .sc-inspector .sc-side-sheet {
-        left: auto;
-        right: auto;
-        border: 0;
-    }
-
     .sc-source-panel,
     .sc-inspector-panel {
         height: auto;
@@ -1162,8 +1620,8 @@ select option:disabled {
     }
 
     .sc-project-links {
-        height: 36px;
-        padding: 3px;
+        height: 40px;
+        padding: 4px;
     }
 
     .sc-project-link {
@@ -1186,7 +1644,9 @@ select option:disabled {
     .sc-layer-rail {
         top: 12px;
         right: 8px;
-        bottom: 8px;
+        bottom: 12px;
+        width: 36px;
+        padding-top: 10px;
     }
 }
 
@@ -1209,34 +1669,35 @@ select option:disabled {
     }
 }
 
+/* Status text stays legible on the graphite bar: one warm hue per meaning, nothing neon. */
 @layer utilities {
     .status-error {
-        color: #fecaca;
+        color: #f0a49c;
     }
     .status-success {
-        color: #a7f3d0;
+        color: #9dcf9a;
     }
     .status-info {
-        color: #bae6fd;
+        color: var(--color-steel);
     }
     .status-warning {
-        color: #fde68a;
+        color: #f2c477;
     }
     .status-cancel {
-        color: #fecaca;
+        color: #f0a49c;
     }
 
     [data-theme="light"] .status-error,
     [data-theme="light"] .status-cancel {
-        color: #b91c1c;
+        color: #a4262c;
     }
     [data-theme="light"] .status-success {
-        color: #065f46;
+        color: #2f6b37;
     }
     [data-theme="light"] .status-info {
-        color: #0c4a6e;
+        color: #45585f;
     }
     [data-theme="light"] .status-warning {
-        color: #92400e;
+        color: #8a5406;
     }
 }

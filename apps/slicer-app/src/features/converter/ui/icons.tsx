@@ -30,6 +30,49 @@ export function UploadIcon(props: IconProps) {
     );
 }
 
+/** @zh 源文件栏图标。 @en Source-column icon. */
+export function FileIcon(props: IconProps) {
+    return (
+        <Icon {...props}>
+            <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z" />
+            <path d="M14 3v5h5" />
+        </Icon>
+    );
+}
+
+/** @zh 导出栏图标。 @en Export-column icon. */
+export function ExportIcon(props: IconProps) {
+    return (
+        <Icon {...props}>
+            <path d="M12 15V3" />
+            <path d="m7 8 5-5 5 5" />
+            <path d="M4 15v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-3" />
+        </Icon>
+    );
+}
+
+/** @zh 目标格式分组图标。 @en Target-group icon. */
+export function SlidersIcon(props: IconProps) {
+    return (
+        <Icon {...props}>
+            <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h10M18 18h2" />
+            <circle cx="16" cy="6" r="2" />
+            <circle cx="10" cy="12" r="2" />
+            <circle cx="16" cy="18" r="2" />
+        </Icon>
+    );
+}
+
+/** @zh 转换动作图标。 @en Convert-action icon. */
+export function ConvertIcon(props: IconProps) {
+    return (
+        <Icon {...props}>
+            <path d="M3 8h14l-3.5-3.5" />
+            <path d="M21 16H7l3.5 3.5" />
+        </Icon>
+    );
+}
+
 /** @zh 层叠图标。 @en Stacked-layers icon. */
 export function LayersIcon(props: IconProps) {
     return (

@@ -4,6 +4,7 @@ import { listImportableFileExtensions, type ParsedHeader } from "@innovgame/slic
 
 import { formatBytes } from "../../../shared/lib/format";
 import { renderThumbnail } from "../../preview";
+import { FileIcon, UploadIcon } from "./icons";
 
 interface FileSummaryCardProps {
     sourceFile: File | null;
@@ -36,11 +37,16 @@ export function FileSummaryCard({ sourceFile, parsedHeader, onFileSelect }: File
         importableExtensions.length > 0
             ? `Supports ${importableExtensions.join(", ")} or click to browse`
             : "Load WASM to discover supported slicer files";
+    const layerCount = parsedHeader ? parsedHeader.layers.length : null;
 
     return (
         <section className="sc-source-panel">
             <header className="sc-panel-header">
+                <span aria-hidden="true" className="sc-panel-mark">
+                    <FileIcon />
+                </span>
                 <h2>Source</h2>
+                {layerCount !== null ? <span className="sc-panel-meta">{layerCount} layers</span> : null}
             </header>
             <div className="sc-panel-body">
                 <div
@@ -80,10 +86,17 @@ export function FileSummaryCard({ sourceFile, parsedHeader, onFileSelect }: File
                             void onFileSelect(file);
                         }
                     }}
-                    className={dragging ? "sc-dropzone is-dragging" : "sc-dropzone"}
+                    className={dropZoneClass(dragging, sourceFile !== null)}
                 >
+                    <span aria-hidden="true" className="sc-dropzone-mark">
+                        <UploadIcon />
+                    </span>
                     <p className="sc-dropzone-title">
-                        {dragging ? "Release to upload your slicer file" : "Drag and drop a slicer file here"}
+                        {dragging
+                            ? "Release to upload your slicer file"
+                            : sourceFile
+                              ? "Replace the current file"
+                              : "Drag and drop a slicer file here"}
                     </p>
                     <p className="sc-dropzone-copy" title={supportText}>
                         {supportText}
@@ -126,4 +139,19 @@ export function FileSummaryCard({ sourceFile, parsedHeader, onFileSelect }: File
             </div>
         </section>
     );
+}
+
+/**
+ * @zh 拖放区在拖入时高亮，在已有源文件时收成一行。
+ * @en The drop zone highlights while dragging and collapses to one row once a source file is loaded.
+ */
+function dropZoneClass(dragging: boolean, hasSourceFile: boolean): string {
+    const classes = ["sc-dropzone"];
+    if (hasSourceFile) {
+        classes.push("is-compact");
+    }
+    if (dragging) {
+        classes.push("is-dragging");
+    }
+    return classes.join(" ");
 }

@@ -18,6 +18,7 @@ export function ConverterPage() {
         <AppShell
             title="Slicer File Converter"
             documentStatus={controller.sourceFile?.name ?? "No file open"}
+            documentLoaded={controller.sourceFile !== null}
             source={
                 <FileSummaryCard
                     sourceFile={controller.sourceFile}
@@ -34,32 +35,24 @@ export function ConverterPage() {
                 />
             }
             inspector={
-                <>
-                    {controller.parsedHeader ? null : (
-                        <div className="sc-inspector-empty">
-                            <p className="sc-empty-title">Export</p>
-                            <p className="sc-empty-copy">Load a slicer file to choose a target format.</p>
-                        </div>
-                    )}
-                    <ConvertPanel
-                        wasmReady={controller.wasmReady}
-                        parsedHeader={controller.parsedHeader}
-                        status={controller.status}
-                        outputFileName={controller.outputFileName}
-                        slicerConverterFormatId={controller.slicerConverterFormatId}
-                        slicerConverterSuffixId={controller.slicerConverterSuffixId}
-                        slicerConverterVersionId={controller.slicerConverterVersionId}
-                        converting={controller.converting}
-                        exportWarning={controller.exportWarning}
-                        progress={controller.progress}
-                        onOutputFileNameChange={controller.onOutputFileNameChange}
-                        onSelectSlicerConverterFormat={controller.onSelectSlicerConverterFormat}
-                        onSelectSlicerConverterSuffix={controller.onSelectSlicerConverterSuffix}
-                        onSelectSlicerConverterVersion={controller.onSelectSlicerConverterVersion}
-                        onConvert={controller.onConvert}
-                        onCancel={controller.onCancel}
-                    />
-                </>
+                <ConvertPanel
+                    wasmReady={controller.wasmReady}
+                    parsedHeader={controller.parsedHeader}
+                    status={controller.status}
+                    outputFileName={controller.outputFileName}
+                    slicerConverterFormatId={controller.slicerConverterFormatId}
+                    slicerConverterSuffixId={controller.slicerConverterSuffixId}
+                    slicerConverterVersionId={controller.slicerConverterVersionId}
+                    converting={controller.converting}
+                    exportWarning={controller.exportWarning}
+                    progress={controller.progress}
+                    onOutputFileNameChange={controller.onOutputFileNameChange}
+                    onSelectSlicerConverterFormat={controller.onSelectSlicerConverterFormat}
+                    onSelectSlicerConverterSuffix={controller.onSelectSlicerConverterSuffix}
+                    onSelectSlicerConverterVersion={controller.onSelectSlicerConverterVersion}
+                    onConvert={controller.onConvert}
+                    onCancel={controller.onCancel}
+                />
             }
             status={<StatusBanner id="statusMsg" status={controller.status} />}
         />

@@ -156,7 +156,9 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                         <LayersIcon />
                     </div>
                     <p className="sc-empty-title">Layer preview</p>
-                    <p className="sc-empty-copy">Open a slicer file to inspect exposure layers.</p>
+                    <p className="sc-empty-copy">
+                        Open a slicer file to inspect exposure layers. Drop files in the Source column to start.
+                    </p>
                 </div>
             )}
             <section
@@ -233,8 +235,8 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                                     <span className="sc-rail-value">
                                         {formatLayerHeight(
                                             layerTopMm(selectedLayer, parsedHeader?.metadata.layer_height_mm)
-                                        )}{" "}
-                                        mm
+                                        )}
+                                        <span className="sc-rail-unit"> mm</span>
                                     </span>
                                     <span className="sc-rail-detail">
                                         <span id="layerNum" className="sc-sr">
