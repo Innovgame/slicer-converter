@@ -355,9 +355,9 @@ fn archive_entry_plan_api_uses_rust_archive_layout_rules() {
     let layer_entries = describe_archive_layer_entries("sl1", "demo", 0, 2).expect("layer entries");
     let layer_entries: serde_json::Value =
         serde_json::from_str(&layer_entries).expect("layer entries json");
-    assert_eq!(layer_entries[0]["name"], "demo00000.png");
+    assert_eq!(layer_entries[0]["name"], "demo_00000.png");
     assert_eq!(layer_entries[0]["compression_method"], 8);
-    assert_eq!(layer_entries[1]["name"], "demo00001.png");
+    assert_eq!(layer_entries[1]["name"], "demo_00001.png");
 
     let vdt_entries =
         describe_archive_layer_entries("vdt", "ignored", 0, 2).expect("vdt layer entries");
