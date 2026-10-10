@@ -11,7 +11,7 @@ This file records changes that users can see. Versions follow repository tags, f
 
 ## 0.1.1
 
-- Release assets add macOS Apple Silicon, macOS Intel, and `SHA256SUMS`.
+- Release assets add macOS Apple Silicon and `SHA256SUMS`. Intel macOS builds from source.
 - `examples/sample.ctb` is a tiny file for a first CLI conversion.
 - Maintainer notes moved under `docs/internal/`.
 
