@@ -373,13 +373,13 @@ fn cli_converts_goo_to_sl1_with_zero_based_layer_entries() {
         .and_then(|stem| stem.to_str())
         .expect("temp output stem should be utf8");
     archive
-        .by_name(&format!("{job_name}00000.png"))
+        .by_name(&format!("{job_name}_00000.png"))
         .expect("SL1 layers should start at zero with the job name prefix");
     archive
-        .by_name(&format!("{job_name}00009.png"))
+        .by_name(&format!("{job_name}_00009.png"))
         .expect("sample GOO has ten zero-based SL1 layers");
     assert!(
-        archive.by_name(&format!("{job_name}00010.png")).is_err(),
+        archive.by_name(&format!("{job_name}_00010.png")).is_err(),
         "sample GOO should not produce a one-based extra terminal SL1 layer"
     );
 
