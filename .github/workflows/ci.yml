@@ -23,7 +23,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 15
         steps:
-            - uses: actions/checkout@v5
+            - uses: actions/checkout@v7
 
             - uses: ./.github/actions/setup-toolchain
               with:
@@ -41,7 +41,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 45
         steps:
-            - uses: actions/checkout@v5
+            - uses: actions/checkout@v7
 
             - uses: ./.github/actions/setup-toolchain
               with:
@@ -73,7 +73,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 30
         steps:
-            - uses: actions/checkout@v5
+            - uses: actions/checkout@v7
 
             - uses: ./.github/actions/setup-toolchain
               with:
@@ -105,7 +105,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 30
         steps:
-            - uses: actions/checkout@v5
+            - uses: actions/checkout@v7
 
             - uses: ./.github/actions/setup-toolchain
               with:
@@ -120,7 +120,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 40
         steps:
-            - uses: actions/checkout@v5
+            - uses: actions/checkout@v7
 
             - uses: ./.github/actions/setup-toolchain
               with:
