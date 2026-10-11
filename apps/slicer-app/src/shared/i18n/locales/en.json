@@ -1,6 +1,7 @@
 {
     "app": {
         "title": "Slicer File Converter",
+        "version": "Version {{version}}",
         "noFile": "No file open"
     },
     "source": {

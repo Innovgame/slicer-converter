@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { useTranslation } from "../../../shared/i18n/i18n";
+import { PRODUCT_VERSION } from "../../../product-version";
 import { LayersIcon } from "./icons";
 import { ProjectLinks } from "./project-links";
 import { ThemeToggle } from "./theme-toggle";
@@ -30,6 +32,9 @@ export function AppShell({
     inspector,
     status
 }: AppShellProps) {
+    const { t } = useTranslation();
+    const versionLabel = t("app.version", { version: PRODUCT_VERSION });
+
     return (
         <main className="sc-workbench">
             <header className="sc-header">
@@ -38,7 +43,12 @@ export function AppShell({
                         <LayersIcon />
                     </div>
                     <div className="sc-brand-copy">
-                        <h1 className="sc-product-name">{title}</h1>
+                        <div className="sc-product-title">
+                            <h1 className="sc-product-name">{title}</h1>
+                            <span className="sc-app-version" aria-label={versionLabel} title={versionLabel}>
+                                v{PRODUCT_VERSION}
+                            </span>
+                        </div>
                         <p className={documentLoaded ? "sc-document-status is-loaded" : "sc-document-status"}>
                             {documentStatus}
                         </p>

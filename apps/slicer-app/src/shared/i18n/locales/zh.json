@@ -1,6 +1,7 @@
 {
     "app": {
         "title": "切片文件转换器",
+        "version": "版本 {{version}}",
         "noFile": "未打开文件"
     },
     "source": {

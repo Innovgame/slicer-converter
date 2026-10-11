@@ -264,7 +264,15 @@ select option:disabled {
     gap: 2px;
 }
 
+.sc-product-title {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 8px;
+}
+
 .sc-product-name {
+    min-width: 0;
     margin: 0;
     overflow: hidden;
     font-size: 14px;
@@ -273,6 +281,20 @@ select option:disabled {
     letter-spacing: 0;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.sc-app-version {
+    flex: 0 0 auto;
+    padding: 0 6px;
+    border: 1px solid var(--color-outline);
+    border-radius: var(--sc-radius-pill);
+    background: color-mix(in srgb, var(--color-foreground) 5%, transparent);
+    color: var(--color-muted-foreground);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: 0.02em;
 }
 
 .sc-document-status {
@@ -1835,6 +1857,27 @@ select option:disabled {
 
     .sc-header {
         flex: 0 0 auto;
+        flex-wrap: wrap;
+        height: auto;
+        min-height: var(--sc-header-height);
+        padding-top: 8px;
+        padding-bottom: 8px;
+        row-gap: 8px;
+    }
+
+    .sc-brand {
+        flex: 1 1 100%;
+        margin-right: 0;
+    }
+
+    .sc-header-actions {
+        width: 100%;
+        margin-left: 0;
+        justify-content: flex-end;
+    }
+
+    .sc-tour-invitation {
+        top: 112px;
     }
 
     .sc-product-name {
