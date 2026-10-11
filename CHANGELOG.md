@@ -4,6 +4,10 @@ This file records changes that users can see. Versions follow repository tags, f
 
 ## Unreleased
 
+- The test page header shows the published version beside the product name. On a phone, the links and toggles move below the name so both stay readable.
+- Preview zoom sits in one field with its percent unit. The layer rail and the layer number beside it are narrower.
+- A long source file name shows the full name on hover.
+
 ## 0.1.4
 
 - The test page header links to the repository, a bug report, and a feature request.
