@@ -7,7 +7,9 @@ import {
 
 const catalogExtensions = [".ctb", ".v1.ctb", ".gktwo.ctb", ".encrypted.ctb", ".goo", ".v1.cxdlp", ".zip"];
 
-function environment(input: Partial<FilePickerEnvironment> & Pick<FilePickerEnvironment, "userAgent">): FilePickerEnvironment {
+function environment(
+    input: Partial<FilePickerEnvironment> & Pick<FilePickerEnvironment, "userAgent">
+): FilePickerEnvironment {
     return {
         platform: "",
         maxTouchPoints: 0,
