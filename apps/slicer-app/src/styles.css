@@ -283,6 +283,19 @@ select option:disabled {
     white-space: nowrap;
 }
 
+.sc-version-toggle {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+}
+
+.sc-version-toggle:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
 .sc-app-version {
     flex: 0 0 auto;
     padding: 0 6px;

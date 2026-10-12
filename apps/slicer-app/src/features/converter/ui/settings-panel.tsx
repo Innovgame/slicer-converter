@@ -2,7 +2,7 @@ import { CircleHelp, Languages, Sun } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { useTheme } from "../../../app/providers";
-import { PRODUCT_VERSION } from "../../../product-version";
+import { VersionBadge } from "./version-badge";
 import { useTranslation } from "../../../shared/i18n/i18n";
 import { LanguageToggle } from "./language-toggle";
 import { ProjectLinks } from "./project-links";
@@ -86,7 +86,7 @@ export function SettingsPanel({ help }: { help: ReactNode }) {
                 <ProjectLinks />
             </section>
             <p className="sc-settings-version sc-mobile-only">
-                {t("app.title")} · v{PRODUCT_VERSION}
+                {t("app.title")} · <VersionBadge />
             </p>
         </div>
     );

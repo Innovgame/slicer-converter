@@ -51,7 +51,9 @@ describe("ConverterPage / 转换器页面", () => {
         const productVersion = JSON.parse(
             readFileSync(resolve(process.cwd(), "../../packages/slicer-wasm/package.json"), "utf8")
         ).version as string;
-        expect(screen.getByLabelText(`Version ${productVersion}`)).toHaveTextContent(`v${productVersion}`);
+        for (const version of screen.getAllByLabelText(`Version ${productVersion}`)) {
+            expect(version).toHaveTextContent(`v${productVersion}`);
+        }
         expect(screen.getByRole("link", { name: "Open the slicer-converter GitHub repository" })).toHaveAttribute(
             "href",
             "https://github.com/Innovgame/slicer-converter"

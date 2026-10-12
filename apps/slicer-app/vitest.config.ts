@@ -13,6 +13,7 @@ export default defineConfig({
         }
     },
     test: {
+        env: { VITE_BUILD_COMMIT: "abcdef12" },
         environment: "jsdom",
         setupFiles: ["./tests/unit/setup.ts"],
         include: ["tests/**/*.test.ts", "tests/**/*.test.tsx"],

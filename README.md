@@ -225,6 +225,8 @@ pnpm dev
 
 `pnpm dev` builds release WASM first, then starts the `apps/slicer-app` test page.
 
+Click the version label to show or hide the build commit (8 characters). Builds use the checked-out Git commit; `VITE_BUILD_COMMIT` can explicitly supply the commit for CI or source archives. Values must be hexadecimal with 8–64 characters. Without Git, builds fall back to `GITHUB_SHA`, or omit the commit when neither is available. The browser receives only this public build identifier through Vite's typed environment variables.
+
 ```bash
 pnpm check
 pnpm test

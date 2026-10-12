@@ -2,7 +2,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { FolderOpen, Info, Maximize, Minimize, SlidersHorizontal, X } from "lucide-react";
 
 import { useTranslation } from "../../../shared/i18n/i18n";
-import { PRODUCT_VERSION } from "../../../product-version";
+import { VersionBadge } from "./version-badge";
 import { LayersIcon } from "./icons";
 import { SettingsPanel } from "./settings-panel";
 import { useMobileWorkbench, type MobileWorkbenchSession } from "../model/use-mobile-workbench";
@@ -41,7 +41,6 @@ export function AppShell({
     converting = false
 }: AppShellProps) {
     const { t } = useTranslation();
-    const versionLabel = t("app.version", { version: PRODUCT_VERSION });
     const session = useMobileWorkbench(documentIdentity);
     const returnFocus = useRef<HTMLElement | null>(null);
     const drawerRef = useRef<HTMLElement | null>(null);
@@ -93,13 +92,7 @@ export function AppShell({
                     <div className="sc-brand-copy">
                         <div className="sc-product-title">
                             <h1 className="sc-product-name sc-desktop-only">{title}</h1>
-                            <span
-                                className="sc-app-version sc-desktop-only"
-                                aria-label={versionLabel}
-                                title={versionLabel}
-                            >
-                                v{PRODUCT_VERSION}
-                            </span>
+                            <VersionBadge className="sc-app-version sc-desktop-only" />
                         </div>
                         <p
                             className={`${documentLoaded ? "sc-document-status is-loaded" : "sc-document-status"} sc-desktop-only`}

@@ -6,6 +6,7 @@ import { ThemeProvider } from "../../../src/app/providers";
 import { AppShell } from "../../../src/features/converter/ui/app-shell";
 import { createAppI18n } from "../../../src/shared/i18n/i18n";
 import { PreviewPanel } from "../../../src/features/converter/ui/preview-panel";
+import { PRODUCT_VERSION } from "../../../src/product-version";
 
 function viewport(mobile: boolean) {
     vi.stubGlobal("matchMedia", () => ({
@@ -35,6 +36,30 @@ function mount() {
 
 describe("Mobile AppShell / 移动工作台", () => {
     afterEach(() => vi.unstubAllGlobals());
+
+    it("toggles the build commit after the desktop version / 点击桌面版本号显示和隐藏构建提交", () => {
+        viewport(false);
+        const view = mount();
+        const version = view.container.querySelector(".sc-app-version")!;
+        expect(version.textContent).toBe(`v${PRODUCT_VERSION}`);
+        fireEvent.click(version);
+        expect(version.textContent).toBe(`v${PRODUCT_VERSION} · abcdef12`);
+        fireEvent.click(version);
+        expect(version.textContent).toBe(`v${PRODUCT_VERSION}`);
+    });
+
+    it("toggles the build commit in mobile settings / 点击移动设置页版本号显示和隐藏构建提交", () => {
+        viewport(true);
+        mount();
+        fireEvent.click(screen.getByRole("tab", { name: "Settings" }));
+        const settings = screen.getByRole("tabpanel", { name: "Settings" });
+        const version = within(settings).getByText(`v${PRODUCT_VERSION}`, { exact: false });
+        expect(version).not.toHaveTextContent("abcdef12");
+        fireEvent.click(version);
+        expect(version).toHaveTextContent(`v${PRODUCT_VERSION} · abcdef12`);
+        fireEvent.click(version);
+        expect(version).not.toHaveTextContent("abcdef12");
+    });
 
     it("preserves the preview and export draft across page switches / 切换页面保留预览与导出草稿", () => {
         viewport(true);
