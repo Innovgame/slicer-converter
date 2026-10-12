@@ -1887,6 +1887,24 @@ select option:disabled {
         --sc-mobile-line: var(--color-outline-subtle);
         --sc-mobile-accent: var(--color-accent);
         --sc-mobile-shadow: 0 6px 20px #00000026, inset 0 1px 0 #ffffff08;
+        --sc-mobile-toolbar-shadow: 0 8px 24px #00000026, 0 2px 6px #00000014;
+        --sc-mobile-controls-height: 0px;
+        --sc-mobile-tool-size: 44px;
+        --sc-mobile-tool-padding: 2px;
+        --sc-mobile-tool-group-gap: 4px;
+        --sc-mobile-tools-height: calc(
+            5 * var(--sc-mobile-tool-size) + 2 * var(--sc-mobile-tool-group-gap) + 2 * var(--sc-mobile-tool-padding)
+        );
+        --sc-mobile-tools-top: max(
+            calc(80px + env(safe-area-inset-top)),
+            calc(
+                (
+                        100dvh + 80px + env(safe-area-inset-top) - var(--sc-mobile-tabs-height) -
+                            var(--sc-mobile-controls-height) - var(--sc-mobile-tools-height)
+                    ) /
+                    2
+            )
+        );
         position: relative;
         display: block;
         height: 100dvh;
@@ -1899,6 +1917,9 @@ select option:disabled {
     .sc-desktop-only {
         display: none !important;
     }
+    .sc-workbench:has(.sc-slice:not(.is-collapsed) .sc-mobile-preview-controls) {
+        --sc-mobile-controls-height: 154px;
+    }
     .sc-mobile-only {
         display: block;
     }
@@ -1906,12 +1927,26 @@ select option:disabled {
     .sc-body {
         display: contents;
     }
-    .sc-brand {
+    .sc-header::before {
         position: absolute;
         z-index: 2;
-        top: calc(20px + env(safe-area-inset-top));
-        left: 24px;
-        right: 82px;
+        inset: 0 0 auto;
+        height: calc(96px + env(safe-area-inset-top));
+        background: linear-gradient(180deg, var(--color-background) 80%, transparent);
+        content: "";
+        pointer-events: none;
+    }
+    .sc-workbench[data-mobile-tab="settings"] .sc-header::before,
+    .sc-workbench[data-immersive="true"] .sc-header::before {
+        display: none;
+    }
+    .sc-brand {
+        position: absolute;
+        z-index: 3;
+        top: calc(14px + env(safe-area-inset-top));
+        left: 16px;
+        right: 16px;
+        width: auto;
         margin: 0;
         min-width: 0;
     }
@@ -1922,25 +1957,54 @@ select option:disabled {
         width: 100%;
         min-width: 0;
     }
-    .sc-mobile-file-title {
+    .sc-mobile-file-navigation {
         display: grid;
-        gap: 4px;
-        width: 100%;
-        min-height: 32px;
-        padding: 0;
-        border: 0;
-        background: transparent;
-        color: var(--sc-mobile-ink);
-        text-align: left;
+        grid-template-columns: 44px minmax(0, 1fr) 44px;
+        align-items: center;
+        gap: 12px;
     }
-    .sc-mobile-file-title strong {
+    .sc-mobile-file-open,
+    .sc-mobile-file-info {
+        display: grid;
+        place-items: center;
+        flex: 0 0 44px;
+        width: 44px;
+        height: 44px;
+        border: 0;
+        border-radius: 14px;
+        background: var(--sc-mobile-panel);
+        color: var(--sc-mobile-accent);
+    }
+    .sc-mobile-file-open svg,
+    .sc-mobile-file-info svg {
+        width: 20px;
+        height: 20px;
+        stroke-width: 1.7;
+    }
+    .sc-mobile-file-copy {
+        display: grid;
+        align-content: center;
+        min-width: 0;
+        min-height: 52px;
+        gap: 4px;
+        text-align: center;
+    }
+    .sc-mobile-file-copy small {
         overflow: hidden;
-        font-size: 16px;
-        font-weight: 600;
+        color: var(--sc-mobile-muted);
+        font-size: 12px;
+        line-height: 16px;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-    .sc-mobile-browse,
+    .sc-mobile-file-copy strong {
+        overflow: hidden;
+        min-width: 0;
+        font-size: 17px;
+        font-weight: 650;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
     .sc-mobile-immersive,
     .sc-mobile-restore {
         position: absolute;
@@ -1956,18 +2020,24 @@ select option:disabled {
         background: var(--sc-mobile-panel);
         color: var(--sc-mobile-muted);
     }
-    .sc-mobile-browse {
-        top: calc(20px + env(safe-area-inset-top));
+    .sc-mobile-immersive {
+        z-index: 3;
+        top: calc(
+            var(--sc-mobile-tools-top) + var(--sc-mobile-tool-padding) + 2 * var(--sc-mobile-tool-size) +
+                var(--sc-mobile-tool-group-gap)
+        );
+        right: calc(16px + var(--sc-mobile-tool-padding));
+        height: var(--sc-mobile-tool-size);
         border: 0;
         background: transparent;
     }
-    .sc-mobile-immersive {
-        top: calc(174px + env(safe-area-inset-top));
+    .sc-mobile-immersive[hidden],
+    .sc-mobile-restore[hidden] {
+        display: none;
     }
     .sc-mobile-restore {
         top: calc(20px + env(safe-area-inset-top));
     }
-    .sc-mobile-browse svg,
     .sc-mobile-immersive svg,
     .sc-mobile-restore svg {
         width: 22px;
@@ -2019,26 +2089,87 @@ select option:disabled {
     .sc-mobile-preview-tools {
         position: absolute;
         z-index: 2;
-        top: calc(72px + env(safe-area-inset-top));
+        top: var(--sc-mobile-tools-top);
         right: 16px;
         display: flex;
         flex-direction: column;
-        gap: 7px;
+        width: calc(var(--sc-mobile-tool-size) + 2 * var(--sc-mobile-tool-padding));
+        height: var(--sc-mobile-tools-height);
+        padding: var(--sc-mobile-tool-padding);
+        gap: 0;
+        border-radius: 11px;
+        background: color-mix(in srgb, var(--sc-mobile-panel) 97%, transparent);
+        box-shadow:
+            var(--sc-mobile-toolbar-shadow),
+            inset 0 0 0 1px color-mix(in srgb, var(--sc-mobile-line) 45%, transparent);
+        backdrop-filter: blur(12px);
+        pointer-events: none;
+    }
+    .sc-mobile-preview-tools::before,
+    .sc-mobile-preview-tools::after {
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        height: 1px;
+        background: color-mix(in srgb, var(--sc-mobile-line) 65%, transparent);
+        content: "";
+    }
+    .sc-mobile-preview-tools::before {
+        top: calc(var(--sc-mobile-tool-padding) + 2 * var(--sc-mobile-tool-size) + var(--sc-mobile-tool-group-gap) / 2);
+    }
+    .sc-mobile-preview-tools::after {
+        top: calc(
+            var(--sc-mobile-tool-padding) + 3 * var(--sc-mobile-tool-size) + 1.5 * var(--sc-mobile-tool-group-gap)
+        );
     }
     .sc-mobile-preview-tools .sc-tool {
+        position: relative;
         width: 44px;
-        height: 44px;
-        border: 1px solid var(--sc-mobile-line);
+        height: var(--sc-mobile-tool-size);
+        flex: 0 0 var(--sc-mobile-tool-size);
+        border: 0;
         border-radius: 12px;
-        background: var(--sc-mobile-panel);
-        color: var(--sc-mobile-muted);
+        background: transparent;
+        color: color-mix(in srgb, var(--sc-mobile-ink) 75%, var(--sc-mobile-muted));
+        pointer-events: auto;
+    }
+    .sc-mobile-preview-tools .sc-tool svg,
+    .sc-mobile-immersive svg {
+        position: relative;
+        z-index: 1;
+        width: 20px;
+        height: 20px;
+        stroke-width: 1.7;
     }
     .sc-mobile-preview-tools .sc-tool:nth-child(n + 3) {
-        transform: translateY(51px);
+        transform: translateY(calc(var(--sc-mobile-tool-size) + 2 * var(--sc-mobile-tool-group-gap)));
     }
     .sc-mobile-preview-tools .sc-tool[aria-pressed="true"] {
-        background: color-mix(in srgb, var(--sc-mobile-accent) 16%, var(--sc-mobile-panel));
+        background: transparent;
         color: var(--sc-mobile-accent);
+    }
+    .sc-mobile-preview-tools .sc-tool::before,
+    .sc-mobile-immersive::before {
+        position: absolute;
+        inset: 4px;
+        border-radius: 11px;
+        background: transparent;
+        content: "";
+        pointer-events: none;
+        transition: background-color 120ms ease;
+    }
+    .sc-mobile-preview-tools .sc-tool[aria-pressed="true"]::before {
+        background: color-mix(in srgb, var(--sc-mobile-accent) 12%, var(--sc-mobile-panel));
+    }
+    .sc-mobile-preview-tools .sc-tool:hover:not(:disabled),
+    .sc-mobile-preview-tools .sc-tool:active:not(:disabled),
+    .sc-workbench .sc-mobile-immersive:active:not(:disabled) {
+        background: transparent;
+        box-shadow: none;
+    }
+    .sc-mobile-preview-tools .sc-tool:active:not(:disabled)::before,
+    .sc-mobile-immersive:active:not(:disabled)::before {
+        background: color-mix(in srgb, var(--sc-mobile-accent) 20%, var(--sc-mobile-panel));
     }
     .sc-mobile-preview-controls {
         position: absolute;
@@ -2501,10 +2632,11 @@ select option:disabled {
 
     .sc-status-bar {
         position: absolute;
-        z-index: 2;
-        left: 24px;
-        right: 80px;
-        top: calc(50px + env(safe-area-inset-top));
+        z-index: 3;
+        left: 20px;
+        right: 20px;
+        width: auto;
+        top: calc(76px + env(safe-area-inset-top));
         bottom: auto;
         gap: 10px;
         height: auto;
@@ -2514,17 +2646,7 @@ select option:disabled {
         background: transparent;
         color: var(--sc-mobile-muted);
         pointer-events: none;
-    }
-    .sc-mobile-status-summary {
-        min-width: 0;
-        max-width: 45%;
-        overflow: hidden;
-        color: var(--sc-mobile-muted);
-        font-family: var(--font-sans);
-        font-size: 11px;
-        line-height: 18px;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        justify-content: center;
     }
     .sc-status-bar::before {
         display: none;
@@ -2541,7 +2663,9 @@ select option:disabled {
         top: calc(38px + env(safe-area-inset-top));
         left: auto;
         right: 24px;
+        width: auto;
         max-width: calc(100% - 164px);
+        justify-content: flex-end;
     }
     .sc-workbench[data-mobile-tab="settings"] .sc-status-details {
         left: auto;
@@ -2574,9 +2698,9 @@ select option:disabled {
         right: 16px;
         max-width: calc(100vw - 32px);
     }
-    .sc-mobile-file-title:focus-visible,
+    .sc-mobile-file-info:focus-visible,
+    .sc-mobile-file-open:focus-visible,
     .sc-mobile-tabs button:focus-visible,
-    .sc-mobile-browse:focus-visible,
     .sc-mobile-immersive:focus-visible,
     .sc-mobile-restore:focus-visible,
     .sc-drawer-close:focus-visible,
@@ -2596,6 +2720,7 @@ select option:disabled {
         --color-raised: #edf2f9;
         --color-outline-subtle: #d5deeb;
         --sc-mobile-shadow: 0 6px 20px #20314b0c, inset 0 1px 0 #ffffff;
+        --sc-mobile-toolbar-shadow: 0 8px 24px #20314b0c, 0 2px 6px #20314b06;
     }
 
     .sc-workbench {
@@ -2609,7 +2734,7 @@ select option:disabled {
             var(--color-background) 72%
         );
     }
-    .sc-mobile-file-title strong {
+    .sc-mobile-file-copy strong {
         letter-spacing: -0.02em;
     }
     .sc-slice-empty .sc-empty-mark {
@@ -2619,19 +2744,8 @@ select option:disabled {
     .sc-slice-empty .sc-empty-title {
         font-weight: 650;
     }
-    .sc-mobile-preview-tools .sc-tool,
-    .sc-mobile-immersive,
     .sc-mobile-restore {
         box-shadow: var(--sc-mobile-shadow);
-    }
-    .sc-mobile-browse {
-        border-radius: 12px;
-        background: color-mix(in srgb, var(--sc-mobile-accent) 10%, var(--sc-mobile-panel));
-        color: var(--sc-mobile-accent);
-        box-shadow: var(--sc-mobile-shadow);
-    }
-    .sc-mobile-preview-tools .sc-tool[aria-pressed="true"] {
-        border-color: color-mix(in srgb, var(--sc-mobile-accent) 55%, var(--sc-mobile-line));
     }
     .sc-mobile-preview-controls,
     .sc-source,
@@ -2786,7 +2900,8 @@ select option:disabled {
     .sc-status-details {
         position: absolute;
         top: calc(100% + 10px);
-        left: 0;
+        left: auto;
+        right: 0;
         width: min(340px, calc(100vw - 48px));
         max-height: min(280px, 45dvh);
         overflow: auto;
@@ -2842,6 +2957,9 @@ select option:disabled {
 }
 
 @media (max-width: 767px) and (max-height: 520px) {
+    .sc-workbench:has(.sc-slice:not(.is-collapsed) .sc-mobile-preview-controls) {
+        --sc-mobile-controls-height: 0px;
+    }
     .sc-mobile-preview-controls {
         left: 16px;
         right: 78px;
@@ -2861,19 +2979,6 @@ select option:disabled {
     .sc-mobile-export-button {
         min-height: 36px;
         padding: 6px 12px;
-    }
-    .sc-mobile-preview-tools {
-        top: calc(66px + env(safe-area-inset-top));
-    }
-    .sc-mobile-preview-tools .sc-tool {
-        height: 36px;
-    }
-    .sc-mobile-immersive {
-        top: calc(152px + env(safe-area-inset-top));
-        height: 36px;
-    }
-    .sc-mobile-preview-tools .sc-tool:nth-child(n + 3) {
-        transform: translateY(43px);
     }
 }
 

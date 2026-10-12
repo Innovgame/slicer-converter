@@ -22,6 +22,7 @@ function mount() {
                 title="Converter"
                 documentStatus="sample.goo"
                 documentLoaded
+                sourceSummary="GOO · 10 layers"
                 help={<button>Quick tour</button>}
                 source={<input aria-label="Source file" defaultValue="sample.goo" />}
                 viewer={<canvas aria-label="Exposure canvas" />}
@@ -68,12 +69,42 @@ describe("Mobile AppShell / 移动工作台", () => {
         viewport(true);
         mount();
         const trigger = screen.getByRole("button", { name: "File details" });
+        expect(screen.getByText("sample.goo", { selector: "strong" })).toBeVisible();
+        expect(screen.getByText("GOO · 10 layers")).toBeVisible();
+        expect(trigger).toHaveAttribute("aria-expanded", "false");
         fireEvent.click(trigger);
+        expect(trigger).toHaveAttribute("aria-expanded", "true");
         const drawer = screen.getByRole("dialog", { name: "File details" });
         expect(within(drawer).getByRole("textbox", { name: "Source file" })).toHaveValue("sample.goo");
         fireEvent.click(within(drawer).getByRole("button", { name: "Close panel" }));
         expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
         expect(trigger).toHaveFocus();
+    });
+
+    it("opens the file picker from the empty header entry / 空文件标题入口直接打开文件选择器", () => {
+        viewport(true);
+        const browse = vi.fn();
+        render(
+            <ThemeProvider>
+                <AppShell
+                    title="Converter"
+                    documentStatus="No file open"
+                    documentLoaded={false}
+                    help={null}
+                    source={null}
+                    viewer={<canvas />}
+                    inspector={null}
+                    status={null}
+                    onBrowseFile={browse}
+                />
+            </ThemeProvider>
+        );
+        const trigger = screen.getByRole("button", { name: "Open file" });
+        expect(trigger).toHaveAccessibleName("Open file");
+        expect(screen.queryByRole("button", { name: "File details" })).not.toBeInTheDocument();
+        fireEvent.click(trigger);
+        expect(browse).toHaveBeenCalledOnce();
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
 
     it("exits pure canvas with Escape from the focused real viewport / 实际画布获得焦点后 Escape 退出纯画布", () => {

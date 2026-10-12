@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from "react";
-import { FolderOpen, Maximize, Minimize, SlidersHorizontal, X } from "lucide-react";
+import { FolderOpen, Info, Maximize, Minimize, SlidersHorizontal, X } from "lucide-react";
 
 import { useTranslation } from "../../../shared/i18n/i18n";
 import { PRODUCT_VERSION } from "../../../product-version";
@@ -107,14 +107,44 @@ export function AppShell({
                             {documentStatus}
                         </p>
                         {session.isMobile && (
-                            <button
-                                className="sc-mobile-file-title"
-                                onClick={(event) => openDrawer("source", event.currentTarget)}
-                                aria-label={t("mobile.fileDetails")}
-                                disabled={chromeHidden}
-                            >
-                                <strong title={documentStatus}>{documentStatus}</strong>
-                            </button>
+                            <div className="sc-mobile-file-navigation">
+                                <button
+                                    type="button"
+                                    className="sc-mobile-file-open"
+                                    aria-label={t("mobile.openFile")}
+                                    disabled={chromeHidden}
+                                    onClick={(event) => {
+                                        if (onBrowseFile) onBrowseFile();
+                                        else openDrawer("source", event.currentTarget);
+                                    }}
+                                >
+                                    <FolderOpen aria-hidden="true" />
+                                </button>
+                                <div className="sc-mobile-file-copy">
+                                    <strong title={documentLoaded ? documentStatus : undefined}>
+                                        {documentLoaded ? documentStatus : t("mobile.openFile")}
+                                    </strong>
+                                    <small>
+                                        {documentLoaded
+                                            ? (sourceSummary ?? t("mobile.fileDetails"))
+                                            : t("mobile.chooseFile")}
+                                    </small>
+                                </div>
+                                {documentLoaded && (
+                                    <button
+                                        type="button"
+                                        className="sc-mobile-file-info"
+                                        aria-label={t("mobile.fileDetails")}
+                                        aria-expanded={sourceOpen}
+                                        aria-controls="sc-source-panel"
+                                        aria-haspopup="dialog"
+                                        disabled={chromeHidden}
+                                        onClick={(event) => openDrawer("source", event.currentTarget)}
+                                    >
+                                        <Info aria-hidden="true" />
+                                    </button>
+                                )}
+                            </div>
                         )}
                     </div>
                 </div>
@@ -131,14 +161,6 @@ export function AppShell({
             </header>
             {session.isMobile && !previewHidden && (
                 <>
-                    <button
-                        className="sc-mobile-browse"
-                        aria-label={t("mobile.openFile")}
-                        onClick={onBrowseFile}
-                        hidden={chromeHidden}
-                    >
-                        <FolderOpen aria-hidden="true" />
-                    </button>
                     <button
                         ref={canvasButtonRef}
                         className="sc-mobile-immersive"
@@ -192,6 +214,7 @@ export function AppShell({
                     />
                 )}
                 <aside
+                    id="sc-source-panel"
                     ref={sourceOpen ? drawerRef : undefined}
                     className="sc-source"
                     role={sourceOpen ? "dialog" : undefined}
@@ -224,9 +247,6 @@ export function AppShell({
                 </aside>
             </div>
             <footer className="sc-status-bar" hidden={session.isMobile && session.immersive}>
-                {session.isMobile && session.tab === "preview" && (
-                    <small className="sc-mobile-status-summary">{sourceSummary ?? t("mobile.openFile")}</small>
-                )}
                 {typeof status === "function" ? status(mobileSession) : status}
             </footer>
             {session.isMobile && !session.immersive && (

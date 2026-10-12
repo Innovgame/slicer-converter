@@ -175,6 +175,7 @@
         "project": "Project and feedback",
         "fileDetails": "File details",
         "openFile": "Open file",
+        "chooseFile": "Choose a slicer file",
         "enterCanvas": "Enter pure canvas",
         "exitCanvas": "Exit pure canvas",
         "openExport": "Open export settings",
