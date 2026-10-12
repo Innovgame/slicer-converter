@@ -69,8 +69,10 @@ test("localizes the tour and fits small screens / 中文引导适配窄屏", asy
     await page.setViewportSize({ width: 390, height: 844 });
     await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
     await page.goto("/");
-    await page.getByRole("button", { name: "Switch to Chinese" }).click();
-    await page.getByRole("button", { name: "开始引导", exact: true }).click();
+    await page.getByRole("button", { name: "Not now", exact: true }).click();
+    await page.getByRole("tab", { name: "Settings", exact: true }).click();
+    await page.getByRole("combobox", { name: "Language" }).selectOption("zh");
+    await page.getByRole("button", { name: "新手引导", exact: true }).click();
     await expect(dialog(page)).toContainText("打开切片文件");
     await expect(dialog(page)).toContainText("第 1 / 5 步");
     for (let step = 0; step < 5; step++) {

@@ -13,6 +13,7 @@ import { ConvertIcon, ExportIcon, FileIcon, SlidersIcon } from "./icons";
 
 interface ConvertPanelProps {
     wasmReady: boolean;
+    mobile?: boolean;
     parsedHeader: ParsedHeader | null;
     status: StatusState | null;
     outputFileName: string;
@@ -36,6 +37,7 @@ interface ConvertPanelProps {
  */
 export function ConvertPanel({
     wasmReady,
+    mobile = false,
     parsedHeader,
     status,
     outputFileName,
@@ -70,6 +72,85 @@ export function ConvertPanel({
         slicerConverterSelection?.suffix.versions.filter(isVisibleSlicerConverterVersionOption) ?? [];
     const hasSlicerConverterVersionOptions = visibleSlicerConverterVersions.length > 0;
 
+    const outputControls = (
+        <div className="sc-group">
+            <p className="sc-group-title">
+                <FileIcon />
+                {t("export.output")}
+            </p>
+            <label htmlFor="slicerConverterFileName" className="sc-label">
+                {t("export.fileName")}
+            </label>
+            <div className="sc-filename">
+                <input
+                    id="slicerConverterFileName"
+                    value={outputFileName}
+                    onChange={(event) => onOutputFileNameChange(event.target.value)}
+                />
+                <span>{outputExtension ? `.${outputExtension}` : ""}</span>
+            </div>
+        </div>
+    );
+    const targetControls = (
+        <div className="sc-group" data-tour="export-target">
+            <p className="sc-group-title">
+                <SlidersIcon />
+                {t("export.target")}
+            </p>
+            <label htmlFor="slicerConverterFormat" className="sc-label">
+                {t("common.format")}
+            </label>
+            <select
+                id="slicerConverterFormat"
+                value={slicerConverterSelection?.format.id ?? ""}
+                onChange={(event) => onSelectSlicerConverterFormat(event.target.value)}
+                className="sc-select"
+            >
+                {slicerConverterMatrix.map((format) => (
+                    <option key={format.id} value={format.id}>
+                        {format.name}
+                    </option>
+                ))}
+            </select>
+
+            <label htmlFor="slicerConverterSuffix" className="sc-label">
+                {t("export.suffix")}
+            </label>
+            <select
+                id="slicerConverterSuffix"
+                value={slicerConverterSelection?.suffix.id ?? ""}
+                onChange={(event) => onSelectSlicerConverterSuffix(event.target.value)}
+                className="sc-select"
+            >
+                {(slicerConverterSelection?.format.suffixes ?? []).map((suffix) => (
+                    <option key={suffix.id} value={suffix.id}>
+                        {suffix.name}
+                    </option>
+                ))}
+            </select>
+
+            {hasSlicerConverterVersionOptions ? (
+                <>
+                    <label htmlFor="slicerConverterVersion" className="sc-label">
+                        {t("export.version")}
+                    </label>
+                    <select
+                        id="slicerConverterVersion"
+                        value={slicerConverterSelection?.version.id ?? ""}
+                        onChange={(event) => onSelectSlicerConverterVersion(event.target.value)}
+                        className="sc-select"
+                    >
+                        {visibleSlicerConverterVersions.map((version) => (
+                            <option key={version.id} value={version.id}>
+                                {version.name}
+                            </option>
+                        ))}
+                    </select>
+                </>
+            ) : null}
+        </div>
+    );
+
     return (
         <section id="convertCard" className="sc-inspector-panel">
             <div className={visible ? "sc-inspector-empty hidden" : "sc-inspector-empty"}>
@@ -89,81 +170,17 @@ export function ConvertPanel({
                 ) : null}
             </header>
             <div className={visible ? "sc-inspector-body" : "sc-inspector-body hidden"}>
-                <div className="sc-group">
-                    <p className="sc-group-title">
-                        <FileIcon />
-                        {t("export.output")}
-                    </p>
-                    <label htmlFor="slicerConverterFileName" className="sc-label">
-                        {t("export.fileName")}
-                    </label>
-                    <div className="sc-filename">
-                        <input
-                            id="slicerConverterFileName"
-                            value={outputFileName}
-                            onChange={(event) => onOutputFileNameChange(event.target.value)}
-                        />
-                        <span>{outputExtension ? `.${outputExtension}` : ""}</span>
-                    </div>
-                </div>
-
-                <div className="sc-group" data-tour="export-target">
-                    <p className="sc-group-title">
-                        <SlidersIcon />
-                        {t("export.target")}
-                    </p>
-                    <label htmlFor="slicerConverterFormat" className="sc-label">
-                        {t("common.format")}
-                    </label>
-                    <select
-                        id="slicerConverterFormat"
-                        value={slicerConverterSelection?.format.id ?? ""}
-                        onChange={(event) => onSelectSlicerConverterFormat(event.target.value)}
-                        className="sc-select"
-                    >
-                        {slicerConverterMatrix.map((format) => (
-                            <option key={format.id} value={format.id}>
-                                {format.name}
-                            </option>
-                        ))}
-                    </select>
-
-                    <label htmlFor="slicerConverterSuffix" className="sc-label">
-                        {t("export.suffix")}
-                    </label>
-                    <select
-                        id="slicerConverterSuffix"
-                        value={slicerConverterSelection?.suffix.id ?? ""}
-                        onChange={(event) => onSelectSlicerConverterSuffix(event.target.value)}
-                        className="sc-select"
-                    >
-                        {(slicerConverterSelection?.format.suffixes ?? []).map((suffix) => (
-                            <option key={suffix.id} value={suffix.id}>
-                                {suffix.name}
-                            </option>
-                        ))}
-                    </select>
-
-                    {hasSlicerConverterVersionOptions ? (
-                        <>
-                            <label htmlFor="slicerConverterVersion" className="sc-label">
-                                {t("export.version")}
-                            </label>
-                            <select
-                                id="slicerConverterVersion"
-                                value={slicerConverterSelection?.version.id ?? ""}
-                                onChange={(event) => onSelectSlicerConverterVersion(event.target.value)}
-                                className="sc-select"
-                            >
-                                {visibleSlicerConverterVersions.map((version) => (
-                                    <option key={version.id} value={version.id}>
-                                        {version.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </>
-                    ) : null}
-                </div>
+                {mobile ? (
+                    <>
+                        {targetControls}
+                        {outputControls}
+                    </>
+                ) : (
+                    <>
+                        {outputControls}
+                        {targetControls}
+                    </>
+                )}
 
                 {exportWarning ? (
                     <p id="exportGeometryWarning" className="sc-warning">

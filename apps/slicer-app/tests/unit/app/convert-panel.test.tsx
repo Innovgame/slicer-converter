@@ -71,6 +71,13 @@ function renderConvertPanel(props: Partial<React.ComponentProps<typeof ConvertPa
 }
 
 describe("ConvertPanel / 转换面板", () => {
+    it("places target selection before filename on phones / 手机端先选择目标再填写文件名", () => {
+        renderConvertPanel({ mobile: true });
+        expect(
+            screen.getByLabelText("Format").compareDocumentPosition(screen.getByLabelText("File name")) &
+                Node.DOCUMENT_POSITION_FOLLOWING
+        ).not.toBe(0);
+    });
     it("renders unified filename and slicer-converter target selectors / 渲染统一文件名和 slicer-converter 目标选择", () => {
         const onOutputFileNameChange = vi.fn();
         renderConvertPanel({

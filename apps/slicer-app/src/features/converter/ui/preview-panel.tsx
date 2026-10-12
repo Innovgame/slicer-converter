@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type 
 
 import type { ParsedHeader } from "@innovgame/slicer-converter";
 
+import type { MobileWorkbenchSession } from "../model/use-mobile-workbench";
 import type { PreviewLayerInteraction } from "../../preview";
 import type { PreviewImageState } from "../model/use-converter-controller";
 import {
@@ -31,6 +32,11 @@ interface PreviewPanelProps {
     parsedHeader: ParsedHeader | null;
     selectedLayer: number;
     previewImage: PreviewImageState | null;
+    mobile?: MobileWorkbenchSession;
+    onBrowseFile?(): void;
+    exportSummary?: string;
+    outputName?: string;
+    converting?: boolean;
     onPreviewLayerChange(layerIndex: number, interaction?: PreviewLayerInteraction): Promise<void>;
 }
 
@@ -38,7 +44,17 @@ interface PreviewPanelProps {
  * @zh 切片层图视口：铺满的画布、缩放工具条、像素读数和纵向层轨。
  * @en Slice layer viewport: filled canvas, zoom toolbar, pixel readout and vertical layer rail.
  */
-export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPreviewLayerChange }: PreviewPanelProps) {
+export function PreviewPanel({
+    parsedHeader,
+    selectedLayer,
+    previewImage,
+    onPreviewLayerChange,
+    mobile,
+    onBrowseFile,
+    exportSummary,
+    outputName,
+    converting
+}: PreviewPanelProps) {
     const { t } = useTranslation();
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const viewportRef = useRef<LayerViewport | null>(null);
@@ -184,6 +200,60 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
         visible
     ]);
 
+    const layerSlider = (
+        <input
+            id="layerSlider"
+            aria-label={t("preview.layerHeight")}
+            aria-orientation={mobile?.isMobile ? "horizontal" : "vertical"}
+            className={mobile?.isMobile ? "sc-mobile-layer-slider" : "sc-layer-slider"}
+            disabled={!visible}
+            max={sliderMax}
+            min="0"
+            style={{ "--layer-fill": `${railPosition}%` } as CSSProperties}
+            type="range"
+            value={displayedLayer}
+            onPointerDown={(event) => {
+                sliderDraggingRef.current = true;
+                void onPreviewLayerChange(Number.parseInt(event.currentTarget.value, 10), "dragging");
+            }}
+            onPointerUp={(event) => commitSelectedLayer(Number.parseInt(event.currentTarget.value, 10))}
+            onPointerCancel={(event) => commitSelectedLayer(Number.parseInt(event.currentTarget.value, 10))}
+            onBlur={(event) => commitSelectedLayer(Number.parseInt(event.currentTarget.value, 10))}
+            onChange={(event) => {
+                const layerIndex = Number.parseInt(event.target.value, 10);
+                if (sliderDraggingRef.current) {
+                    setDragLayer({ header: parsedHeader, index: layerIndex });
+                    queueDraggingLayer(layerIndex);
+                    return;
+                }
+                void onPreviewLayerChange(layerIndex, "committed");
+            }}
+        />
+    );
+    const layerNumberInput = (
+        <input
+            aria-label={t("preview.layerNumber")}
+            className="sc-layer-number-input"
+            disabled={!visible}
+            inputMode="numeric"
+            type="text"
+            title={t("preview.jumpHelp", { count: totalLayers })}
+            value={layerDraft ?? String(displayedLayer + 1)}
+            onFocus={(event) => event.currentTarget.select()}
+            onChange={(event) => setLayerDraft(event.currentTarget.value)}
+            onBlur={commitLayerNumber}
+            onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    commitLayerNumber();
+                } else if (event.key === "Escape") {
+                    event.preventDefault();
+                    setLayerDraft(null);
+                }
+            }}
+        />
+    );
+
     return (
         <div className="sc-viewport-fill">
             {visible ? null : (
@@ -192,7 +262,12 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                         <LayersIcon />
                     </div>
                     <p className="sc-empty-title">{t("preview.title")}</p>
-                    <p className="sc-empty-copy">{t("preview.empty")}</p>
+                    <p className="sc-empty-copy">{t(mobile?.isMobile ? "mobile.previewEmpty" : "preview.empty")}</p>
+                    {mobile?.isMobile && (
+                        <button className="sc-mobile-open-file" onClick={onBrowseFile}>
+                            {t("mobile.openFile")}
+                        </button>
+                    )}
                 </div>
             )}
             <section
@@ -212,120 +287,101 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                         />
                         {view.error ? <p className="sc-slice-error">{t("preview.imageError")}</p> : null}
                     </div>
-                    <div className="sc-layer-rail" aria-label={t("preview.layerHeight")} data-layer-rail="">
-                        <div className="sc-layer-rail-stage">
-                            <label className="sc-sr" htmlFor="layerSlider">
-                                {t("preview.layer")}
-                            </label>
-                            <input
-                                id="layerSlider"
-                                aria-label={t("preview.layerHeight")}
-                                aria-orientation="vertical"
-                                className="sc-layer-slider"
-                                disabled={!visible}
-                                max={sliderMax}
-                                min="0"
-                                style={{ "--layer-fill": `${railPosition}%` } as CSSProperties}
-                                type="range"
-                                value={displayedLayer}
-                                onPointerDown={(event) => {
-                                    sliderDraggingRef.current = true;
-                                    void onPreviewLayerChange(
-                                        Number.parseInt(event.currentTarget.value, 10),
-                                        "dragging"
-                                    );
-                                }}
-                                onPointerUp={(event) =>
-                                    commitSelectedLayer(Number.parseInt(event.currentTarget.value, 10))
-                                }
-                                onPointerCancel={(event) =>
-                                    commitSelectedLayer(Number.parseInt(event.currentTarget.value, 10))
-                                }
-                                onBlur={(event) => commitSelectedLayer(Number.parseInt(event.currentTarget.value, 10))}
-                                onChange={(event) => {
-                                    const layerIndex = Number.parseInt(event.target.value, 10);
-                                    if (sliderDraggingRef.current) {
-                                        setDragLayer({ header: parsedHeader, index: layerIndex });
-                                        queueDraggingLayer(layerIndex);
-                                        return;
-                                    }
-                                    void onPreviewLayerChange(layerIndex, "committed");
-                                }}
-                            />
-                            <div
-                                className="sc-rail-readout"
-                                data-clip-end="current"
-                                style={{
-                                    bottom: `calc(${railPosition}% + var(--sc-layer-thumb-size) * ${0.5 - railPosition / 100})`
-                                }}
-                            >
-                                <button
-                                    aria-label={t("preview.increase")}
-                                    className="sc-rail-nudge"
-                                    disabled={!visible || displayedLayer >= sliderMax}
-                                    type="button"
-                                    onClick={() => nudgeLayer(1)}
-                                >
-                                    <ChevronUpIcon />
-                                </button>
-                                <span className="sc-rail-copy">
-                                    <span className="sc-rail-detail">
-                                        <span id="layerNum" className="sc-sr">
-                                            {displayedLayer}
-                                        </span>
-                                        <input
-                                            aria-label={t("preview.layerNumber")}
-                                            className="sc-layer-number-input"
-                                            disabled={!visible}
-                                            inputMode="numeric"
-                                            type="text"
-                                            title={t("preview.jumpHelp", { count: totalLayers })}
-                                            value={layerDraft ?? String(displayedLayer + 1)}
-                                            onFocus={(event) => event.currentTarget.select()}
-                                            onChange={(event) => setLayerDraft(event.currentTarget.value)}
-                                            onBlur={commitLayerNumber}
-                                            onKeyDown={(event) => {
-                                                if (event.key === "Enter") {
-                                                    event.preventDefault();
-                                                    commitLayerNumber();
-                                                } else if (event.key === "Escape") {
-                                                    event.preventDefault();
-                                                    setLayerDraft(null);
-                                                }
-                                            }}
-                                        />
-                                        <span className="sc-rail-total">/ {totalLayers}</span>
-                                    </span>
-                                    <span className="sc-rail-value" aria-label={t("preview.zHeight")}>
-                                        {formatLayerHeight(
-                                            layerTopMm(displayedLayer, parsedHeader?.metadata.layer_height_mm)
-                                        )}
-                                        <span className="sc-rail-unit">mm</span>
-                                    </span>
+                    {mobile?.isMobile ? (
+                        <div className="sc-mobile-preview-controls">
+                            <div className="sc-mobile-layer-readout">
+                                <span>{t("preview.layer")}</span>
+                                <span id="layerNum" className="sc-sr">
+                                    {displayedLayer}
                                 </span>
+                                {layerNumberInput}
+                                <span>/ {totalLayers}</span>
+                                <span className="sc-mobile-layer-z" aria-label={t("preview.zHeight")}>
+                                    Z{" "}
+                                    {formatLayerHeight(
+                                        layerTopMm(displayedLayer, parsedHeader?.metadata.layer_height_mm)
+                                    )}{" "}
+                                    mm
+                                </span>
+                            </div>
+                            {layerSlider}
+                            <div className="sc-mobile-export-summary">
+                                <div>
+                                    <strong>{exportSummary}</strong>
+                                    <small title={outputName}>{outputName}</small>
+                                </div>
                                 <button
-                                    aria-label={t("preview.decrease")}
-                                    className="sc-rail-nudge"
-                                    disabled={!visible || displayedLayer <= 0}
-                                    type="button"
-                                    onClick={() => nudgeLayer(-1)}
+                                    aria-label={t("mobile.openExport")}
+                                    onClick={() => mobile?.openDrawer("export")}
+                                    className="sc-mobile-export-button"
                                 >
-                                    <ChevronDownIcon />
+                                    {converting ? t("progress.converting") : t("export.title")}
+                                    <ChevronUpIcon />
                                 </button>
                             </div>
                         </div>
-                        <button
-                            aria-label={t("preview.reset")}
-                            className="sc-clip-reset"
-                            disabled={!visible || displayedLayer === 0}
-                            type="button"
-                            onClick={() => void onPreviewLayerChange(0, "committed")}
-                        >
-                            <RotateCcwIcon />
-                        </button>
-                    </div>
+                    ) : (
+                        <div className="sc-layer-rail" aria-label={t("preview.layerHeight")} data-layer-rail="">
+                            <div className="sc-layer-rail-stage">
+                                <label className="sc-sr" htmlFor="layerSlider">
+                                    {t("preview.layer")}
+                                </label>
+                                {layerSlider}
+                                <div
+                                    className="sc-rail-readout"
+                                    data-clip-end="current"
+                                    style={{
+                                        bottom: `calc(${railPosition}% + var(--sc-layer-thumb-size) * ${0.5 - railPosition / 100})`
+                                    }}
+                                >
+                                    <button
+                                        aria-label={t("preview.increase")}
+                                        className="sc-rail-nudge"
+                                        disabled={!visible || displayedLayer >= sliderMax}
+                                        type="button"
+                                        onClick={() => nudgeLayer(1)}
+                                    >
+                                        <ChevronUpIcon />
+                                    </button>
+                                    <span className="sc-rail-copy">
+                                        <span className="sc-rail-detail">
+                                            <span id="layerNum" className="sc-sr">
+                                                {displayedLayer}
+                                            </span>
+                                            {layerNumberInput}
+                                            <span className="sc-rail-total">/ {totalLayers}</span>
+                                        </span>
+                                        <span className="sc-rail-value" aria-label={t("preview.zHeight")}>
+                                            {formatLayerHeight(
+                                                layerTopMm(displayedLayer, parsedHeader?.metadata.layer_height_mm)
+                                            )}
+                                            <span className="sc-rail-unit">mm</span>
+                                        </span>
+                                    </span>
+                                    <button
+                                        aria-label={t("preview.decrease")}
+                                        className="sc-rail-nudge"
+                                        disabled={!visible || displayedLayer <= 0}
+                                        type="button"
+                                        onClick={() => nudgeLayer(-1)}
+                                    >
+                                        <ChevronDownIcon />
+                                    </button>
+                                </div>
+                            </div>
+                            <button
+                                aria-label={t("preview.reset")}
+                                className="sc-clip-reset"
+                                disabled={!visible || displayedLayer === 0}
+                                type="button"
+                                onClick={() => void onPreviewLayerChange(0, "committed")}
+                            >
+                                <RotateCcwIcon />
+                            </button>
+                        </div>
+                    )}
                 </div>
-                <div className="sc-slice-chrome">
+                <div className="sc-slice-chrome" hidden={mobile?.isMobile}>
                     <div aria-label={t("preview.toolbar")} className="sc-slice-toolbar" role="toolbar">
                         <ToolButton
                             disabled={!view.ready}
@@ -390,6 +446,40 @@ export function PreviewPanel({ parsedHeader, selectedLayer, previewImage, onPrev
                     </div>
                 </div>
             </section>
+            {mobile?.isMobile && (
+                <div className="sc-mobile-preview-tools" role="toolbar" aria-label={t("preview.toolbar")}>
+                    <ToolButton
+                        disabled={!view.ready}
+                        label={t("preview.fit")}
+                        onClick={() => viewportRef.current?.fit()}
+                    >
+                        <MaximizeIcon />
+                    </ToolButton>
+                    <button
+                        aria-label={t("preview.grid")}
+                        aria-pressed={view.grid}
+                        className="sc-tool"
+                        disabled={!view.ready}
+                        onClick={() => viewportRef.current?.setGrid(!view.grid)}
+                    >
+                        <GridIcon />
+                    </button>
+                    <ToolButton
+                        disabled={!view.ready}
+                        label={t("preview.zoomIn")}
+                        onClick={() => viewportRef.current?.zoomBy(2)}
+                    >
+                        <ZoomInIcon />
+                    </ToolButton>
+                    <ToolButton
+                        disabled={!view.ready}
+                        label={t("preview.zoomOut")}
+                        onClick={() => viewportRef.current?.zoomBy(0.5)}
+                    >
+                        <ZoomOutIcon />
+                    </ToolButton>
+                </div>
+            )}
         </div>
     );
 }

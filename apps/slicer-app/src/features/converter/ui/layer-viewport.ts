@@ -117,6 +117,14 @@ export class LayerViewport {
     private space = false;
     private pointer: { x: number; y: number } | undefined;
     private drag: { id: number; x: number; y: number } | undefined;
+    /**
+     * @zh 捕获中的触点与双指缩放锚点；离开画布或失焦时清除。
+     * @en Captured touch points and pinch anchor; cleared when capture ends or the viewport loses focus.
+     */
+    private readonly touches = new Map<number, { x: number; y: number }>();
+    private pinch:
+        | { distance: number; zoom: number; x: number; y: number; offsetX: number; offsetY: number }
+        | undefined;
     private error: string | undefined;
 
     constructor(
@@ -148,6 +156,7 @@ export class LayerViewport {
             return;
         }
         const bounds = this.canvas.getBoundingClientRect();
+        if (bounds.width < 2 || bounds.height < 2) return;
         const dpr = window.devicePixelRatio || 1;
         const centerX = this.width > 0 ? (this.width / 2 - this.offsetX) / this.scale : 0;
         const centerY = this.height > 0 ? (this.height / 2 - this.offsetY) / this.scale : 0;
@@ -472,9 +481,28 @@ export class LayerViewport {
     private readonly onPointerDown = (event: PointerEvent): void => {
         event.stopPropagation();
         this.canvas.focus({ preventScroll: true });
-        if (!this.image || this.drag || event.button > 2) {
+        if (!this.image || event.button > 2) {
             return;
         }
+        if (event.pointerType === "touch") {
+            event.preventDefault();
+            this.touches.set(event.pointerId, this.localPoint(event));
+            this.canvas.setPointerCapture?.(event.pointerId);
+            this.fitting = false;
+            if (this.touches.size >= 2) {
+                const [a, b] = Array.from(this.touches.values());
+                this.drag = undefined;
+                this.pinch = {
+                    distance: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)),
+                    zoom: this.zoom,
+                    x: (a.x + b.x) / 2,
+                    y: (a.y + b.y) / 2,
+                    offsetX: this.offsetX,
+                    offsetY: this.offsetY
+                };
+                return;
+            }
+        } else if (this.drag) return;
         event.preventDefault();
         this.drag = { id: event.pointerId, x: event.clientX, y: event.clientY };
         this.canvas.setPointerCapture?.(event.pointerId);
@@ -485,6 +513,22 @@ export class LayerViewport {
     private readonly onPointerMove = (event: PointerEvent): void => {
         event.stopPropagation();
         this.pointer = this.localPoint(event);
+        if (this.touches.has(event.pointerId)) {
+            this.touches.set(event.pointerId, this.pointer);
+            if (this.pinch && this.touches.size >= 2) {
+                const [a, b] = Array.from(this.touches.values());
+                const zoom = Math.max(
+                    this.minimumZoom,
+                    Math.min(32, (this.pinch.zoom * Math.hypot(a.x - b.x, a.y - b.y)) / this.pinch.distance)
+                );
+                const ratio = zoom / this.pinch.zoom;
+                this.offsetX = (a.x + b.x) / 2 - (this.pinch.x - this.pinch.offsetX) * ratio;
+                this.offsetY = (a.y + b.y) / 2 - (this.pinch.y - this.pinch.offsetY) * ratio;
+                this.zoom = zoom;
+                this.paintNow();
+                return;
+            }
+        }
         if (this.drag?.id === event.pointerId) {
             this.offsetX += event.clientX - this.drag.x;
             this.offsetY += event.clientY - this.drag.y;
@@ -496,6 +540,15 @@ export class LayerViewport {
 
     private readonly onPointerUp = (event: PointerEvent): void => {
         event.stopPropagation();
+        if (this.touches.delete(event.pointerId)) {
+            this.pinch = undefined;
+            const remaining = this.touches.entries().next().value;
+            if (remaining) {
+                const bounds = this.canvas.getBoundingClientRect();
+                this.drag = { id: remaining[0], x: remaining[1].x + bounds.left, y: remaining[1].y + bounds.top };
+            } else this.endDrag();
+            return;
+        }
         if (this.drag?.id === event.pointerId) {
             this.endDrag();
         }
@@ -519,6 +572,8 @@ export class LayerViewport {
 
     private readonly onBlur = (): void => {
         this.space = false;
+        this.touches.clear();
+        this.pinch = undefined;
         this.endDrag();
         this.pointer = undefined;
         this.invalidate();

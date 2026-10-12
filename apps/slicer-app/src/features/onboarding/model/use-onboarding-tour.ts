@@ -1,6 +1,7 @@
 import { driver, type Config, type DriveStep, type Driver } from "driver.js";
 import { useEffect, useRef, useState } from "react";
 import type { TFunction } from "i18next";
+import { flushSync } from "react-dom";
 
 import { useTranslation } from "../../../shared/i18n/i18n";
 
@@ -22,10 +23,11 @@ function rememberTour(outcome: "completed" | "dismissed"): void {
     }
 }
 
-function buildSteps(t: TFunction, documentLoaded: boolean): DriveStep[] {
+function buildSteps(t: TFunction, documentLoaded: boolean, navigate: (id: string) => void): DriveStep[] {
     const step = (id: string, element: string, description = id): DriveStep => ({
         element,
         data: { id },
+        onHighlightStarted: () => navigate(id),
         popover: {
             title: t(`onboarding.steps.${id}.title`),
             description: t(`onboarding.steps.${description}.description`),
@@ -36,7 +38,7 @@ function buildSteps(t: TFunction, documentLoaded: boolean): DriveStep[] {
     return [
         step("source", "#dropZone"),
         step("preview", '[data-tour="preview"]', documentLoaded ? "preview" : "previewEmpty"),
-        ...(documentLoaded ? [step("layer", ".sc-rail-copy")] : []),
+        ...(documentLoaded ? [step("layer", ".sc-rail-copy, .sc-mobile-layer-readout")] : []),
         step(
             "export",
             documentLoaded ? '[data-tour="export-target"]' : '[data-tour="export"]',
@@ -52,14 +54,26 @@ function buildSteps(t: TFunction, documentLoaded: boolean): DriveStep[] {
  * @zh Driver.js 引导的展示态与首次邀请；不加载文件、不改图层、不触发转换。
  * @en Driver.js tour and first-visit invitation state; never loads files, changes layers or starts conversion.
  */
-export function useOnboardingTour({ documentLoaded, converting }: { documentLoaded: boolean; converting: boolean }) {
+export function useOnboardingTour({
+    documentLoaded,
+    converting,
+    onNavigate
+}: {
+    documentLoaded: boolean;
+    converting: boolean;
+    onNavigate?(step: string): void;
+}) {
     const { t } = useTranslation();
     const [invitationVisible, setInvitationVisible] = useState(() => !hasSeenInvitation());
     const tourRef = useRef<Driver | null>(null);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
+    const navigateRef = useRef(onNavigate);
+    navigateRef.current = onNavigate;
 
     const createConfig = (): Config => ({
-        steps: buildSteps(t, documentLoaded),
+        steps: buildSteps(t, documentLoaded, (id) => {
+            if (navigateRef.current) flushSync(() => navigateRef.current?.(id));
+        }),
         animate: false,
         smoothScroll: false,
         allowClose: true,
@@ -95,7 +109,10 @@ export function useOnboardingTour({ documentLoaded, converting }: { documentLoad
         onDestroyed(_element, _step, { driver: tour }) {
             if (tourRef.current !== tour) return;
             tourRef.current = null;
-            queueMicrotask(() => triggerRef.current?.focus());
+            queueMicrotask(() => {
+                if (navigateRef.current) flushSync(() => navigateRef.current?.("preferences"));
+                triggerRef.current?.focus();
+            });
         }
     });
 

@@ -160,5 +160,26 @@
                 "description": "遇到问题可点击“报告问题”，填写文件格式、复现步骤并附上截图；希望改进某项功能可点击“功能建议”。两个入口会在新标签页打开 GitHub Issue 表单，提交需要 GitHub 账号。“GitHub”链接可查看项目源码。"
             }
         }
+    },
+    "mobile": {
+        "preview": "预览",
+        "settings": "设置",
+        "settingsDescription": "显示、语言与使用帮助",
+        "interface": "界面",
+        "appearance": "外观",
+        "light": "浅色",
+        "dark": "深色",
+        "language": "语言",
+        "help": "帮助",
+        "project": "项目与反馈",
+        "fileDetails": "文件详情",
+        "openFile": "打开文件",
+        "enterCanvas": "进入纯画布",
+        "exitCanvas": "退出纯画布",
+        "openExport": "打开导出设置",
+        "closePanel": "关闭面板",
+        "navigation": "工作台页面",
+        "exportAs": "导出为",
+        "previewEmpty": "打开切片文件，查看曝光图层。"
     }
 }

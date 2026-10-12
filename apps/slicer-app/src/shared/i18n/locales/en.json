@@ -161,5 +161,26 @@
                 "description": "Use Report a bug to describe a problem, including the file format, steps to reproduce and screenshots. Use Request a feature to suggest improvements. Both open a GitHub issue form in a new tab; submitting feedback requires a GitHub account. The GitHub link opens the project repository."
             }
         }
+    },
+    "mobile": {
+        "preview": "Preview",
+        "settings": "Settings",
+        "settingsDescription": "Display, language and help",
+        "interface": "Interface",
+        "appearance": "Appearance",
+        "light": "Light",
+        "dark": "Dark",
+        "language": "Language",
+        "help": "Help",
+        "project": "Project and feedback",
+        "fileDetails": "File details",
+        "openFile": "Open file",
+        "enterCanvas": "Enter pure canvas",
+        "exitCanvas": "Exit pure canvas",
+        "openExport": "Open export settings",
+        "closePanel": "Close panel",
+        "navigation": "Workbench pages",
+        "exportAs": "Export as",
+        "previewEmpty": "Open a slicer file to inspect exposure layers."
     }
 }

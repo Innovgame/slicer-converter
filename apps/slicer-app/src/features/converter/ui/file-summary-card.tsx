@@ -1,6 +1,6 @@
 import { useTranslation } from "../../../shared/i18n/i18n";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 
 import { listImportableFileExtensions, type ParsedHeader } from "@innovgame/slicer-converter";
 
@@ -12,17 +12,19 @@ interface FileSummaryCardProps {
     sourceFile: File | null;
     parsedHeader: ParsedHeader | null;
     onFileSelect(file: File): Promise<void>;
+    inputRef?: RefObject<HTMLInputElement | null>;
 }
 
 /**
  * @zh 源文件栏：拖放、格式摘要和缩略图。
  * @en Source column: drop target, format summary and thumbnail.
  */
-export function FileSummaryCard({ sourceFile, parsedHeader, onFileSelect }: FileSummaryCardProps) {
+export function FileSummaryCard({ sourceFile, parsedHeader, onFileSelect, inputRef }: FileSummaryCardProps) {
     const { t } = useTranslation();
     const [dragging, setDragging] = useState(false);
     const dragDepthRef = useRef(0);
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const localInputRef = useRef<HTMLInputElement | null>(null);
+    const fileInputRef = inputRef ?? localInputRef;
     const thumbnailContainerRef = useRef<HTMLDivElement | null>(null);
     const thumbnailCanvasRef = useRef<HTMLCanvasElement | null>(null);
 

@@ -23,6 +23,8 @@ export interface ConverterController {
     previewImage: PreviewImageState | null;
     progress: ProgressState | null;
     outputFileName: string;
+    outputExtension: string;
+    exportSummary: string;
     slicerConverterFormatId: string;
     slicerConverterSuffixId: string;
     slicerConverterVersionId: string;
@@ -73,6 +75,11 @@ export function useConverterController(): ConverterController {
         conversionTarget: slicerConverterSelection?.version.target ?? null,
         setStatus: runtime.setStatus
     });
+    const outputExtension =
+        slicerConverterSelection?.version.target.resolvedExtension ?? slicerConverterSelection?.suffix.id ?? "";
+    const exportSummary = slicerConverterSelection
+        ? `${outputExtension.toUpperCase()}${slicerConverterSelection.version.id === "default" ? "" : ` · ${slicerConverterSelection.version.name}`}`
+        : "";
 
     useEffect(() => {
         if (!slicerConverterSelection) {
@@ -144,6 +151,8 @@ export function useConverterController(): ConverterController {
         previewImage: preview.previewImage,
         progress: conversion.progress,
         outputFileName,
+        outputExtension,
+        exportSummary,
         slicerConverterFormatId: slicerConverterSelection?.format.id ?? slicerConverterFormatId,
         slicerConverterSuffixId: slicerConverterSelection?.suffix.id ?? slicerConverterSuffixId,
         slicerConverterVersionId: slicerConverterSelection?.version.id ?? slicerConverterVersionId,

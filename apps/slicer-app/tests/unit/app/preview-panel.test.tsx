@@ -28,6 +28,38 @@ describe("PreviewPanel / 预览面板", () => {
         vi.useRealTimers();
     });
 
+    it("commits mobile horizontal layer input / 提交移动端横向图层输入", () => {
+        const onPreviewLayerChange = vi.fn(async () => undefined);
+        const { container } = render(
+            <PreviewPanel
+                parsedHeader={multiLayerParsedHeader}
+                selectedLayer={0}
+                previewImage={null}
+                onPreviewLayerChange={onPreviewLayerChange}
+                mobile={{
+                    isMobile: true,
+                    tab: "preview",
+                    drawer: null,
+                    immersive: false,
+                    selectTab: vi.fn(),
+                    openDrawer: vi.fn(),
+                    closeDrawer: vi.fn(),
+                    setImmersive: vi.fn()
+                }}
+                exportSummary="CTB · v4"
+                outputName="sample.ctb"
+            />
+        );
+        const slider = container.querySelector<HTMLInputElement>("#layerSlider")!;
+        expect(slider).toHaveAttribute("aria-orientation", "horizontal");
+        fireEvent.change(slider, { target: { value: "4" } });
+        expect(onPreviewLayerChange).toHaveBeenLastCalledWith(4, "committed");
+        const input = screen.getByRole("textbox", { name: "Layer number" });
+        fireEvent.change(input, { target: { value: "8" } });
+        fireEvent.keyDown(input, { key: "Enter" });
+        expect(onPreviewLayerChange).toHaveBeenLastCalledWith(7, "committed");
+    });
+
     it("copies the preview bitmap without sizing the viewport to native pixels / 复制 preview bitmap 且不把视口撑成原生像素", () => {
         const drawImage = vi.fn();
         vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({

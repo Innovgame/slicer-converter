@@ -8,9 +8,17 @@ import { useOnboardingTour } from "../model/use-onboarding-tour";
  * @zh 顶栏可重开的新手引导入口和首次访问邀请；邀请不阻挡正常操作。
  * @en Replayable header tour entry and a first-visit invitation that leaves normal interaction available.
  */
-export function Onboarding({ documentLoaded, converting }: { documentLoaded: boolean; converting: boolean }) {
+export function Onboarding({
+    documentLoaded,
+    converting,
+    onNavigate
+}: {
+    documentLoaded: boolean;
+    converting: boolean;
+    onNavigate?(step: string): void;
+}) {
     const { t } = useTranslation();
-    const tour = useOnboardingTour({ documentLoaded, converting });
+    const tour = useOnboardingTour({ documentLoaded, converting, onNavigate });
     return (
         <>
             <button
@@ -23,6 +31,7 @@ export function Onboarding({ documentLoaded, converting }: { documentLoaded: boo
                 onClick={tour.startTour}
             >
                 <CircleHelp aria-hidden="true" />
+                <span className="sc-mobile-only">{t("onboarding.entry")}</span>
             </button>
             {tour.invitationVisible &&
                 createPortal(
