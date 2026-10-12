@@ -103,11 +103,57 @@ describe("LayerViewport touch and visibility / 层图触摸与可见性", () => 
             viewport.zoomBy(2);
             expect(Number(canvas.dataset.zoom)).toBe(64);
             canvas.dispatchEvent(new WheelEvent("wheel", { deltaY: -600, clientX: 200, clientY: 150 }));
+            viewport.resize();
             expect(Number(canvas.dataset.zoom)).toBe(128);
             viewport.setZoom(1024);
             expect(Number(canvas.dataset.zoom)).toBe(128);
         } finally {
             viewport.dispose();
+            vi.restoreAllMocks();
+        }
+    });
+
+    it("coalesces wheel frames and reads cached grey without Canvas readback / 合并滚轮帧并从缓存读取灰度而不读回画布", () => {
+        const { canvas, viewport } = createViewport();
+        const frames: FrameRequestCallback[] = [];
+        vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+            frames.push(callback);
+            return frames.length;
+        });
+        const read = vi.fn(() => {
+            throw new Error("unexpected Canvas readback");
+        });
+        vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({
+            clearRect() {},
+            drawImage() {},
+            setTransform() {},
+            getImageData: read
+        } as unknown as CanvasRenderingContext2D);
+        const publish = vi.fn();
+        viewport.dispose();
+        const cached = new LayerViewport(canvas, publish);
+        const greys = new Uint8Array(100 * 50).fill(173);
+        cached.setImage({
+            bitmap: {} as ImageBitmap,
+            bitmapWidth: 100,
+            bitmapHeight: 50,
+            layerIndex: 0,
+            plate,
+            greys: greys.buffer
+        });
+        publish.mockClear();
+        try {
+            for (let i = 0; i < 3; i++) {
+                canvas.dispatchEvent(new WheelEvent("wheel", { deltaY: -28, clientX: 200, clientY: 150 }));
+            }
+            expect(publish).not.toHaveBeenCalled();
+            expect(frames).toHaveLength(1);
+            frames[0]!(0);
+            expect(publish).toHaveBeenCalledTimes(1);
+            expect(publish.mock.calls[0]![0].pixel).toMatchObject({ x: 50, y: 25, grey: 173 });
+            expect(read).not.toHaveBeenCalled();
+        } finally {
+            cached.dispose();
             vi.restoreAllMocks();
         }
     });

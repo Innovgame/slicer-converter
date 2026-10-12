@@ -30,6 +30,7 @@ export interface LayerViewportState {
 
 interface DisplayedLayer {
     readonly bitmap: PreviewImageState["bitmap"];
+    readonly greys?: Uint8Array;
     readonly bitmapWidth: number;
     readonly bitmapHeight: number;
     readonly layerIndex: number;
@@ -197,6 +198,7 @@ export class LayerViewport {
      */
     setImage(input: {
         bitmap: PreviewImageState["bitmap"];
+        greys?: ArrayBuffer;
         bitmapWidth: number;
         bitmapHeight: number;
         layerIndex: number;
@@ -239,7 +241,7 @@ export class LayerViewport {
             this.publish(this.snapshot());
             return;
         }
-        this.image = { ...input, settled };
+        this.image = { ...input, greys: input.greys ? new Uint8Array(input.greys) : undefined, settled };
         this.canvas.dataset.previewLayer = String(input.layerIndex);
         if (
             !previous ||
@@ -289,6 +291,10 @@ export class LayerViewport {
     }
 
     setZoom(zoom: number, x = this.width / 2, y = this.height / 2): void {
+        this.zoomAt(zoom, x, y, false);
+    }
+
+    private zoomAt(zoom: number, x: number, y: number, deferred: boolean): void {
         if (!this.image || !Number.isFinite(zoom) || zoom <= 0) {
             return;
         }
@@ -298,7 +304,8 @@ export class LayerViewport {
         this.offsetY = y - (y - this.offsetY) * ratio;
         this.zoom = next;
         this.fitting = false;
-        this.paintNow();
+        if (deferred) this.invalidate();
+        else this.paintNow();
     }
 
     zoomBy(factor: number): void {
@@ -475,16 +482,8 @@ export class LayerViewport {
         if (!image.settled) {
             return { x, y };
         }
-        const context = this.source.getContext("2d");
-        if (!context || typeof context.getImageData !== "function") {
-            return { x, y };
-        }
-        try {
-            const sample = context.getImageData(x, y, 1, 1).data;
-            return { x, y, grey: sample[0] };
-        } catch {
-            return { x, y };
-        }
+        const grey = image.greys?.[y * image.plate.nativeWidth + x];
+        return grey === undefined ? { x, y } : { x, y, grey };
     }
 
     private localPoint(event: MouseEvent): { x: number; y: number } {
@@ -501,10 +500,11 @@ export class LayerViewport {
         this.pointer = this.localPoint(event);
         const line = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? this.height : 1;
         const delta = event.deltaY * line;
-        this.setZoom(
+        this.zoomAt(
             this.zoom * Math.exp(-Math.max(-600, Math.min(600, delta)) * 0.002),
             this.pointer.x,
-            this.pointer.y
+            this.pointer.y,
+            true
         );
     };
 

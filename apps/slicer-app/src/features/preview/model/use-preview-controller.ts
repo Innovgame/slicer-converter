@@ -185,6 +185,7 @@ export function usePreviewController(input: {
                 latestAcceptedRequestRef.current[message.quality] = message.requestId;
                 replacePreviewImage({
                     bitmap: message.result,
+                    greys: message.greys,
                     layerIndex: message.index,
                     width: message.width,
                     height: message.height

@@ -43,16 +43,19 @@ export function createSlicerPreviewHandlers(deps: SlicerWorkerRuntimeDeps): Prev
                             quality,
                             index,
                             result: nativeZipPng.bitmap,
+                            greys: nativeZipPng.greys,
                             width: nativeZipPng.width,
                             height: nativeZipPng.height,
                             timings: nativeZipPng.timings
                         } satisfies SlicerWorkerResponse,
-                        [nativeZipPng.bitmap]
+                        nativeZipPng.greys ? [nativeZipPng.bitmap, nativeZipPng.greys] : [nativeZipPng.bitmap]
                     );
                     return;
                 }
 
                 const decoded = await decodePreviewPayload(deps, message, payload);
+                const greys =
+                    quality === "settled" ? extractGreys(decoded.pixels, decoded.width, decoded.height) : undefined;
                 const t1 = deps.now();
                 const bitmap = await rgbaToImageBitmap(decoded.pixels, decoded.width, decoded.height);
                 const t2 = deps.now();
@@ -80,11 +83,12 @@ export function createSlicerPreviewHandlers(deps: SlicerWorkerRuntimeDeps): Prev
                         quality,
                         index,
                         result: bitmap,
+                        greys,
                         width: decoded.width,
                         height: decoded.height,
                         timings
                     } satisfies SlicerWorkerResponse,
-                    [bitmap]
+                    greys ? [bitmap, greys] : [bitmap]
                 );
             } catch (error: unknown) {
                 const response: SlicerWorkerErrorMessage = toSlicerWorkerErrorMessage({
@@ -123,6 +127,7 @@ type DecodedPreviewPayload = {
 
 type NativeZipPngPreview = {
     bitmap: ImageBitmap;
+    greys?: ArrayBuffer;
     width: number;
     height: number;
     timings: {
@@ -161,10 +166,12 @@ async function decodeNativeZipPngPreview(
             : await deps.inflateRaw(new Uint8Array(payload.data), payload.uncompressedSize);
     const inflatedAt = deps.now();
     const bitmap = await createNativePngImageBitmap(pngBytes);
+    const greys = sampleNativeBitmap(bitmap);
     const finishedAt = deps.now();
 
     return {
         bitmap,
+        greys,
         width: bitmap.width || payload.width,
         height: bitmap.height || payload.height,
         timings: {
@@ -175,6 +182,26 @@ async function decodeNativeZipPngPreview(
             zipInflateMs: inflatedAt - startedAt
         }
     };
+}
+
+function extractGreys(pixels: Uint8Array | Uint8ClampedArray, width: number, height: number): ArrayBuffer {
+    const greys = new Uint8Array(width * height);
+    for (let i = 0; i < greys.length; i++) greys[i] = pixels[i * 4] ?? 0;
+    return greys.buffer;
+}
+
+function sampleNativeBitmap(bitmap: ImageBitmap): ArrayBuffer | undefined {
+    if (typeof OffscreenCanvas === "undefined") return undefined;
+    const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+    try {
+        const context = canvas.getContext("2d", { willReadFrequently: true });
+        if (!context) return undefined;
+        context.drawImage(bitmap, 0, 0);
+        return extractGreys(context.getImageData(0, 0, bitmap.width, bitmap.height).data, bitmap.width, bitmap.height);
+    } finally {
+        canvas.width = 0;
+        canvas.height = 0;
+    }
 }
 
 function createNativePngImageBitmap(pngBytes: Uint8Array): Promise<ImageBitmap> {

@@ -4,6 +4,98 @@ import { createSlicerPreviewHandlers } from "../../src/browser/worker/handlers/p
 import type { SlicerWorkerResponse } from "../../src/browser/worker/protocol.js";
 
 describe("preview worker handlers / preview worker handlers 用例", () => {
+    it("samples native PNG greys in the worker and transfers their buffer / 在 Worker 中采样原生 PNG 灰度并转移缓存", async () => {
+        const posted: Array<{ message: SlicerWorkerResponse; transfer?: Transferable[] }> = [];
+        const previousCanvas = globalThis.OffscreenCanvas;
+        const restore = installImageBitmapMocks({ bitmapWidth: 2, bitmapHeight: 1 });
+        vi.stubGlobal(
+            "OffscreenCanvas",
+            class {
+                width = 2;
+                height = 1;
+                getContext() {
+                    return {
+                        drawImage() {},
+                        getImageData() {
+                            return { data: new Uint8ClampedArray([17, 17, 17, 255, 203, 203, 203, 255]) };
+                        }
+                    };
+                }
+            }
+        );
+        try {
+            const handlers = createSlicerPreviewHandlers({
+                postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) =>
+                    posted.push({ message, transfer }),
+                now: () => 0
+            } as never);
+            handlers["decode-preview"]({
+                type: "decode-preview",
+                requestId: 10,
+                quality: "settled",
+                index: 0,
+                maxPreviewSize: 2,
+                payload: {
+                    kind: "zip-entry",
+                    data: new ArrayBuffer(1),
+                    compressionMethod: 0,
+                    uncompressedSize: 1,
+                    sourceFormat: "sl1",
+                    width: 2,
+                    height: 1
+                }
+            });
+            await waitForPostedMessages(posted, 1);
+            const message = posted[0]!.message;
+            expect(message).toMatchObject({ type: "preview-done", greys: expect.any(ArrayBuffer) });
+            if (message.type !== "preview-done") throw new Error("Expected preview");
+            expect(new Uint8Array(message.greys!)).toEqual(new Uint8Array([17, 203]));
+            expect(posted[0]!.transfer).toContain(message.greys);
+        } finally {
+            restore();
+            vi.stubGlobal("OffscreenCanvas", previousCanvas);
+        }
+    });
+    it("transfers native-resolution grey samples for settled previews / 完整预览传输原生分辨率灰度采样", async () => {
+        const posted: Array<{ message: SlicerWorkerResponse; transfer?: Transferable[] }> = [];
+        const handlers = createSlicerPreviewHandlers({
+            postMessage: (message: SlicerWorkerResponse, transfer?: Transferable[]) =>
+                posted.push({ message, transfer }),
+            now: () => 0,
+            decodeLayerPreview: () => ({
+                pixels: new Uint8Array([17, 17, 17, 255, 203, 203, 203, 255]),
+                width: 2,
+                height: 1
+            })
+        } as never);
+        const restore = installImageBitmapMocks();
+        try {
+            handlers["decode-preview"]({
+                type: "decode-preview",
+                requestId: 9,
+                quality: "settled",
+                index: 0,
+                maxPreviewSize: 2,
+                payload: {
+                    kind: "encoded-layer",
+                    data: new ArrayBuffer(1),
+                    format: "prz",
+                    width: 2,
+                    height: 1,
+                    antiAliasLevel: 1,
+                    encryptionKey: 0
+                }
+            });
+            await waitForPostedMessages(posted, 1);
+            const message = posted[0]!.message;
+            expect(message).toMatchObject({ type: "preview-done", greys: expect.any(ArrayBuffer) });
+            if (message.type !== "preview-done") throw new Error("Expected preview");
+            expect(new Uint8Array(message.greys!)).toEqual(new Uint8Array([17, 203]));
+            expect(posted[0]!.transfer).toContain(message.greys);
+        } finally {
+            restore();
+        }
+    });
     it("keeps interactive preview dimensions proportional to the source layer / interactive preview 尺寸与 source layer 保持比例", async () => {
         const posted: Array<{ message: SlicerWorkerResponse; transfer?: Transferable[] }> = [];
         const decodeLayerPreview = vi.fn(
@@ -70,7 +162,8 @@ describe("preview worker handlers / preview worker handlers 用例", () => {
             requestId: 1,
             quality: "interactive",
             width: 512,
-            height: 320
+            height: 320,
+            greys: undefined
         });
     });
 

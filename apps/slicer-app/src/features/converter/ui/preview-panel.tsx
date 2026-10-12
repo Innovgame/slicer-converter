@@ -178,6 +178,7 @@ export function PreviewPanel({
         if (previewImage && previewImage.layerIndex === selectedLayer) {
             viewport.setImage({
                 bitmap: previewImage.bitmap,
+                greys: previewImage.greys,
                 bitmapWidth: previewImage.width,
                 bitmapHeight: previewImage.height,
                 layerIndex: selectedLayer,

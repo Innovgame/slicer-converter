@@ -259,6 +259,11 @@ export interface SlicerWorkerPreviewDoneMessage {
     quality: PreviewQuality;
     index: number;
     result: ImageBitmap;
+    /**
+     * @zh 完整层的原生灰度缓冲区；随消息转移，不将可枚举的像素数组放入 UI 状态。
+     * @en Transferred native grey buffer for a full layer; keeps enumerable pixel arrays out of UI state.
+     */
+    greys?: ArrayBuffer;
     width: number;
     height: number;
     timings?: PreviewTimings;

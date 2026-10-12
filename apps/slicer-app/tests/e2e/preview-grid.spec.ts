@@ -21,8 +21,12 @@ for (const dpr of [1, 2, 3]) {
                 await canvas.press("1");
                 for (let i = 0; i < (dpr === 1 ? 4 : 5); i++) await canvas.press("+");
                 for (const fractional of [false, true]) {
-                    if (fractional)
+                    if (fractional) {
                         await canvas.dispatchEvent("wheel", { deltaY: 28, clientX: width / 2, clientY: 422 });
+                        await page.evaluate(
+                            () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
+                        );
+                    }
                     await expect(canvas).toHaveAttribute("data-grid-visible", "true");
                     const measurements = await canvas.evaluate((element: HTMLCanvasElement) => {
                         const context = element.getContext("2d")!;

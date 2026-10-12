@@ -19,6 +19,11 @@ export interface StatusState {
  */
 export interface PreviewImageState {
     bitmap: ImageBitmap;
+    /**
+     * @zh Worker 转移的原生灰度缓冲区；像素数组只在视口内部创建，避免 React 开发模式逐像素枚举。
+     * @en Native grey buffer transferred by the Worker; pixel views stay inside the viewport to avoid enumeration by React development tooling.
+     */
+    greys?: ArrayBuffer;
     layerIndex: number;
     width: number;
     height: number;
