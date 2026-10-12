@@ -2817,19 +2817,6 @@ select option:disabled {
         font-size: 10px;
         white-space: nowrap;
     }
-    .sc-workbench[data-mobile-tab="settings"] .sc-status-bar {
-        z-index: 4;
-        top: calc(38px + env(safe-area-inset-top));
-        left: auto;
-        right: 24px;
-        width: auto;
-        max-width: calc(100% - 164px);
-        justify-content: flex-end;
-    }
-    .sc-workbench[data-mobile-tab="settings"] .sc-status-details {
-        left: auto;
-        right: 0;
-    }
     .sc-workbench[data-mobile-tab="settings"] .sc-viewer-column {
         visibility: hidden;
     }

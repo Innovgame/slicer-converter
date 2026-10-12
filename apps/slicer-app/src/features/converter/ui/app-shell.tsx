@@ -250,7 +250,7 @@ export function AppShell({
                     {typeof inspector === "function" ? inspector(mobileSession) : inspector}
                 </aside>
             </div>
-            {(!session.isMobile || previewHidden) && (
+            {!session.isMobile && (
                 <footer className="sc-status-bar">
                     {typeof status === "function" ? status(mobileSession) : status}
                 </footer>

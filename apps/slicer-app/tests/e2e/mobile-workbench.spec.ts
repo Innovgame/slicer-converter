@@ -38,7 +38,9 @@ test("keeps preview geometry and export choices across mobile tabs / 移动标�
     await page.getByRole("tab", { name: "Settings", exact: true }).click();
     await expect(page.getByRole("tabpanel", { name: "Settings", exact: true })).toBeVisible();
     await expect(page.getByRole("group", { name: "Appearance" })).toBeVisible();
+    await expect(page.locator("#statusMsg")).toHaveCount(0);
     await page.getByRole("tab", { name: "Preview", exact: true }).click();
+    await expect(page.locator(".sc-mobile-file-copy #statusMsg")).toContainText("File loaded");
     await expect(page.locator("#slicerConverterFileName")).toHaveValue("mobile-output");
     await page
         .getByRole("dialog", { name: "Export", exact: true })
