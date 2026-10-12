@@ -16,6 +16,36 @@ use super::{calc_volumes::AnycubicZipCalcLayerVolumes, scene::AnycubicZipSceneMa
 pub(super) struct AnycubicZipSettingsManifest {
     #[serde(default)]
     pub(super) machine_type: AnycubicZipMachineType,
+    #[serde(default)]
+    machine_extern: serde_json::Value,
+}
+
+impl AnycubicZipSettingsManifest {
+    fn active_slicepara(&self) -> Option<&serde_json::Value> {
+        let name = self
+            .machine_extern
+            .get("active_resins")?
+            .as_array()?
+            .first()?
+            .as_str()?;
+        for key in ["user_resins", "factory_resins"] {
+            if let Some(resins) = self
+                .machine_extern
+                .get(key)
+                .and_then(serde_json::Value::as_array)
+            {
+                if let Some(resin) = resins.iter().find(|resin| {
+                    resin
+                        .pointer("/property/name")
+                        .and_then(serde_json::Value::as_str)
+                        == Some(name)
+                }) {
+                    return resin.get("slicepara");
+                }
+            }
+        }
+        None
+    }
 }
 
 /// Machine settings extracted from Anycubic ZIP `settings.json`.
@@ -150,7 +180,11 @@ fn metadata_layer_exposure(metadata: &FileMetadata, layer_index: u32) -> f32 {
         .get(layer_index as usize)
         .and_then(|settings| settings.exposure_time)
         .filter(|value| value.is_finite() && *value > 0.0)
-        .unwrap_or(metadata.exposure.exposure_time)
+        .unwrap_or(if layer_index < metadata.slicing.bottom_layer_count {
+            metadata.exposure.bottom_exposure_time
+        } else {
+            metadata.exposure.exposure_time
+        })
 }
 
 fn metadata_layer_lift_height(metadata: &FileMetadata, layer_index: u32) -> f32 {
@@ -213,7 +247,38 @@ pub(super) fn build_settings_json(metadata: &FileMetadata) -> serde_json::Value 
             "print_zsize": finite_or(metadata.printer.machine_z_mm, 0.0),
             "raster_antialiasing": metadata.slicing.anti_alias_level.max(1)
         },
-        "machine_extern": {}
+        "machine_extern": {
+            "version": "3", "active_resins": ["slicer-converter"],
+            "user_resins": [{
+                "version": "2", "property": {"name": "slicer-converter"},
+                "slicepara": {
+                    "anti_count": metadata.slicing.anti_alias_level.max(1),
+                    "bott_layers": metadata.slicing.bottom_layer_count,
+                    "bott_time": metadata.exposure.bottom_exposure_time,
+                    "bott_time_dual": metadata.exposure.bottom_exposure_time,
+                    "exposure_time": metadata.exposure.exposure_time,
+                    "zthick": metadata.slicing.layer_height_mm,
+                    "zup_height": metadata.motion.lift_height + metadata.motion.lift_height2,
+                    "zup_speed": metadata.motion.lift_speed / 60.0,
+                    "zdown_speed": metadata.motion.retract_speed / 60.0,
+                    "off_time": metadata.waits.before_cure,
+                    "bott_off_time": metadata.waits.before_cure,
+                    "wait_before_lift": metadata.waits.after_cure,
+                    "bott_wait_before_lift": metadata.waits.after_cure,
+                    "wait_after_lift": metadata.waits.after_lift,
+                    "bott_wait_after_lift": metadata.waits.after_lift
+                },
+                "slice_extpara": {
+                    "transition_layercount": metadata.slicing.transition_layer_count,
+                    "multi_state_paras": {
+                        "bott_0": {"height": metadata.motion.bottom_lift_height, "up_speed": metadata.motion.bottom_lift_speed / 60.0, "down_speed": metadata.motion.retract_speed / 60.0},
+                        "normal_0": {"height": metadata.motion.lift_height, "up_speed": metadata.motion.lift_speed / 60.0, "down_speed": metadata.motion.retract_speed / 60.0},
+                        "bott_1": {"height": metadata.motion.lift_height2, "up_speed": metadata.motion.lift_speed2 / 60.0, "down_speed": metadata.motion.retract_speed2 / 60.0},
+                        "normal_1": {"height": metadata.motion.lift_height2, "up_speed": metadata.motion.lift_speed2 / 60.0, "down_speed": metadata.motion.retract_speed2 / 60.0}
+                    }
+                }
+            }]
+        }
     })
 }
 
@@ -375,7 +440,23 @@ pub(super) fn metadata_from_manifests(
     };
     let machine = &settings.machine_type;
 
+    let slice = settings.active_slicepara();
+    let bottom_count = slice
+        .and_then(|value| value.get("bott_layers"))
+        .and_then(serde_json::Value::as_u64)
+        .and_then(|value| u32::try_from(value).ok())
+        .unwrap_or(0);
+    let exposure = |key: &str, fallback: f32| {
+        slice
+            .and_then(|value| value.get(key))
+            .and_then(serde_json::Value::as_f64)
+            .filter(|value| value.is_finite() && *value >= 0.0)
+            .map(|value| value as f32)
+            .unwrap_or(fallback)
+    };
+
     FileMetadataBuilder::new()
+        .bottom_layer_count(bottom_count)
         .machine_name(machine.name.clone())
         .resolution(machine.res_x, machine.res_y)
         .display_size_mm(machine.print_xsize, machine.print_ysize)
@@ -383,7 +464,10 @@ pub(super) fn metadata_from_manifests(
         .layer_height_mm(first_layer.layer_thickness)
         .layer_count(layers.layers.len() as u32)
         .anti_alias_level(machine.raster_antialiasing.max(1))
-        .exposure(first_layer.exposure_time, first_layer.exposure_time)
+        .exposure(
+            exposure("exposure_time", first_layer.exposure_time),
+            exposure("bott_time", first_layer.exposure_time),
+        )
         .lift(first_layer.zup_height, first_layer.zup_speed)
         .statistics(
             parse_print_time(print_info.print_time),

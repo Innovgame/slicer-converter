@@ -120,7 +120,7 @@ pub static CXDLP_V3_SPEC: FormatSpec = FormatSpec {
         supports_anti_alias: true,
         supports_per_layer_settings: false,
         supports_encryption: false,
-        requires_full_document_parse: false,
+        requires_full_document_parse: true,
     },
     keys: FormatKeys {
         family_key: keys::FAMILY_CREALITY,
@@ -172,7 +172,7 @@ pub static CXDLP_V1_SPEC: FormatSpec = FormatSpec {
         supports_anti_alias: true,
         supports_per_layer_settings: false,
         supports_encryption: false,
-        requires_full_document_parse: false,
+        requires_full_document_parse: true,
     },
     keys: FormatKeys {
         family_key: keys::FAMILY_CREALITY,
@@ -223,7 +223,7 @@ pub static CXDLP_V2_SPEC: FormatSpec = FormatSpec {
         supports_anti_alias: true,
         supports_per_layer_settings: false,
         supports_encryption: false,
-        requires_full_document_parse: false,
+        requires_full_document_parse: true,
     },
     keys: FormatKeys {
         family_key: keys::FAMILY_CREALITY,
@@ -274,7 +274,7 @@ pub static CXDLP_V4_SPEC: FormatSpec = FormatSpec {
         supports_anti_alias: true,
         supports_per_layer_settings: true,
         supports_encryption: true,
-        requires_full_document_parse: false,
+        requires_full_document_parse: true,
     },
     keys: FormatKeys {
         family_key: keys::FAMILY_CREALITY,

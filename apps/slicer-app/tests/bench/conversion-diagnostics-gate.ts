@@ -19,6 +19,7 @@ export interface ConversionDiagnosticsRun {
     statusText: string;
     elapsedMs: number;
     diagnostics: DiagnosticEvent[];
+    completionEvidence?: "public-status";
     fileSystemSink?: FileSystemSinkStats;
 }
 
@@ -63,6 +64,7 @@ export type ConversionDiagnosticsThresholdMap = Record<string, ConversionDiagnos
 export interface ConversionDiagnosticsTargetSummary {
     runs: number;
     completeEvents: number;
+    publicStatusCompletions: number;
     elapsedMs: number;
     assembleWaitMs: number | null;
     centralDirectoryWallMs: number | null;
@@ -103,15 +105,17 @@ export function buildConversionDiagnosticsGate(
 
     for (const run of runs) {
         const completeEvents = run.diagnostics.filter((item) => item.event === "complete");
-        if (completeEvents.length === 0) {
-            failures.push(`${run.target} run ${run.iteration} did not emit a complete diagnostic event`);
+        const publicTimings =
+            run.completionEvidence === "public-status" ? readPublicCompletionTimings(run.statusText, run.target) : null;
+        if (completeEvents.length === 0 && publicTimings === null) {
+            failures.push(`${run.target} run ${run.iteration} did not provide valid completion evidence`);
         }
         if (/\bbatch=|\bbatch\b/.test(run.statusText)) {
             failures.push(`${run.target} run ${run.iteration} status still reports batch mode`);
         }
 
         const complete = completeEvents.at(-1);
-        const details = complete?.details ?? {};
+        const details = complete?.details ?? publicTimings ?? {};
         const sink = readObject(details.sink);
         const dispatchTransfer = readObject(details.dispatchTransfer);
         const wasmBytes = readObject(details.wasmBytes);
@@ -126,6 +130,7 @@ export function buildConversionDiagnosticsGate(
         const runSummary: ConversionDiagnosticsTargetSummary = {
             runs: 1,
             completeEvents: completeEvents.length,
+            publicStatusCompletions: complete ? 0 : publicTimings ? 1 : 0,
             elapsedMs: run.elapsedMs,
             assembleWaitMs: readNumber(details.assembleWaitMs),
             centralDirectoryWallMs: readNumber(details.centralDirectoryWallMs),
@@ -143,6 +148,16 @@ export function buildConversionDiagnosticsGate(
             wasmInputBytes: readNumber(wasmBytes.inputBytes),
             wasmOutputBytes: readNumber(wasmBytes.outputBytes)
         };
+
+        const required = thresholds[run.target];
+        for (const [limit, metric] of [
+            ["maxFinalizeOnlyWallMs", "finalizeOnlyWallMs"],
+            ["maxSinkFinishWallMs", "sinkFinishWallMs"],
+            ["maxSinkWriteCount", "sinkWriteCount"]
+        ] as const) {
+            if (required?.[limit] !== undefined && runSummary[metric] === null)
+                failures.push(`${run.target} run ${run.iteration} ${metric} measurement unavailable`);
+        }
 
         targets[run.target] = mergeTargetSummary(targets[run.target], runSummary);
     }
@@ -226,6 +241,7 @@ function mergeTargetSummary(
     return {
         runs: previous.runs + next.runs,
         completeEvents: previous.completeEvents + next.completeEvents,
+        publicStatusCompletions: previous.publicStatusCompletions + next.publicStatusCompletions,
         elapsedMs: Math.max(previous.elapsedMs, next.elapsedMs),
         assembleWaitMs: maxNullable(previous.assembleWaitMs, next.assembleWaitMs),
         centralDirectoryWallMs: maxNullable(previous.centralDirectoryWallMs, next.centralDirectoryWallMs),
@@ -263,4 +279,23 @@ function maxNullable(left: number | null, right: number | null): number | null {
 
 function formatMs(value: number): string {
     return `${value.toFixed(1)}ms`;
+}
+
+function readPublicCompletionTimings(status: string, target: string): Record<string, number> | null {
+    const completed = /^Converted \d+ layers to (\S+) in [\d.]+(?:ms|s)\./u.exec(status);
+    if (completed?.[1] !== target.toUpperCase()) return null;
+    const details: Record<string, number> = {};
+    for (const [label, key] of [
+        ["layers", "layerPhaseMs"],
+        ["worker sum", "computeMs"],
+        ["assemble", "assembleWaitMs"],
+        ["finalize-only", "finalizeOnlyWallMs"]
+    ]) {
+        const match = new RegExp(`; ${label} ([\\d.]+)(ms|s)`).exec(status);
+        if (!match) return null;
+        const value = Number(match[1]) * (match[2] === "s" ? 1000 : 1);
+        if (!Number.isFinite(value)) return null;
+        details[key] = value;
+    }
+    return details;
 }

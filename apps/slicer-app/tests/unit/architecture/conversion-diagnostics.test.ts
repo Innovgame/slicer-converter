@@ -150,6 +150,70 @@ describe("conversion diagnostics report / 转换诊断报告", () => {
 });
 
 describe("conversion diagnostics bench gate / 转换诊断 bench gate", () => {
+    it("does not let a measured run hide another run's missing metric / 不允许已观测运行掩盖其他运行的指标缺失", async () => {
+        const { buildConversionDiagnosticsGate } = await import("../../bench/conversion-diagnostics-gate");
+        const gate = buildConversionDiagnosticsGate(
+            [
+                runFor("vdt", {
+                    sinkFinishWallMs: 5,
+                    dispatchTransfer: dispatchTransferFixture(),
+                    wasmBytes: wasmBytesFixture()
+                }),
+                {
+                    target: "vdt",
+                    iteration: 2,
+                    elapsedMs: 1000,
+                    diagnostics: [],
+                    completionEvidence: "public-status",
+                    statusText:
+                        "Converted 10 layers to VDT in 1s. Output 1 MB. workers; layers 1s; worker sum 2s; assemble 3ms; finalize-only 2ms."
+                }
+            ],
+            { vdt: { maxSinkFinishWallMs: 100 } }
+        );
+        expect(gate.failures.join(" ")).toMatch(/run 2.*sinkFinishWallMs.*unavailable/);
+    });
+    it("checks current public completion timings without inventing private diagnostics / 校验公开完成耗时且不伪造内部诊断", async () => {
+        const { buildConversionDiagnosticsGate } = await import("../../bench/conversion-diagnostics-gate");
+        const gate = buildConversionDiagnosticsGate(
+            [
+                {
+                    target: "vdt",
+                    iteration: 1,
+                    elapsedMs: 1300,
+                    diagnostics: [],
+                    completionEvidence: "public-status",
+                    statusText:
+                        "Converted 914 layers to VDT in 1.28s. Output 16.1 MB. workers; setup 0.2ms; layers 1.28s; worker sum 8.85s; assemble 1.28s; finalize-only 4.3ms."
+                }
+            ],
+            { vdt: { maxFinalizeOnlyWallMs: 4 } }
+        );
+        expect(gate.targets.vdt.finalizeOnlyWallMs).toBe(4.3);
+        expect(gate.targets.vdt.completeEvents).toBe(0);
+        expect(gate.targets.vdt.dispatchTransferBytes).toBeNull();
+        expect(gate.failures).toEqual(["vdt finalizeOnlyWallMs 4.3ms exceeds 4.0ms"]);
+    });
+
+    it("rejects incomplete completion evidence and unavailable threshold measurements / 拒绝不完整完成证据及不可用阈值观测", async () => {
+        const { buildConversionDiagnosticsGate } = await import("../../bench/conversion-diagnostics-gate");
+        const gate = buildConversionDiagnosticsGate(
+            [
+                {
+                    target: "vdt",
+                    iteration: 1,
+                    elapsedMs: 1300,
+                    diagnostics: [],
+                    completionEvidence: "public-status",
+                    statusText: "Converting..."
+                }
+            ],
+            { vdt: { maxSinkFinishWallMs: 100 } }
+        );
+        expect(gate.failures.join(" ")).toMatch(/completion/i);
+        expect(gate.failures.join(" ")).toMatch(/sinkFinishWallMs.*unavailable/i);
+    });
+
     it("applies optional thresholds only in the bench harness / applies optional thresholds only in the bench harness 用例", async () => {
         const { buildConversionDiagnosticsGate } = await import("../../bench/conversion-diagnostics-gate");
         const gate = buildConversionDiagnosticsGate(

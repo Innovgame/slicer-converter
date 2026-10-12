@@ -51,6 +51,15 @@ async function parseMetadata(
     const machine = readRecord(settings.machine_type);
     const layerRecords = readRecordArray(layers.paras);
     const firstLayer = layerRecords[0] ?? {};
+    const machineExtern = readRecord(settings.machine_extern);
+    const activeName = Array.isArray(machineExtern.active_resins) ? machineExtern.active_resins[0] : undefined;
+    const resins = [...readRecordArray(machineExtern.user_resins), ...readRecordArray(machineExtern.factory_resins)];
+    const resin =
+        typeof activeName === "string"
+            ? resins.find((value) => readString(readRecord(value.property), "name") === activeName)
+            : undefined;
+    const slice = readRecord(resin?.slicepara);
+
     const printInfoEntry = findZipEntry(entries, "print_info.json");
     const printInfo = printInfoEntry ? readRecord(JSON.parse(await readZipEntryText(source, printInfoEntry))) : {};
 
@@ -64,8 +73,9 @@ async function parseMetadata(
         layer_height_mm: readNumber(firstLayer, "layer_thickness") ?? 0.05,
         layer_count: layerRecords.length || readNumber(layers, "count") || layerCount,
         anti_alias_level: Math.max(readNumber(machine, "raster_antialiasing") ?? 1, 1),
-        exposure_time: readNumber(firstLayer, "exposure_time") ?? 2,
-        bottom_exposure_time: readNumber(firstLayer, "exposure_time") ?? 2,
+        exposure_time: readNumber(slice, "exposure_time") ?? readNumber(firstLayer, "exposure_time") ?? 2,
+        bottom_exposure_time: readNumber(slice, "bott_time") ?? readNumber(firstLayer, "exposure_time") ?? 2,
+        bottom_layer_count: readRoundedNonNegativeNumber(slice, "bott_layers") ?? 0,
         lift_height: readNumber(firstLayer, "zup_height") ?? 5,
         lift_speed: readNumber(firstLayer, "zup_speed") ?? 60,
         print_time_sec: readRoundedNonNegativeNumber(printInfo, "print_time") ?? 0,

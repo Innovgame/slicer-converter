@@ -19,6 +19,7 @@ test("preserves layers, pixels and print settings through GOO → CTB → GOO / 
     await loadFilePath(page, sourcePath, "GOO");
     await page.selectOption("#slicerConverterFormat", "chitubox-manual");
     await page.selectOption("#slicerConverterSuffix", "ctb");
+    await page.selectOption("#slicerConverterVersion", "2");
     const ctbDownload = page.waitForEvent("download");
     await page.click("#convertBtn");
     const ctbPath = testInfo.outputPath("converted.ctb");

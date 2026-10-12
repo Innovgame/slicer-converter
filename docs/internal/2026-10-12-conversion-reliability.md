@@ -2,6 +2,8 @@
 
 基线：`cbfcc5c`。此次实现覆盖项目审查中已获同意的六项问题。
 
+后续浏览器验证已完成：Chromium/Firefox E2E 62项与WASM浏览器1项通过，原环境限制已解除。最新证据见[格式矩阵与发布准备](2026-10-12-format-matrix-and-release-readiness.md)。
+
 ## 实现
 
 - CTB 解析先检查图层表范围再分配；完整二进制输入单独校验层数和 payload 范围。浏览器完整文件打开执行同类校验，ZIP source 拒绝截断读取和 stored 大小不匹配。
@@ -55,7 +57,7 @@ rust/target/release/slicer-converter --input /tmp/slicer-reliability-validation/
 
 截断 CTB 的 CLI 回归也经 release 二进制验证：返回错误且未创建 GOO 输出。
 
-## 环境限制
+## 本轮审查时的环境限制（后续已解除）
 
 Vite 监听 `localhost:8080` 被当前沙箱拒绝。请求沙箱外执行时，自动审批系统因审批模型账户配置错误（404：`gpt-5.6-luna` 不受支持）未能完成审批，测试没有执行；这不是对测试操作安全性的否定。没有绕过审批。
 

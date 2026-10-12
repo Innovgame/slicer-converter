@@ -4,6 +4,11 @@ This file records changes that users can see. Versions follow repository tags, f
 
 ## Unreleased
 
+## 0.1.5
+
+- Anycubic Zip keeps bottom exposure and layer count in its active resin settings on export and import.
+- Creality files are read in full before checksum validation, so large CXDLPv4 files open through the browser document API.
+
 - Truncated CTB files and invalid layer ranges are rejected before conversion.
 - Cancelling conversion stops pending dispatch and discards in-flight conversion workers before pool reuse.
 - Opening files quickly keeps the latest selection and closes obsolete documents.

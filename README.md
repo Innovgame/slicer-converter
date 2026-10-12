@@ -15,7 +15,7 @@ Resin slicer file converter for MSLA and DLP printers. One Rust format registry 
 
 ## Install
 
-Version `0.1.4`. Questions can go to [Discussions](https://github.com/Innovgame/slicer-converter/discussions). Changes are in [CHANGELOG.md](CHANGELOG.md).
+Version `0.1.5`. Questions can go to [Discussions](https://github.com/Innovgame/slicer-converter/discussions). Changes are in [CHANGELOG.md](CHANGELOG.md).
 
 ### CLI
 

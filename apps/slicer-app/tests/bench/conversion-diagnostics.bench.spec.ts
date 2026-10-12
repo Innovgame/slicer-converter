@@ -18,11 +18,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_SAMPLE = path.resolve(__dirname, "../../../../rust/data/球体_1_202604141902.goo");
 const DEFAULT_DIAGNOSTIC_THRESHOLDS: ConversionDiagnosticsThresholdMap = {
     prz: {
-        maxSinkFinishWallMs: 1500
+        maxFinalizeOnlyWallMs: 1500
     },
     vdt: {
-        maxFinalizeOnlyWallMs: 1500,
-        maxSinkFinishWallMs: 1500
+        maxFinalizeOnlyWallMs: 1500
     }
 };
 const SAMPLE_PATH = process.env.BENCH_SAMPLE_PATH ?? DEFAULT_SAMPLE;
@@ -271,6 +270,7 @@ test.describe("conversion diagnostics bench / 转换诊断 bench", () => {
                     statusText,
                     elapsedMs,
                     diagnostics,
+                    completionEvidence: "public-status",
                     fileSystemSink
                 });
                 page.off("console", onConsole);

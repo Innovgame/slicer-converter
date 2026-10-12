@@ -15,7 +15,7 @@
 
 ## 安装
 
-当前版本 `0.1.4`。问题可以发到 [Discussions](https://github.com/Innovgame/slicer-converter/discussions)。变更见 [CHANGELOG.md](CHANGELOG.md)。
+当前版本 `0.1.5`。问题可以发到 [Discussions](https://github.com/Innovgame/slicer-converter/discussions)。变更见 [CHANGELOG.md](CHANGELOG.md)。
 
 ### CLI
 
