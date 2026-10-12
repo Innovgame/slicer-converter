@@ -106,7 +106,6 @@ export function ConverterPage() {
                     mobile={mobile.isMobile}
                     converting={controller.converting}
                     progress={controller.progress}
-                    documentLoaded={controller.parsedHeader !== null}
                 />
             )}
         />

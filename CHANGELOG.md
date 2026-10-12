@@ -4,10 +4,12 @@ This file records changes that users can see. Versions follow repository tags, f
 
 ## Unreleased
 
-## 0.1.5
+## 0.1.15
 
 - Mobile navigation, file and export drawers, layer controls, and preview tools share a floating frosted-glass style with light and dark themes.
 - Mobile settings use iOS-style grouped lists and labeled segments for theme and language. Switching language keeps the settings page open.
+- The layer slider stays centered in its rail on iPad and other touch-enabled tablets.
+- Mobile status appears beside the file summary on the header's second line and stays visible instead of fading out. Full status details remain available on tap.
 - Pixel grids stay aligned while zooming and dragging in mobile device emulation. Preview zoom now reaches 128×, and dragging presents complete frames without flicker.
 - Mobile preference and onboarding tests follow the current navigation and segmented controls. Local temporary diagnostic scripts are excluded from lint checks.
 

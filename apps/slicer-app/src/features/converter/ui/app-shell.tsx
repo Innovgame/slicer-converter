@@ -124,11 +124,15 @@ export function AppShell({
                                     <strong title={documentLoaded ? documentStatus : undefined}>
                                         {documentLoaded ? documentStatus : t("mobile.openFile")}
                                     </strong>
-                                    <small>
-                                        {documentLoaded
-                                            ? (sourceSummary ?? t("mobile.fileDetails"))
-                                            : t("mobile.chooseFile")}
-                                    </small>
+                                    <div className="sc-mobile-file-subtitle">
+                                        <small>
+                                            {documentLoaded
+                                                ? (sourceSummary ?? t("mobile.fileDetails"))
+                                                : t("mobile.chooseFile")}
+                                        </small>
+                                        {!previewHidden &&
+                                            (typeof status === "function" ? status(mobileSession) : status)}
+                                    </div>
                                 </div>
                                 {documentLoaded && (
                                     <button
@@ -246,9 +250,11 @@ export function AppShell({
                     {typeof inspector === "function" ? inspector(mobileSession) : inspector}
                 </aside>
             </div>
-            <footer className="sc-status-bar" hidden={session.isMobile && session.immersive}>
-                {typeof status === "function" ? status(mobileSession) : status}
-            </footer>
+            {(!session.isMobile || previewHidden) && (
+                <footer className="sc-status-bar">
+                    {typeof status === "function" ? status(mobileSession) : status}
+                </footer>
+            )}
             {session.isMobile && !session.immersive && (
                 <nav className="sc-mobile-tabs" role="tablist" aria-label={t("mobile.navigation")}>
                     <button

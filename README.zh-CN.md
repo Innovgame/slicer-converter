@@ -13,9 +13,21 @@
 
 ![Slicer File Converter 预览](docs/images/app-preview-2.png)
 
+### 移动端界面
+
+用手机打开[浏览器应用](https://innovgame.github.io/slicer-converter/)，即可在本地预览图层和转换文件。移动端提供悬浮毛玻璃导航、文件与导出抽屉，以及 iOS 风格设置页。
+
+<p>
+  <img src="docs/images/app-mobile-preview.png" alt="移动端图层预览，顶部状态常显，底部提供图层控制" width="240" />
+  <img src="docs/images/app-mobile-export.png" alt="移动端导出抽屉，可选择格式、版本和输出文件名" width="240" />
+  <img src="docs/images/app-mobile-settings.png" alt="移动端设置页，提供主题和语言分段切换" width="240" />
+</p>
+
+通过双指手势或右侧工具缩放预览，拖动平移，使用图层滑块检查打印内容。顶部持续显示当前状态，点击可查看详情。切换「预览」和「设置」会保留已打开文件和导出选项。平板保留较大的工作台布局，触摸滑轨保持居中。
+
 ## 安装
 
-当前版本 `0.1.5`。问题可以发到 [Discussions](https://github.com/Innovgame/slicer-converter/discussions)。变更见 [CHANGELOG.md](CHANGELOG.md)。
+当前版本 `0.1.15`。问题可以发到 [Discussions](https://github.com/Innovgame/slicer-converter/discussions)。变更见 [CHANGELOG.md](CHANGELOG.md)。
 
 ### CLI
 

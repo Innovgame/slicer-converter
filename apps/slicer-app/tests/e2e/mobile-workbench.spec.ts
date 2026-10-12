@@ -3,6 +3,22 @@ import { loadFixtureFile } from "../support/fixture-files";
 
 test.use({ viewport: { width: 390, height: 844 } });
 
+test("keeps status in the file subtitle without automatic dismissal / 文件第二行状态持续显示", async ({ page }) => {
+    await page.clock.install();
+    await page.goto("/");
+    await page.getByRole("button", { name: "Not now", exact: true }).click();
+    const subtitleStatus = page.locator(".sc-mobile-file-copy #statusMsg");
+    await expect(subtitleStatus).toContainText("Ready", { timeout: 30_000 });
+    await expect(subtitleStatus.getByRole("button", { name: /Ready/ })).toBeVisible();
+    await loadFixtureFile(page, "sample.goo", "GOO");
+    await expect(subtitleStatus.getByRole("button", { name: /File loaded/ })).toBeVisible();
+    await page.clock.fastForward(10_000);
+    await expect(subtitleStatus.getByRole("button", { name: /File loaded/ })).toBeVisible();
+    await subtitleStatus.getByRole("button").click();
+    await expect(page.getByRole("region", { name: "Status details" })).toBeVisible();
+    expect(await page.locator("#statusMsg").count()).toBe(1);
+});
+
 test("keeps preview geometry and export choices across mobile tabs / 移动标签切换保留预览几何与导出选择", async ({
     page
 }) => {

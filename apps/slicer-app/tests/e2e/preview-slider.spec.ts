@@ -105,3 +105,16 @@ test.describe("preview and layer slider / 预览与图层滑块", () => {
         }
     });
 });
+
+test.describe("Tablet touch rail / 平板触摸滑轨", () => {
+    test.use({ viewport: { width: 820, height: 1180 }, hasTouch: true, deviceScaleFactor: 2 });
+
+    test("centers the touch slider within its rail / 触摸滑块在滑轨内居中", async ({ page }) => {
+        await page.goto("/");
+        await expect(page.locator("#statusMsg")).toContainText("Ready", { timeout: 30_000 });
+        await loadFixtureFile(page, "sample.goo", "GOO");
+        const rail = (await page.locator(".sc-layer-rail").boundingBox())!;
+        const slider = (await page.locator("#layerSlider").boundingBox())!;
+        expect(Math.abs(slider.x + slider.width / 2 - (rail.x + rail.width / 2))).toBeLessThan(1);
+    });
+});

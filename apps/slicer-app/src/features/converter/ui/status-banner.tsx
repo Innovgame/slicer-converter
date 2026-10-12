@@ -14,21 +14,13 @@ interface StatusBannerProps {
     mobile?: boolean;
     converting?: boolean;
     progress?: ProgressState | null;
-    documentLoaded?: boolean;
 }
 
 /**
  * @zh 桌面完整状态行与移动端行内状态；保留完整消息和空状态节点供辅助技术与测试定位。
  * @en Full desktop status and inline mobile status; retains complete messages and empty nodes for accessibility and tests.
  */
-export function StatusBanner({
-    id,
-    status,
-    mobile = false,
-    converting = false,
-    progress,
-    documentLoaded = true
-}: StatusBannerProps) {
+export function StatusBanner({ id, status, mobile = false, converting = false, progress }: StatusBannerProps) {
     const { t } = useTranslation();
     if (mobile) {
         return (
@@ -38,7 +30,6 @@ export function StatusBanner({
                 status={status}
                 converting={converting}
                 progress={progress}
-                documentLoaded={documentLoaded}
             />
         );
     }
@@ -57,22 +48,11 @@ export function StatusBanner({
         </div>
     );
 }
-function MobileStatus({ id, status, converting = false, progress, documentLoaded }: StatusBannerProps) {
+function MobileStatus({ id, status, converting = false, progress }: StatusBannerProps) {
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
-    const [expired, setExpired] = useState(false);
     const rootRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
-    const autoHide = status?.type === "success" && !converting;
-    const faded = autoHide && expired && !expanded;
-    const quietReady =
-        !documentLoaded && !converting && status?.type === "success" && status.message.startsWith("Ready -");
-
-    useEffect(() => {
-        if (!autoHide || expanded) return;
-        const timer = window.setTimeout(() => setExpired(true), 5000);
-        return () => window.clearTimeout(timer);
-    }, [autoHide, expanded]);
 
     useEffect(() => {
         if (!expanded) return;
@@ -112,10 +92,6 @@ function MobileStatus({ id, status, converting = false, progress, documentLoaded
             id={id}
             className={`sc-status-message sc-status-inline${status || converting ? "" : " hidden"}`}
             data-tone={tone}
-            data-faded={faded}
-            aria-hidden={faded || quietReady || undefined}
-            hidden={quietReady}
-            inert={faded || quietReady}
         >
             <span className="sc-sr" role={tone === "error" ? "alert" : "status"} aria-atomic="true">
                 {detail}

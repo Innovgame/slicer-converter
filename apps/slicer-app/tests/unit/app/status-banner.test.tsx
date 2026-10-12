@@ -10,25 +10,15 @@ const ready = { type: "success" as const, message: "Ready - prewarmed 1 worker(s
 describe("Mobile inline status / 移动端行内状态", () => {
     afterEach(() => vi.useRealTimers());
 
-    it("keeps empty-file readiness quiet while still surfacing initialization and errors / 空文件就绪不重复展示但保留初始化与错误", () => {
+    it("keeps readiness visible alongside initialization and errors / 就绪初始化与错误状态持续可见", () => {
         const view = render(
-            <StatusBanner
-                id="statusMsg"
-                status={{ type: "info", message: "Loading WASM..." }}
-                mobile
-                documentLoaded={false}
-            />
+            <StatusBanner id="statusMsg" status={{ type: "info", message: "Loading WASM..." }} mobile />
         );
         expect(screen.getByRole("button", { name: /Getting ready/ })).toBeVisible();
-        view.rerender(<StatusBanner id="statusMsg" status={ready} mobile documentLoaded={false} />);
-        expect(screen.queryByRole("button")).not.toBeInTheDocument();
+        view.rerender(<StatusBanner id="statusMsg" status={ready} mobile />);
+        expect(screen.getByRole("button", { name: /Ready/ })).toBeVisible();
         view.rerender(
-            <StatusBanner
-                id="statusMsg"
-                status={{ type: "error", message: "Parse error: corrupt header" }}
-                mobile
-                documentLoaded={false}
-            />
+            <StatusBanner id="statusMsg" status={{ type: "error", message: "Parse error: corrupt header" }} mobile />
         );
         expect(screen.getByRole("button", { name: /Could not open file/ })).toBeVisible();
     });
@@ -49,7 +39,7 @@ describe("Mobile inline status / 移动端行内状态", () => {
         expect(trigger).toHaveFocus();
     });
 
-    it("pauses dismissal while details are open and reveals a new error / 查看详情暂停淡出且新错误重新显示", () => {
+    it("keeps success visible after closing details and reveals a new error / 关闭详情后成功状态持续显示且新错误更新", () => {
         vi.useFakeTimers();
         const view = render(<StatusBanner id="statusMsg" status={ready} mobile />);
         fireEvent.click(screen.getByRole("button", { name: /Ready/ }));
@@ -57,7 +47,7 @@ describe("Mobile inline status / 移动端行内状态", () => {
         expect(screen.getByRole("region")).toBeVisible();
         fireEvent.click(screen.getByRole("button", { name: "Close status details" }));
         act(() => vi.advanceTimersByTime(5000));
-        expect(screen.queryByRole("button", { name: /Ready/ })).not.toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /Ready/ })).toBeVisible();
         view.rerender(
             <StatusBanner id="statusMsg" status={{ type: "error", message: "Parse error: corrupt header" }} mobile />
         );

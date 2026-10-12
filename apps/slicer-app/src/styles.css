@@ -1994,6 +1994,34 @@ select option:disabled {
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+    .sc-mobile-file-subtitle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-width: 0;
+    }
+    .sc-mobile-file-subtitle small {
+        min-width: 0;
+    }
+    .sc-mobile-file-subtitle .sc-status-inline {
+        min-width: 0;
+        flex-shrink: 0;
+        max-width: 55%;
+    }
+    .sc-mobile-file-subtitle .sc-status-trigger {
+        min-height: 20px;
+        padding: 0;
+        line-height: 16px;
+    }
+    .sc-mobile-file-subtitle .sc-status-details {
+        position: fixed;
+        top: calc(80px + env(safe-area-inset-top));
+        left: 16px;
+        right: 16px;
+        width: auto;
+        text-align: left;
+    }
     .sc-mobile-file-copy strong {
         overflow: hidden;
         min-width: 0;
@@ -2812,6 +2840,10 @@ select option:disabled {
     .sc-workbench[data-mobile-drawer="source"] .sc-status-bar {
         z-index: 5;
     }
+    .sc-workbench[data-mobile-drawer="export"] .sc-brand,
+    .sc-workbench[data-mobile-drawer="source"] .sc-brand {
+        z-index: 5;
+    }
     .sc-workbench[data-immersive="true"] .sc-brand,
     .sc-workbench[data-immersive="true"] .sc-mobile-preview-tools,
     .sc-workbench[data-immersive="true"] .sc-mobile-preview-controls {
@@ -2981,11 +3013,6 @@ select option:disabled {
             opacity 180ms ease,
             visibility 180ms ease;
     }
-    .sc-status-inline[data-faded="true"] {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-    }
     .sc-status-trigger {
         position: relative;
         display: flex;
@@ -3138,6 +3165,9 @@ select option:disabled {
     }
 
     .sc-layer-slider {
+        width: 28px;
+    }
+    .sc-layer-rail-stage {
         width: 28px;
     }
 }

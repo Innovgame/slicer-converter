@@ -13,9 +13,21 @@ Resin slicer file converter for MSLA and DLP printers. One Rust format registry 
 
 ![Slicer File Converter preview](docs/images/app-preview-2.png)
 
+### Mobile interface
+
+Open the [browser app](https://innovgame.github.io/slicer-converter/) on your phone to preview layers and convert files locally. The mobile interface includes floating frosted-glass navigation, file and export drawers, and iOS-style settings.
+
+<p>
+  <img src="docs/images/app-mobile-preview.png" alt="Mobile layer preview with persistent file status and layer controls" width="240" />
+  <img src="docs/images/app-mobile-export.png" alt="Mobile export drawer with format, version and file name controls" width="240" />
+  <img src="docs/images/app-mobile-settings.png" alt="Mobile settings with theme and language segments" width="240" />
+</p>
+
+Use pinch gestures or the preview tools to zoom, drag to pan, and move the layer slider to inspect the print. The header keeps the current status visible; tap it for details. The Preview and Settings tabs preserve the loaded file and export choices. Tablets retain the larger workbench with a centered touch slider.
+
 ## Install
 
-Version `0.1.5`. Questions can go to [Discussions](https://github.com/Innovgame/slicer-converter/discussions). Changes are in [CHANGELOG.md](CHANGELOG.md).
+Version `0.1.15`. Questions can go to [Discussions](https://github.com/Innovgame/slicer-converter/discussions). Changes are in [CHANGELOG.md](CHANGELOG.md).
 
 ### CLI
 
