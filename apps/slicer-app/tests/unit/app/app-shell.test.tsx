@@ -176,9 +176,11 @@ describe("Mobile AppShell / 移动工作台", () => {
             </I18nextProvider>
         );
         fireEvent.click(screen.getByRole("tab", { name: "Settings" }));
-        fireEvent.change(screen.getByRole("combobox", { name: "Appearance" }), { target: { value: "dark" } });
+        fireEvent.click(
+            within(screen.getByRole("group", { name: "Appearance" })).getByRole("button", { name: "Dark" })
+        );
         expect(document.documentElement).toHaveAttribute("data-theme", "dark");
-        fireEvent.change(screen.getByRole("combobox", { name: "Language" }), { target: { value: "zh" } });
+        fireEvent.click(within(screen.getByRole("group", { name: "Language" })).getByRole("button", { name: "中文" }));
         expect(await screen.findByRole("tab", { name: "设置" })).toHaveAttribute("aria-selected", "true");
         fireEvent.click(screen.getByRole("tab", { name: "预览" }));
         expect(screen.getByRole("tab", { name: "预览" })).toHaveAttribute("aria-selected", "true");

@@ -64,6 +64,6 @@ describe("Mobile tour navigation / 移动引导导航", () => {
         expect(screen.getByRole("tabpanel", { name: "Settings" })).toBeVisible();
         expect(screen.getByRole("link", { name: "Report a bug" })).toBeInTheDocument();
         highlight(4);
-        expect(screen.getByRole("combobox", { name: "Appearance" })).toBeInTheDocument();
+        expect(screen.getByRole("group", { name: "Appearance" })).toBeInTheDocument();
     });
 });

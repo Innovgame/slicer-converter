@@ -6,6 +6,11 @@ This file records changes that users can see. Versions follow repository tags, f
 
 ## 0.1.5
 
+- Mobile navigation, file and export drawers, layer controls, and preview tools share a floating frosted-glass style with light and dark themes.
+- Mobile settings use iOS-style grouped lists and labeled segments for theme and language. Switching language keeps the settings page open.
+- Pixel grids stay aligned while zooming and dragging in mobile device emulation. Preview zoom now reaches 128×, and dragging presents complete frames without flicker.
+- Mobile preference and onboarding tests follow the current navigation and segmented controls. Local temporary diagnostic scripts are excluded from lint checks.
+
 - Anycubic Zip keeps bottom exposure and layer count in its active resin settings on export and import.
 - Creality files are read in full before checksum validation, so large CXDLPv4 files open through the browser document API.
 

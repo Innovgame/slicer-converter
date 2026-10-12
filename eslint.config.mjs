@@ -5,6 +5,7 @@ import tseslint from "typescript-eslint";
 export default defineConfig([
     {
         ignores: [
+            ".tmp/**",
             "**/dist/**",
             "**/node_modules/**",
             "packages/slicer-wasm/lib/**",

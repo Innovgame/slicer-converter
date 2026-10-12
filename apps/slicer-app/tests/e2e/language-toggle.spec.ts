@@ -35,10 +35,16 @@ test("switches language without losing the file or selected layer / 切换语言
     await expect(page.locator("#statusMsg")).toContainText("Ready");
 });
 
-test("keeps the language button visible on small screens / 窄屏语言按钮保持可见", async ({ page }) => {
+test("keeps language segments accessible on small screens / 窄屏语言分段控件保持可用", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
-    await page.getByRole("button", { name: "Switch to Chinese" }).click();
-    await expect(page.getByRole("button", { name: "Switch to English" })).toBeVisible();
+    await page.getByRole("button", { name: "Not now", exact: true }).click();
+    await page.getByRole("tab", { name: "Settings", exact: true }).click();
+    await page.getByRole("group", { name: "Language" }).getByRole("button", { name: "中文" }).click();
+    const english = page.getByRole("group", { name: "语言" }).getByRole("button", { name: "EN" });
+    await expect(english).toBeVisible();
+    await english.click();
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.getByRole("tab", { name: "Settings", exact: true })).toHaveAttribute("aria-selected", "true");
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
 });
