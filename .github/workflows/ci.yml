@@ -133,8 +133,27 @@ jobs:
                   build-wasm: true
                   cache-key: cargo-wasm-e2e
 
+            - name: Configure Ubuntu dependency downloads
+              run: |
+                  sources=/etc/apt/sources.list.d/ubuntu.sources
+                  if [ -f "$sources" ]; then
+                      sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' "$sources"
+                  fi
+                  sudo tee /etc/apt/apt.conf.d/80-ci-network >/dev/null <<'EOF'
+                  Acquire::Retries "3";
+                  Acquire::http::Timeout "30";
+                  Acquire::https::Timeout "30";
+                  EOF
+
+            - name: Install Playwright system dependencies
+              timeout-minutes: 10
+              run: pnpm --filter @slicer-converter/slicer-app exec playwright install-deps chromium firefox
+
             - name: Install Playwright browsers
-              run: pnpm --filter @slicer-converter/slicer-app exec playwright install --with-deps chromium firefox
+              timeout-minutes: 10
+              env:
+                  PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT: "60000"
+              run: pnpm --filter @slicer-converter/slicer-app exec playwright install chromium firefox
 
             - name: Run browser e2e
               run: pnpm test:app:e2e
