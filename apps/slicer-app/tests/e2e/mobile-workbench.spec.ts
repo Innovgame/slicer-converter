@@ -21,7 +21,7 @@ test("keeps preview geometry and export choices across mobile tabs / 移动标�
     expect(await canvas.boundingBox()).toEqual(bounds);
     await page.getByRole("tab", { name: "Settings", exact: true }).click();
     await expect(page.getByRole("tabpanel", { name: "Settings", exact: true })).toBeVisible();
-    await expect(page.getByRole("combobox", { name: "Appearance" })).toBeVisible();
+    await expect(page.getByRole("group", { name: "Appearance" })).toBeVisible();
     await page.getByRole("tab", { name: "Preview", exact: true }).click();
     await expect(page.locator("#slicerConverterFileName")).toHaveValue("mobile-output");
     await page
@@ -44,10 +44,25 @@ test("opens a narrow standalone settings page and localizes navigation / 窄屏�
     await page.goto("/");
     await page.getByRole("button", { name: "Not now", exact: true }).click();
     await page.getByRole("tab", { name: "Settings", exact: true }).click();
-    await page.getByRole("combobox", { name: "Language" }).selectOption("zh");
+    await page.getByRole("group", { name: "Language" }).getByRole("button", { name: "中文" }).click();
     await expect(page.getByRole("tab", { name: "设置", exact: true })).toHaveAttribute("aria-selected", "true");
-    await page.getByRole("combobox", { name: "外观" }).selectOption("light");
+    await expect(page.getByRole("group", { name: "语言" }).getByRole("button", { name: "中文" })).toHaveAttribute(
+        "aria-pressed",
+        "true"
+    );
+    const appearance = page.getByRole("group", { name: "外观" });
+    await appearance.getByRole("button", { name: "浅色" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+    await appearance.getByRole("button", { name: "深色" }).click();
+    await expect(appearance.getByRole("button", { name: "深色" })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await page.getByRole("group", { name: "语言" }).getByRole("button", { name: "EN" }).click();
+    await expect(page.getByRole("group", { name: "Language" }).getByRole("button", { name: "EN" })).toHaveAttribute(
+        "aria-pressed",
+        "true"
+    );
+    await expect(page.getByRole("tab", { name: "Settings", exact: true })).toHaveAttribute("aria-selected", "true");
+    await page.getByRole("group", { name: "Language" }).getByRole("button", { name: "中文" }).click();
     await expect(page.getByRole("link", { name: "报告问题", exact: true })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
 });

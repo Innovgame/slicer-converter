@@ -42,7 +42,7 @@ export function AppShell({
 }: AppShellProps) {
     const { t } = useTranslation();
     const versionLabel = t("app.version", { version: PRODUCT_VERSION });
-    const session = useMobileWorkbench(documentIdentity ?? documentStatus);
+    const session = useMobileWorkbench(documentIdentity);
     const returnFocus = useRef<HTMLElement | null>(null);
     const drawerRef = useRef<HTMLElement | null>(null);
     const canvasButtonRef = useRef<HTMLButtonElement | null>(null);

@@ -25,25 +25,50 @@ export function SettingsPanel({ help }: { help: ReactNode }) {
             </header>
             <section className="sc-settings-preferences" data-tour="preferences">
                 <h3 className="sc-mobile-only">{t("mobile.interface")}</h3>
-                <label className="sc-settings-row sc-mobile-only">
-                    <Sun aria-hidden="true" />
-                    <span>{t("mobile.appearance")}</span>
-                    <select value={theme} onChange={(event) => setTheme(event.target.value as "light" | "dark")}>
-                        <option value="light">{t("mobile.light")}</option>
-                        <option value="dark">{t("mobile.dark")}</option>
-                    </select>
-                </label>
-                <label className="sc-settings-row sc-mobile-only">
-                    <Languages aria-hidden="true" />
-                    <span>{t("mobile.language")}</span>
-                    <select
-                        value={i18n.resolvedLanguage === "zh" ? "zh" : "en"}
-                        onChange={(event) => void i18n.changeLanguage(event.target.value)}
-                    >
-                        <option value="zh">简体中文</option>
-                        <option value="en">English</option>
-                    </select>
-                </label>
+                <div className="sc-settings-list sc-mobile-only">
+                    <div className="sc-settings-row sc-mobile-only">
+                        <Sun aria-hidden="true" />
+                        <span>{t("mobile.appearance")}</span>
+                        <div
+                            role="group"
+                            className="sc-ios-segmented"
+                            aria-label={t("mobile.appearance")}
+                            data-selected={theme === "dark" ? "1" : "0"}
+                        >
+                            <button type="button" aria-pressed={theme === "light"} onClick={() => setTheme("light")}>
+                                {t("mobile.light")}
+                            </button>
+                            <button type="button" aria-pressed={theme === "dark"} onClick={() => setTheme("dark")}>
+                                {t("mobile.dark")}
+                            </button>
+                        </div>
+                    </div>
+                    <div className="sc-settings-row sc-mobile-only">
+                        <Languages aria-hidden="true" />
+                        <span>{t("mobile.language")}</span>
+                        <div
+                            role="group"
+                            className="sc-ios-segmented"
+                            aria-label={t("mobile.language")}
+                            data-selected={i18n.resolvedLanguage === "zh" ? "0" : "1"}
+                        >
+                            <button
+                                type="button"
+                                aria-pressed={i18n.resolvedLanguage === "zh"}
+                                onClick={() => void i18n.changeLanguage("zh")}
+                            >
+                                中文
+                            </button>
+                            <button
+                                type="button"
+                                aria-pressed={i18n.resolvedLanguage !== "zh"}
+                                onClick={() => void i18n.changeLanguage("en")}
+                            >
+                                EN
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <div className="sc-preferences sc-desktop-only">
                     <ThemeToggle />
                     <LanguageToggle />
