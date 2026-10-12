@@ -46,7 +46,7 @@ export function createSlicerLayerPrefetch(
     buildPayload: (layerIndex: number) => Promise<SlicerWorkerDispatchPayload>,
     prefetch: number | SlicerLayerPrefetchOptions,
     signal: AbortSignal
-): { next(): Promise<SlicerWorkerDispatchPayload> } {
+): { next(): Promise<SlicerWorkerDispatchPayload>; dispose(): void } {
     interface PrefetchTask {
         promise: Promise<SlicerWorkerDispatchPayload>;
         ready: boolean;
@@ -54,6 +54,7 @@ export function createSlicerLayerPrefetch(
 
     const queue: PrefetchTask[] = [];
     let nextFetch = 0;
+    let disposed = false;
     const { initialAhead, minAhead, maxAhead } = normalizeConfig(prefetch, totalLayers);
     let windowAhead = initialAhead;
     let readyBacklogStreak = 0;
@@ -66,6 +67,7 @@ export function createSlicerLayerPrefetch(
                 return payload;
             })
         };
+        void task.promise.catch(() => undefined);
         queue.push(task);
     }
 
@@ -99,7 +101,7 @@ export function createSlicerLayerPrefetch(
     }
 
     function fill(): void {
-        while (!signal.aborted && queue.length < windowAhead && nextFetch < totalLayers) {
+        while (!disposed && !signal.aborted && queue.length < windowAhead && nextFetch < totalLayers) {
             enqueue(nextFetch);
             nextFetch += 1;
         }
@@ -108,6 +110,10 @@ export function createSlicerLayerPrefetch(
     fill();
 
     return {
+        dispose() {
+            disposed = true;
+            queue.length = 0;
+        },
         async next(): Promise<SlicerWorkerDispatchPayload> {
             const task = queue.shift();
             if (task) {

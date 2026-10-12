@@ -273,6 +273,11 @@ fn convert_file_with_options(input: &Path, output: &Path, options: &CliArgs) -> 
         .pipeline
         .parse_document(source_format, &source_bytes)
         .map_err(|error| format!("failed to parse source header: {error}"))?;
+    if !source_format.capabilities.is_archive {
+        parsed
+            .validate_complete(source_bytes.len())
+            .map_err(|error| format!("invalid source document: {error}"))?;
+    }
     let export_options = export_target_options(options);
     let target_format = target_format_for_output(
         output,

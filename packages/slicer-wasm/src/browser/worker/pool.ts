@@ -58,6 +58,8 @@ export function createSlicerWorkerPoolState<TWorker extends BusySlicerWorker>(
     const clearTimeoutFn = options.clearTimeoutFn ?? ((handle) => globalThis.clearTimeout(handle));
     const waitForReady = options.waitForReady ?? (async () => undefined);
     const idleTimers = new Map<TWorker, IdleTimeoutHandle>();
+    let generation = 0;
+    let ensureChain: Promise<void> = Promise.resolve();
     const minWorkers = options.minWorkers ?? workers.length;
     const maxWorkers = options.maxWorkers ?? Math.max(minWorkers, workers.length);
 
@@ -91,28 +93,37 @@ export function createSlicerWorkerPoolState<TWorker extends BusySlicerWorker>(
         findIdleWorker() {
             return workers.find((worker) => !worker.busy);
         },
-        async ensureWorkers(targetCount = maxWorkers) {
-            const desiredCount = Math.min(Math.max(targetCount, minWorkers), maxWorkers);
-
-            while (workers.length < desiredCount) {
-                if (!options.createWorker) {
-                    break;
-                }
-
-                const worker = options.createWorker();
-                try {
-                    await waitForReady(worker);
-                    workers.push(worker);
-                } catch {
-                    const lifecycle = worker as TWorker & Partial<PoolWorkerLifecycle>;
-                    if (typeof lifecycle.terminate === "function") {
-                        lifecycle.terminate();
+        ensureWorkers(targetCount = maxWorkers) {
+            const requestGeneration = generation;
+            const ensure = ensureChain.then(async () => {
+                if (requestGeneration !== generation) return workers;
+                const desiredCount = Math.min(Math.max(targetCount, minWorkers), maxWorkers);
+                while (workers.length < desiredCount) {
+                    if (!options.createWorker) break;
+                    const worker = options.createWorker();
+                    const terminate = (): void => {
+                        const lifecycle = worker as TWorker & Partial<PoolWorkerLifecycle>;
+                        lifecycle.terminate?.();
+                    };
+                    try {
+                        await waitForReady(worker);
+                        if (requestGeneration !== generation) {
+                            terminate();
+                            break;
+                        }
+                        workers.push(worker);
+                    } catch {
+                        terminate();
+                        break;
                     }
-                    break;
                 }
-            }
-
-            return workers;
+                return workers;
+            });
+            ensureChain = ensure.then(
+                () => undefined,
+                () => undefined
+            );
+            return ensure;
         },
         pauseIdleTermination() {
             for (const worker of idleTimers.keys()) {
@@ -147,6 +158,7 @@ export function createSlicerWorkerPoolState<TWorker extends BusySlicerWorker>(
             }
         },
         terminateAll() {
+            generation++;
             pool.pauseIdleTermination();
             for (const worker of [...workers]) {
                 terminateWorker(worker);

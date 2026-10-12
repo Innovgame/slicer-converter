@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { openSlicerDocumentFile, parseBrowserFileHeader, type SlicerDocument } from "@innovgame/slicer-converter";
 import { getErrorMessage } from "../../../shared/lib/errors";
@@ -13,8 +13,27 @@ type OpenedDocument = SlicerDocument;
 export function useDocumentController(input: { wasmReady: boolean; setStatus: (status: StatusState | null) => void }) {
     const [document, setDocument] = useState<OpenedDocument | null>(null);
     const [sourceFile, setSourceFile] = useState<File | null>(null);
+    const selectionGeneration = useRef(0);
+    const mounted = useRef(true);
+    const currentDocument = useRef<OpenedDocument | null>(null);
+
+    useEffect(() => {
+        mounted.current = true;
+        return () => {
+            mounted.current = false;
+            selectionGeneration.current++;
+            const previous = currentDocument.current;
+            currentDocument.current = null;
+            if (previous) void closeDocument(previous);
+        };
+    }, []);
 
     async function onFileSelect(file: File): Promise<void> {
+        const generation = ++selectionGeneration.current;
+        const isCurrent = (): boolean => mounted.current && generation === selectionGeneration.current;
+        const previous = currentDocument.current;
+        currentDocument.current = null;
+        if (previous) void closeDocument(previous);
         setSourceFile(file);
         setDocument(null);
 
@@ -29,6 +48,11 @@ export function useDocumentController(input: { wasmReady: boolean; setStatus: (s
                 parseHeader: parseBrowserFileHeader
             });
 
+            if (!isCurrent()) {
+                await closeDocument(opened);
+                return;
+            }
+            currentDocument.current = opened;
             setDocument(opened);
             const metadata = opened.parsedHeader.metadata;
             input.setStatus({
@@ -36,10 +60,19 @@ export function useDocumentController(input: { wasmReady: boolean; setStatus: (s
                 message: `Parsed ${opened.parsedHeader.format.toUpperCase()}: ${opened.parsedHeader.layers.length} layers, ${metadata.resolution_x}x${metadata.resolution_y}`
             });
         } catch (error: unknown) {
+            if (!isCurrent()) return;
             setDocument(null);
             input.setStatus({ type: "error", message: `Parse error: ${getErrorMessage(error)}` });
         }
     }
 
     return { document, sourceFile, onFileSelect };
+}
+
+async function closeDocument(document: OpenedDocument): Promise<void> {
+    try {
+        await document.close();
+    } catch (error: unknown) {
+        console.warn("[document-controller] document close failed", error);
+    }
 }

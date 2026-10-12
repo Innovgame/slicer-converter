@@ -40,6 +40,55 @@ vi.mock("../../lib/slicer_converter.js", () => ({
 }));
 
 describe("conversion job / 转换任务", () => {
+    it("rejects cancellation while finishing the output / 输出完成期间取消时拒绝成功结果", async () => {
+        syncSupportedFormatInfosForValidation([
+            formatFact({ name: "goo", aliases: ["goo"], extensions: ["goo"], is_zip: false })
+        ]);
+        const controller = new AbortController();
+        const sink = createBlobOutputSink();
+        const finish = sink.finish.bind(sink);
+        sink.finish = async () => {
+            controller.abort();
+            return finish();
+        };
+        await expect(
+            runSlicerConversionJob({
+                document: createFakeDocument(),
+                targetFormat: asSlicerFormatId("goo"),
+                outputFileName: "sample.goo",
+                sink,
+                workers: [createLayerDoneWorker()],
+                signal: controller.signal,
+                updateProgress: vi.fn()
+            })
+        ).rejects.toMatchObject({ name: "AbortError" });
+    });
+    it("stops assembly before finishing the sink when cancelled / 取消组装后不完成输出 sink", async () => {
+        syncSupportedFormatInfosForValidation([
+            formatFact({ name: "goo", aliases: ["goo"], extensions: ["goo"], is_zip: false })
+        ]);
+        const controller = new AbortController();
+        const sink = createBlobOutputSink();
+        const write = sink.write.bind(sink);
+        sink.write = async (bytes) => {
+            await write(bytes);
+            controller.abort();
+        };
+        const finish = vi.spyOn(sink, "finish");
+        await expect(
+            runSlicerConversionJob({
+                document: createFakeDocument(),
+                targetFormat: asSlicerFormatId("goo"),
+                outputFileName: "sample.goo",
+                sink,
+                workers: [createLayerDoneWorker()],
+                signal: controller.signal,
+                updateProgress: vi.fn()
+            })
+        ).rejects.toMatchObject({ name: "AbortError" });
+        expect(finish).not.toHaveBeenCalled();
+    });
+
     it("converts a binary target into a Blob sink / 转换二进制目标到 Blob sink", async () => {
         syncSupportedFormatInfosForValidation([
             formatFact({ name: "goo", aliases: ["goo"], extensions: ["goo"], is_zip: false })

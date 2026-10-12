@@ -11,6 +11,56 @@ import type { PatchableSlicerOutputSink, SlicerConversionDeps, SlicerDocument } 
 import { formatFact } from "./support/format-facts.js";
 
 describe("convertSlicerFile / 高层转换 API", () => {
+    it("rejects cancellation during document cleanup / 文档清理期间取消时拒绝成功结果", async () => {
+        syncSupportedFormatInfosForValidation([
+            formatFact({ name: "goo", aliases: [], extensions: ["goo"], is_zip: false })
+        ]);
+        const deps = createDeps(new Blob([new Uint8Array([1])]));
+        const controller = new AbortController();
+        vi.mocked(deps.document.close).mockImplementationOnce(async () => {
+            controller.abort();
+        });
+        await expect(
+            convertSlicerFileWithDeps(
+                { file: deps.document.sourceFile, target: "goo", workerCount: 1, signal: controller.signal },
+                deps
+            )
+        ).rejects.toMatchObject({ name: "AbortError" });
+    });
+    it("rejects cancellation during opening and closes the opened document / 打开期间取消时拒绝并关闭文档", async () => {
+        syncSupportedFormatInfosForValidation([
+            formatFact({ name: "goo", aliases: [], extensions: ["goo"], is_zip: false })
+        ]);
+        const deps = createDeps(new Blob([new Uint8Array([1])]));
+        const controller = new AbortController();
+        deps.openDocument.mockImplementationOnce(async () => {
+            controller.abort();
+            return deps.document;
+        });
+        await expect(
+            convertSlicerFileWithDeps(
+                { file: deps.document.sourceFile, target: "goo", signal: controller.signal, workerCount: 1 },
+                deps
+            )
+        ).rejects.toMatchObject({ name: "AbortError" });
+        expect(deps.document.close).toHaveBeenCalledOnce();
+        expect(deps.runJob).not.toHaveBeenCalled();
+    });
+
+    it("preserves the primary failure when abort and close also fail / 清理失败时保留原始转换错误", async () => {
+        syncSupportedFormatInfosForValidation([
+            formatFact({ name: "goo", aliases: [], extensions: ["goo"], is_zip: false })
+        ]);
+        const deps = createDeps(null);
+        deps.runJob.mockRejectedValueOnce(new Error("primary failure"));
+        deps.sink.abort.mockRejectedValueOnce(new Error("abort failure"));
+        vi.mocked(deps.document.close).mockRejectedValueOnce(new Error("close failure"));
+        await expect(
+            convertSlicerFileWithDeps({ file: deps.document.sourceFile, target: "goo", workerCount: 1 }, deps)
+        ).rejects.toThrow("primary failure");
+        expect(deps.document.close).toHaveBeenCalledOnce();
+    });
+
     it("opens a file, reports progress, and returns a named Blob result / 打开文件并返回命名 Blob 结果", async () => {
         syncSupportedFormatInfosForValidation([
             formatFact({ name: "goo", display_name: "Goo", aliases: ["goo"], extensions: ["goo"], is_zip: false }),
@@ -75,7 +125,7 @@ describe("convertSlicerFile / 高层转换 API", () => {
 
         expect(deps.sink.abort).toHaveBeenCalledWith("worker exploded");
         expect(deps.document.close).toHaveBeenCalledTimes(1);
-        expect(deps.pool.scheduleIdleTermination).toHaveBeenCalledTimes(1);
+        expect(deps.pool.terminateAll).toHaveBeenCalledTimes(1);
     });
 
     it("converts to Blob with a non-null Blob result / 转换为 Blob 并返回 non-null Blob result", async () => {

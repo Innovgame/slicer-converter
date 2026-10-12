@@ -88,8 +88,10 @@ async function parseDocumentSourceWithWasmRetry(input: {
     parseHeader(data: Uint8Array, extension: string): ParsedHeader;
 }): Promise<BrowserDocumentSource> {
     if (requiresFullDocumentParse(input.extension)) {
+        const parsedHeader = input.parseHeader(new Uint8Array(await input.file.arrayBuffer()), input.extension);
+        validateRawDocument(parsedHeader, input.file.size);
         return {
-            parsedHeader: input.parseHeader(new Uint8Array(await input.file.arrayBuffer()), input.extension),
+            parsedHeader,
             layerSource: { kind: "raw-file" }
         };
     }
@@ -110,6 +112,7 @@ async function parseDocumentSourceWithWasmRetry(input: {
                 }
             }
 
+            validateRawDocument(header, input.file.size);
             return {
                 parsedHeader: header,
                 layerSource: { kind: "raw-file" }
@@ -125,6 +128,30 @@ async function parseDocumentSourceWithWasmRetry(input: {
             }
 
             throw error;
+        }
+    }
+}
+
+function validateRawDocument(header: ParsedHeader, fileSize: number): void {
+    if (header.metadata.layer_count !== undefined && header.layers.length !== header.metadata.layer_count) {
+        throw Object.assign(
+            new Error(
+                `Layer count ${header.metadata.layer_count} does not match ${header.layers.length} layer definitions`
+            ),
+            { code: "E_METADATA_VALIDATION" }
+        );
+    }
+    for (const [index, layer] of header.layers.entries()) {
+        if (
+            !Number.isSafeInteger(layer.offset) ||
+            !Number.isSafeInteger(layer.size) ||
+            layer.offset < 0 ||
+            layer.size < 0 ||
+            layer.offset > fileSize - layer.size
+        ) {
+            throw Object.assign(new Error(`Layer ${index} payload range exceeds file size ${fileSize}`), {
+                code: "E_METADATA_VALIDATION"
+            });
         }
     }
 }

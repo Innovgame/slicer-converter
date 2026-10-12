@@ -19,12 +19,26 @@ export interface ZipSource {
  * @en Creates a custom ZIP source backed by a `readRange` callback.
  */
 export function createZipSource(input: { readRange(offset: number, size: number): Promise<Uint8Array> }): ZipSource {
+    const readRange = async (offset: number, size: number): Promise<Uint8Array> => {
+        if (
+            !Number.isSafeInteger(offset) ||
+            !Number.isSafeInteger(size) ||
+            offset < 0 ||
+            size < 0 ||
+            !Number.isSafeInteger(offset + size)
+        ) {
+            throw new Error("Invalid ZIP byte range");
+        }
+        const bytes = await input.readRange(offset, size);
+        if (bytes.byteLength !== size) {
+            throw new Error(`Truncated ZIP byte range: expected ${size} bytes at ${offset}, got ${bytes.byteLength}`);
+        }
+        return bytes;
+    };
     return {
-        readRange(offset, size) {
-            return input.readRange(offset, size);
-        },
+        readRange,
         async readCompressedEntryPayload(localHeaderOffset, compressedSize) {
-            const localHeader = await input.readRange(localHeaderOffset, LOCAL_FILE_HEADER_SIZE);
+            const localHeader = await readRange(localHeaderOffset, LOCAL_FILE_HEADER_SIZE);
             const view = new DataView(localHeader.buffer, localHeader.byteOffset, localHeader.byteLength);
 
             if (view.getUint32(0, true) !== LOCAL_FILE_HEADER_SIGNATURE) {
@@ -35,7 +49,7 @@ export function createZipSource(input: { readRange(offset: number, size: number)
             const localExtraLength = view.getUint16(28, true);
             const payloadOffset = localHeaderOffset + LOCAL_FILE_HEADER_SIZE + localNameLength + localExtraLength;
 
-            return input.readRange(payloadOffset, compressedSize);
+            return readRange(payloadOffset, compressedSize);
         }
     };
 }
@@ -112,6 +126,9 @@ export async function readZipEntryBytes(source: ZipSource, entry: ZipEntryInfo):
     const compressed = await source.readCompressedEntryPayload(entry.localHeaderOffset, entry.compressedSize);
 
     if (entry.compressionMethod === 0) {
+        if (compressed.byteLength !== entry.uncompressedSize) {
+            throw new Error(`Stored ZIP entry size mismatch: ${entry.name}`);
+        }
         return compressed;
     }
 

@@ -127,21 +127,27 @@ impl CtbDecoder {
         // The main LayerDef table itself remains a contiguous 36-byte table.
         let layer_entry_stride = 36usize;
 
+        let table_end = layer_count
+            .checked_mul(layer_entry_stride)
+            .and_then(|size| layer_table_offset.checked_add(size))
+            .ok_or_else(|| ConvertError::BinrwError("CTB layer table range overflows".into()))?;
+        if table_end > data.len() {
+            return Err(ConvertError::BufferTooSmall {
+                need: table_end,
+                got: data.len(),
+            });
+        }
         let mut layer_offsets = Vec::with_capacity(layer_count);
-
-        if layer_table_offset + layer_count * layer_entry_stride <= data.len() {
-            for i in 0..layer_count {
-                let offset = layer_table_offset + i * layer_entry_stride;
-                let mut layer_cursor = Cursor::new(&data[offset..]);
-                if let Ok(layer_def) = CtbLayerDef::read(&mut layer_cursor) {
-                    let abs_offset = (layer_def.page_number as u64) * 4_294_967_296
-                        + layer_def.data_address as u64;
-                    layer_offsets.push(LayerOffset {
-                        offset: abs_offset,
-                        size: layer_def.data_size as u64,
-                    });
-                }
-            }
+        for i in 0..layer_count {
+            let offset = layer_table_offset + i * layer_entry_stride;
+            let mut layer_cursor = Cursor::new(&data[offset..table_end]);
+            let layer_def = CtbLayerDef::read(&mut layer_cursor)?;
+            let abs_offset =
+                (layer_def.page_number as u64) * 4_294_967_296 + layer_def.data_address as u64;
+            layer_offsets.push(LayerOffset {
+                offset: abs_offset,
+                size: layer_def.data_size as u64,
+            });
         }
 
         // Extract preview thumbnails

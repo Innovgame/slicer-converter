@@ -1,6 +1,10 @@
-import { execSync } from "node:child_process";
+import { URL } from "node:url";
+import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const repoRoot = fileURLToPath(new URL("../", import.meta.url));
 
 const pipelinePerLayerThreshold = Number(process.env.BENCH_PIPELINE_MAX_MS_PER_LAYER ?? "25");
 const benchmarkLayers = Number(process.env.BENCH_RLE_LAYERS ?? "10");
@@ -13,23 +17,33 @@ if (!Number.isFinite(benchmarkLayers) || benchmarkLayers <= 0) {
     throw new Error("BENCH_RLE_LAYERS must be a positive number");
 }
 
-const samplePath = resolve("rust/crates/core/data/Untitled_20260413_1125_TI3U.goo");
+const samplePath = resolve(repoRoot, process.env.BENCH_RLE_INPUT ?? "rust/data/Untitled_20260413_1125_TI3U.goo");
 if (!existsSync(samplePath)) {
-    console.log(`Benchmark threshold skipped: real GOO sample is not present at ${samplePath}`);
-    process.exit(0);
+    throw new Error(`Required benchmark sample is missing: ${samplePath}`);
 }
 
 let output;
 try {
-    output = execSync(
-        "cargo run --manifest-path rust/Cargo.toml -p slicer-converter-core --example bench_rle --release",
+    output = execFileSync(
+        "cargo",
+        [
+            "run",
+            "--manifest-path",
+            "rust/Cargo.toml",
+            "-p",
+            "slicer-converter-core",
+            "--example",
+            "bench_rle",
+            "--release"
+        ],
         {
-            cwd: process.cwd(),
+            cwd: repoRoot,
             encoding: "utf8",
             stdio: ["ignore", "pipe", "pipe"],
             env: {
                 ...process.env,
-                BENCH_RLE_LAYERS: String(Math.trunc(benchmarkLayers))
+                BENCH_RLE_LAYERS: String(Math.trunc(benchmarkLayers)),
+                BENCH_RLE_INPUT: samplePath
             }
         }
     );

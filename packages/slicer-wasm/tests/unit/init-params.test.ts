@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { formatFact } from "./support/format-facts.js";
 
 const mocks = vi.hoisted(() => ({
     releaseInit: vi.fn().mockResolvedValue(undefined),
@@ -15,10 +16,28 @@ vi.mock("../../lib/slicer_converter.js", () => ({
 beforeEach(() => {
     vi.resetModules();
     mocks.releaseInit.mockClear();
+    mocks.listSupportedFormats.mockReturnValue(
+        JSON.stringify([formatFact({ name: "ctb", aliases: [], extensions: ["ctb"], is_zip: false })])
+    );
     vi.unstubAllGlobals();
 });
 
 describe("wasm init wrappers / WASM 初始化包装器", () => {
+    it.each([false, true])(
+        "makes format facts available after initialization (progress=%s) / 初始化后可查询格式事实",
+        async (progress) => {
+            const api = await import("../../src/api.js");
+            const { getFormatFacts, listImportableFileExtensions } = await import("../../src/browser/format/facts.js");
+            if (progress) await api.initSlicerConverterWithProgress(() => undefined);
+            else await api.initSlicerConverter();
+            expect(getFormatFacts("ctb").capabilities.canImport).toBe(true);
+            expect(listImportableFileExtensions()).toContain(".ctb");
+            await api.initSlicerConverter();
+            expect(getFormatFacts("ctb").format).toBe("ctb");
+            expect(mocks.releaseInit).toHaveBeenCalledOnce();
+        }
+    );
+
     it("wraps release wasm input in the new module_or_path object / 包装 release wasm input in the new module_or_path 对象", async () => {
         const mod = await import("../../src/api.js");
         const wasmUrl = mod.getSlicerConverterWasmUrl();

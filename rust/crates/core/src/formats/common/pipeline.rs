@@ -32,6 +32,33 @@ pub struct ParsedDocument {
     pub layers: Vec<LayerOffset>,
 }
 
+impl ParsedDocument {
+    /// Validates binary layer definitions against a complete source file, never a header prefix.
+    /// 校验完整二进制源文件的图层定义；不用于 header 前缀或 archive 解码缓冲区。
+    pub fn validate_complete(&self, file_size: usize) -> Result<(), ConvertError> {
+        if self.metadata.slicing.layer_count as usize != self.layers.len() {
+            return Err(ConvertError::MetadataValidation(format!(
+                "layer count {} does not match {} layer definitions",
+                self.metadata.slicing.layer_count,
+                self.layers.len()
+            )));
+        }
+        for (index, layer) in self.layers.iter().enumerate() {
+            if layer
+                .offset
+                .checked_add(layer.size)
+                .is_none_or(|end| end > file_size as u64)
+            {
+                return Err(ConvertError::MetadataValidation(format!(
+                    "layer {index} payload range exceeds file size {}",
+                    file_size
+                )));
+            }
+        }
+        Ok(())
+    }
+}
+
 /// Pull-based source for encoded layer payloads.
 ///
 /// Archive pipelines use this to stream layer bytes without materializing every

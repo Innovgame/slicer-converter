@@ -208,8 +208,10 @@ export async function convertSlicerFileWithDeps(
     deps: SlicerConversionDeps
 ): Promise<SlicerConversionResult> {
     const signal = input.signal ?? new AbortController().signal;
+    signal.throwIfAborted();
     reportProgress(input, { phase: "opening", current: 0, total: 0, label: "Opening file..." });
     await deps.init();
+    signal.throwIfAborted();
 
     const sourceFile = toNamedFile(input.file, input.fileName);
     const document = await deps.openDocument({
@@ -217,10 +219,13 @@ export async function convertSlicerFileWithDeps(
         extension: input.sourceExtension,
         fileName: input.fileName
     });
-    const sink = input.output ?? deps.createDefaultSink();
+    let sink: PatchableSlicerOutputSink | undefined;
+    let primaryError: unknown;
     let pool: SlicerWorkerPoolState<ManagedSlicerWorker> | null = null;
 
     try {
+        signal.throwIfAborted();
+        sink = input.output ?? deps.createDefaultSink();
         const target = resolveTargetInput(input.target, document.parsedHeader.format);
         const outputFileName = buildSlicerOutputFilename({
             sourceFileName: document.sourceName,
@@ -239,8 +244,9 @@ export async function convertSlicerFileWithDeps(
                 workerUrl: input.workerUrl,
                 createWorker: input.createWorker
             }));
-        const workers = await pool.ensureWorkers(input.workerCount);
         pool.pauseIdleTermination();
+        const workers = await pool.ensureWorkers(input.workerCount);
+        signal.throwIfAborted();
         const job = await deps.runJob({
             document,
             targetFormat: target.resolvedTargetFormat,
@@ -250,6 +256,7 @@ export async function convertSlicerFileWithDeps(
             workers,
             signal,
             updateProgress(current, total, label) {
+                if (signal.aborted) return;
                 reportProgress(input, {
                     phase:
                         label.toLowerCase().includes("assembling") || label.toLowerCase().includes("finalizing")
@@ -262,6 +269,7 @@ export async function convertSlicerFileWithDeps(
             }
         });
 
+        signal.throwIfAborted();
         reportProgress(input, {
             phase: "complete",
             current: document.parsedHeader.layers.length,
@@ -279,11 +287,13 @@ export async function convertSlicerFileWithDeps(
             timings: job.timings
         };
     } catch (error: unknown) {
-        await sink.abort(error instanceof Error ? error.message : "Conversion failed");
+        primaryError = error;
+        if (sink) await sink.abort(error instanceof Error ? error.message : "Conversion failed").catch(() => undefined);
         throw error;
     } finally {
-        pool?.scheduleIdleTermination();
-        await document.close();
+        if (input.workerPool) pool?.scheduleIdleTermination();
+        else pool?.terminateAll();
+        await closeDocumentPreservingError(document, primaryError, signal);
     }
 }
 
@@ -378,4 +388,17 @@ function createDefaultSlicerWorker(workerUrl?: URL): ManagedSlicerWorker {
         throw new Error("convertSlicerFile requires workerUrl or createWorker when no workerPool is provided");
     }
     return Object.assign(new Worker(workerUrl, { type: "module" }), { busy: false });
+}
+
+async function closeDocumentPreservingError(
+    document: SlicerDocument,
+    primaryError: unknown,
+    signal: AbortSignal
+): Promise<void> {
+    try {
+        await document.close();
+    } catch (error: unknown) {
+        if (primaryError === undefined) throw error;
+    }
+    if (primaryError === undefined) signal.throwIfAborted();
 }

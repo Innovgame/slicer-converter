@@ -14,13 +14,60 @@ fn fixture_path(name: &str) -> PathBuf {
         .join(name)
 }
 
+struct TempOutputs(Vec<PathBuf>);
+
+impl Drop for TempOutputs {
+    fn drop(&mut self) {
+        for directory in &self.0 {
+            let _ = std::fs::remove_dir_all(directory);
+        }
+    }
+}
+
+thread_local! {
+    static TEMP_OUTPUTS: std::cell::RefCell<TempOutputs> = const { std::cell::RefCell::new(TempOutputs(Vec::new())) };
+}
+
 fn temp_output_path(name: &str) -> PathBuf {
-    let mut path = std::env::temp_dir();
-    path.push(format!(
-        "slicer-converter-cli-{}-{name}",
+    static NEXT_DIRECTORY: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let sequence = NEXT_DIRECTORY.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let directory = std::env::temp_dir().join(format!(
+        "slicer-converter-cli-{}-{sequence}",
         std::process::id()
     ));
-    path
+    std::fs::create_dir(&directory).expect("unique temp directory");
+    TEMP_OUTPUTS.with(|outputs| outputs.borrow_mut().0.push(directory.clone()));
+    directory.join(name)
+}
+
+#[test]
+fn repeated_temp_basenames_are_isolated() {
+    let first = temp_output_path("same.ctb");
+    let second = temp_output_path("same.ctb");
+    assert_ne!(first, second, "test outputs must not share paths");
+    assert_eq!(
+        first.file_name(),
+        second.file_name(),
+        "preserve profile suffix inference"
+    );
+}
+
+#[test]
+fn cli_rejects_a_truncated_ctb_without_creating_output() {
+    let original = std::fs::read(fixture_path("sample.ctb")).unwrap();
+    let table = u32::from_le_bytes(original[64..68].try_into().unwrap()) as usize;
+    let input = temp_output_path("truncated.ctb");
+    let output = temp_output_path("from-truncated.goo");
+    std::fs::write(&input, &original[..table]).unwrap();
+    let result = run_cli(&[
+        "--input",
+        input.to_str().unwrap(),
+        "--output",
+        output.to_str().unwrap(),
+    ]);
+    assert!(!result.status.success());
+    assert!(!output.exists());
+    remove_if_exists(&input);
 }
 
 fn remove_if_exists(path: &Path) {

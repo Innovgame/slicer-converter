@@ -4,6 +4,12 @@ This file records changes that users can see. Versions follow repository tags, f
 
 ## Unreleased
 
+- Truncated CTB files and invalid layer ranges are rejected before conversion.
+- Cancelling conversion stops pending dispatch and discards in-flight conversion workers before pool reuse.
+- Opening files quickly keeps the latest selection and closes obsolete documents.
+- Package initialization also prepares the Rust format catalog for file opening and target selection.
+- CLI tests use isolated temporary output directories. CI now requires the real benchmark fixture and includes a browser roundtrip smoke check.
+
 - The test page header shows the published version beside the product name. On a phone, the links and toggles move below the name so both stay readable.
 - Preview zoom sits in one field with its percent unit. The layer rail and the layer number beside it are narrower.
 - A long source file name shows the full name on hover.

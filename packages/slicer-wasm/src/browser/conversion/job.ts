@@ -47,6 +47,7 @@ export async function runSlicerConversionJob(input: {
     readonly signal: AbortSignal;
     readonly updateProgress: (current: number, total: number, label: string) => void;
 }): Promise<SlicerConversionJobResult> {
+    input.signal.throwIfAborted();
     const header = input.document.parsedHeader;
     const metadata = header.metadata;
     const totalLayers = header.layers.length;
@@ -64,11 +65,12 @@ export async function runSlicerConversionJob(input: {
         startedAt,
         workers: input.workers,
         signal: input.signal,
-        sink: input.sink,
+        sink: withCancellation(input.sink, input.signal),
         outputFileName: input.outputFileName,
         updateProgress: input.updateProgress
     });
 
+    input.signal.throwIfAborted();
     return result;
 }
 
@@ -157,4 +159,27 @@ async function closeSessionPreservingPrimaryError(close: () => Promise<void>, pr
         }
         throw closeError;
     }
+}
+
+function withCancellation(sink: PatchableSlicerOutputSink, signal: AbortSignal): PatchableSlicerOutputSink {
+    return {
+        streaming: sink.streaming,
+        async write(bytes) {
+            signal.throwIfAborted();
+            await sink.write(bytes);
+            signal.throwIfAborted();
+        },
+        async patchHeader(bytes) {
+            signal.throwIfAborted();
+            await sink.patchHeader(bytes);
+            signal.throwIfAborted();
+        },
+        async finish() {
+            signal.throwIfAborted();
+            const result = await sink.finish();
+            signal.throwIfAborted();
+            return result;
+        },
+        abort: (reason) => sink.abort(reason)
+    };
 }

@@ -22,7 +22,7 @@ import { convertSlicerFileToBlob, initSlicerConverter, openSlicerDocumentFile } 
 const api = await initSlicerConverter();
 ```
 
-Call `initSlicerConverter()` before other API functions. In Node, the package reads the bundled wasm file directly. In the browser, it loads that file with `fetch`.
+Call `initSlicerConverter()` before other API functions. It also loads the Rust format catalog, so file opening and target selection are ready to use. In Node, the package reads the bundled wasm file directly. In the browser, it loads that file with `fetch`.
 
 The published package includes the compiled JavaScript facade and the release WASM binary. Rust is not required after install.
 

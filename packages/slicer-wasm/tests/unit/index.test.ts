@@ -25,7 +25,7 @@ const mockFinalizeHeader = vi.fn();
 const mockDescribeArchiveLayerEntries = vi.fn();
 const mockCrc32Bytes = vi.fn();
 const mockCxdLpCrc32Update = vi.fn();
-const mockListSupportedFormats = vi.fn();
+const mockListSupportedFormats = vi.fn(() => "[]");
 const EXPECTED_INIT_API_METHODS = [
     "convertSlicerFile",
     "crc32Bytes",

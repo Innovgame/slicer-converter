@@ -1,4 +1,4 @@
-import type { SlicerWorkerError, SlicerWorkerResponse } from "./protocol.js";
+import type { SlicerWorkerResponse } from "./protocol.js";
 import { getWorkerErrorMessage } from "./errors.js";
 import { createSlicerLayerPrefetch } from "./layer-prefetch.js";
 import type { ManagedSlicerWorker, SlicerWorkerDispatchPayload } from "./dispatch.js";
@@ -25,124 +25,117 @@ export interface SlicerLayerWorkerSchedulerInput<TDone extends SlicerWorkerRespo
 export async function runSlicerLayerWorkerScheduler<TDone extends SlicerWorkerResponse>(
     input: SlicerLayerWorkerSchedulerInput<TDone>
 ): Promise<void> {
-    if (input.totalLayers <= 0) {
-        return;
+    input.signal.throwIfAborted();
+    if (input.totalLayers <= 0) return;
+    if (input.workers.length === 0) throw new Error("Layer worker scheduler requires at least one worker");
+    while (input.workers.every((worker) => worker.busy)) {
+        await new Promise<void>((resolve, reject) => {
+            const onAbort = (): void => {
+                clearTimeout(timer);
+                reject(new DOMException("Conversion cancelled", "AbortError"));
+            };
+            const timer = setTimeout(() => {
+                input.signal.removeEventListener("abort", onAbort);
+                resolve();
+            }, 10);
+            input.signal.addEventListener("abort", onAbort, { once: true });
+        });
+        input.signal.throwIfAborted();
+        if (input.workers.length === 0) throw new Error("Layer worker scheduler requires at least one worker");
     }
-    if (input.workers.length === 0) {
-        throw new Error("Layer worker scheduler requires at least one worker");
+    const workers = input.workers.filter((worker) => !worker.busy);
+    if (workers.length === 0) {
+        throw new Error("Layer worker scheduler requires at least one worker (idle)");
     }
-
-    let nextLayer = 0;
     const prefetch = createSlicerLayerPrefetch(
         input.totalLayers,
         input.buildDispatchPayload,
-        input.workers.length + 2,
+        workers.length + 2,
         input.signal
     );
+    if (input.signal.aborted) {
+        prefetch.dispose();
+        input.signal.throwIfAborted();
+    }
+    let nextLayer = 0;
 
     await new Promise<void>((resolve, reject) => {
-        const onAbort = (): void => {
+        let settled = false;
+        let completed = 0;
+        const active = new Map<ManagedSlicerWorker, () => void>();
+        const finish = (error?: unknown): void => {
+            if (settled) return;
+            settled = true;
             input.signal.removeEventListener("abort", onAbort);
-            reject(new DOMException("Conversion cancelled", "AbortError"));
+            prefetch.dispose();
+            for (const [worker, cleanup] of active) {
+                cleanup();
+                worker.busy = false;
+                worker.terminate();
+                const index = input.workers.indexOf(worker);
+                if (index >= 0) input.workers.splice(index, 1);
+            }
+            active.clear();
+            if (error !== undefined) reject(error);
+            else resolve();
         };
+        const onAbort = (): void => finish(new DOMException("Conversion cancelled", "AbortError"));
         input.signal.addEventListener("abort", onAbort);
 
-        let completed = 0;
-        const settleError = (error: unknown): void => {
-            input.signal.removeEventListener("abort", onAbort);
-            reject(error);
-        };
-
         const dispatch = (worker: ManagedSlicerWorker): void => {
-            if (input.signal.aborted || nextLayer >= input.totalLayers) {
-                return;
-            }
-
-            const layerIndex = nextLayer;
-            nextLayer += 1;
+            if (settled || nextLayer >= input.totalLayers) return;
+            const layerIndex = nextLayer++;
             worker.busy = true;
             let attempt = 0;
-
-            const postDispatchPayload = (): void => {
-                const payloadPromise =
-                    attempt === 0
-                        ? prefetch.next()
-                        : input.buildDispatchPayload(layerIndex).then(({ request, transfer }) => ({
-                              request,
-                              transfer
-                          }));
-
-                payloadPromise
-                    .then(({ request, transfer }) => {
-                        worker.postMessage(request, [transfer]);
-                    })
-                    .catch((error: unknown) => {
-                        worker.removeEventListener("message", handler);
-                        worker.busy = false;
-                        settleError(error);
-                    });
-            };
-
-            const handleError = (error: SlicerWorkerError): void => {
-                if (error.retryable && attempt < WORKER_RETRY_LIMIT) {
-                    attempt += 1;
-                    postDispatchPayload();
-                    return;
-                }
-
+            let handlingDone = false;
+            const cleanup = (): void => {
                 worker.removeEventListener("message", handler);
-                worker.busy = false;
-                settleError(new Error(`Layer ${layerIndex}: ${getWorkerErrorMessage(error)}`));
+                worker.removeEventListener("error", onWorkerError);
+                worker.removeEventListener("messageerror", onWorkerError);
             };
-
-            const completeLayer = (message: TDone): void => {
-                let done: Promise<void> | void;
-                try {
-                    done = input.onDone(message, layerIndex);
-                } catch (error: unknown) {
-                    worker.removeEventListener("message", handler);
-                    worker.busy = false;
-                    settleError(error);
-                    return;
-                }
-
-                Promise.resolve(done)
-                    .then(() => {
-                        worker.removeEventListener("message", handler);
-                        worker.busy = false;
-                        completed += 1;
-                        if (completed === input.totalLayers) {
-                            input.signal.removeEventListener("abort", onAbort);
-                            resolve();
-                            return;
-                        }
-                        dispatch(worker);
+            const onWorkerError = (): void => finish(new Error(`Layer ${layerIndex}: Worker failed`));
+            const postDispatchPayload = (): void => {
+                const payload = attempt === 0 ? prefetch.next() : input.buildDispatchPayload(layerIndex);
+                void payload
+                    .then(({ request, transfer }) => {
+                        if (!settled && !input.signal.aborted) worker.postMessage(request, [transfer]);
                     })
-                    .catch((error: unknown) => {
-                        worker.removeEventListener("message", handler);
-                        worker.busy = false;
-                        settleError(error);
-                    });
+                    .catch(finish);
             };
-
             const handler = (event: Event): void => {
+                if (settled || handlingDone) return;
                 const message = (event as MessageEvent<SlicerWorkerResponse>).data;
                 if (input.isDoneMessage(message, layerIndex)) {
-                    completeLayer(message);
-                    return;
-                }
-
-                if (message.type === "error" && message.index === layerIndex) {
-                    handleError(message.error);
+                    handlingDone = true;
+                    void Promise.resolve()
+                        .then(() => {
+                            if (!settled) return input.onDone(message, layerIndex);
+                        })
+                        .then(() => {
+                            if (settled) return;
+                            cleanup();
+                            active.delete(worker);
+                            worker.busy = false;
+                            completed++;
+                            if (completed === input.totalLayers) finish();
+                            else dispatch(worker);
+                        })
+                        .catch(finish);
+                } else if (message.type === "error" && message.index === layerIndex) {
+                    if (message.error.retryable && attempt < WORKER_RETRY_LIMIT) {
+                        attempt++;
+                        postDispatchPayload();
+                    } else {
+                        finish(new Error(`Layer ${layerIndex}: ${getWorkerErrorMessage(message.error)}`));
+                    }
                 }
             };
-
+            active.set(worker, cleanup);
             worker.addEventListener("message", handler);
+            worker.addEventListener("error", onWorkerError);
+            worker.addEventListener("messageerror", onWorkerError);
             postDispatchPayload();
         };
-
-        for (const worker of input.workers) {
-            dispatch(worker);
-        }
+        for (const worker of workers) dispatch(worker);
     });
 }

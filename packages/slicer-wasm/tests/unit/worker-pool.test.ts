@@ -36,6 +36,45 @@ function makeEventedWorker(name: string): EventedWorker {
 }
 
 describe("worker pool lifecycle / worker pool 生命周期", () => {
+    it("discards a worker that becomes ready after termination / 池终止后丢弃迟到的就绪 worker", async () => {
+        const worker = makeWorker("pending");
+        const ready = Promise.withResolvers<void>();
+        const started = Promise.withResolvers<void>();
+        const pool = createSlicerWorkerPoolState<FakeWorker>([], {
+            minWorkers: 1,
+            maxWorkers: 1,
+            createWorker: () => {
+                started.resolve();
+                return worker;
+            },
+            waitForReady: () => ready.promise
+        });
+        const ensuring = pool.ensureWorkers();
+        await started.promise;
+        pool.terminateAll();
+        ready.resolve();
+        await ensuring;
+        expect(pool.size).toBe(0);
+        expect(worker.terminate).toHaveBeenCalledOnce();
+    });
+
+    it("serializes overlapping worker initialization requests / 串行处理重叠的 worker 初始化请求", async () => {
+        const ready = Promise.withResolvers<void>();
+        let count = 0;
+        const pool = createSlicerWorkerPoolState<FakeWorker>([], {
+            minWorkers: 1,
+            maxWorkers: 1,
+            createWorker: () => makeWorker(String(++count)),
+            waitForReady: () => ready.promise
+        });
+        const first = pool.ensureWorkers();
+        const second = pool.ensureWorkers();
+        ready.resolve();
+        await Promise.all([first, second]);
+        expect(pool.size).toBe(1);
+        expect(count).toBe(1);
+    });
+
     beforeEach(() => {
         vi.useFakeTimers();
     });

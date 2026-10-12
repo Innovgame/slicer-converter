@@ -5,6 +5,8 @@ import initWasm, {
     type InitInput
 } from "../../../lib/slicer_converter.js";
 
+import { syncFormatFacts } from "../format/facts.js";
+
 import { buildFileMetadataJson } from "../format/header.js";
 import type {
     ArchiveLayerEntryPlan,
@@ -154,7 +156,7 @@ export async function initSlicerConverterWasm(wasmUrl: SlicerConverterInitInput 
     if (!initPromise) {
         initPromise = loadWasmModule(wasmUrl)
             .then((moduleOrPath) => initWasm({ module_or_path: moduleOrPath }))
-            .then(() => undefined)
+            .then(() => syncFormatFacts(getSupportedFormats()))
             .catch((error: unknown) => {
                 initPromise = null;
                 throw toWasmError(error);
@@ -177,6 +179,7 @@ export async function initSlicerConverterWasmWithProgress(
         initPromise = streamWasmBytes(wasmUrl, onProgress)
             .then((wasmBytes) => initWasm({ module_or_path: wasmBytes }))
             .then(() => {
+                syncFormatFacts(getSupportedFormats());
                 onProgress({ phase: "ready", loadedBytes: 0, totalBytes: null, percent: 100 });
             })
             .catch((error: unknown) => {

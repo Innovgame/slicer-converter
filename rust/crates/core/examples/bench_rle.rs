@@ -6,8 +6,12 @@ use std::path::PathBuf;
 use std::time::Instant;
 
 fn main() {
-    let goo_path =
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("data/Untitled_20260413_1125_TI3U.goo");
+    let goo_path = std::env::var_os("BENCH_RLE_INPUT")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| {
+            PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .join("../../data/Untitled_20260413_1125_TI3U.goo")
+        });
     let data = std::fs::read(&goo_path).unwrap_or_else(|_| {
         eprintln!("File not found: {}", goo_path.display());
         std::process::exit(1);

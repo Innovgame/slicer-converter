@@ -84,6 +84,11 @@ jobs:
             - name: Run typecheck
               run: pnpm typecheck
 
+            - name: Verify public package initialization
+              run: |
+                  node scripts/smoke-package.mjs
+                  node scripts/smoke-package.mjs progress
+
             - name: Run WASM package unit tests
               run: pnpm test:wasm:unit
 
