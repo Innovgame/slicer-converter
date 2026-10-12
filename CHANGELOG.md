@@ -4,6 +4,10 @@ This file records changes that users can see. Versions follow repository tags, f
 
 ## Unreleased
 
+- Layer preview wheel zoom combines consecutive redraws and reads cached grayscale values without synchronous Canvas readback.
+- Opening large 8K files no longer freezes desktop or mobile layouts in React development builds while expanding preview grayscale data.
+- Mobile settings no longer show file status at the top of the page. Returning to preview restores the status beside the file summary.
+
 ## 0.1.15
 
 - Mobile navigation, file and export drawers, layer controls, and preview tools share a floating frosted-glass style with light and dark themes.
