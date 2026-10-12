@@ -180,6 +180,22 @@
         "closePanel": "关闭面板",
         "navigation": "工作台页面",
         "exportAs": "导出为",
-        "previewEmpty": "打开切片文件，查看曝光图层。"
+        "previewEmpty": "打开切片文件，查看曝光图层。",
+        "status": {
+            "showDetails": "{{status}}，查看详情",
+            "details": "状态详情",
+            "closeDetails": "关闭状态详情",
+            "ready": "就绪",
+            "opened": "文件已加载",
+            "converted": "转换完成",
+            "converting": "正在转换",
+            "convertingProgress": "正在转换 · {{percent}}%",
+            "openError": "文件打开失败",
+            "convertError": "转换失败",
+            "error": "发生错误",
+            "warning": "请查看提示",
+            "starting": "正在准备",
+            "targetUpdated": "导出目标已更新"
+        }
     }
 }

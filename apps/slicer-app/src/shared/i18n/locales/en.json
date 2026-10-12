@@ -181,6 +181,22 @@
         "closePanel": "Close panel",
         "navigation": "Workbench pages",
         "exportAs": "Export as",
-        "previewEmpty": "Open a slicer file to inspect exposure layers."
+        "previewEmpty": "Open a slicer file to inspect exposure layers.",
+        "status": {
+            "showDetails": "{{status}} — view details",
+            "details": "Status details",
+            "closeDetails": "Close status details",
+            "ready": "Ready",
+            "opened": "File loaded",
+            "converted": "Conversion complete",
+            "converting": "Converting",
+            "convertingProgress": "Converting · {{percent}}%",
+            "openError": "Could not open file",
+            "convertError": "Conversion failed",
+            "error": "Something went wrong",
+            "warning": "Review warning",
+            "starting": "Getting ready",
+            "targetUpdated": "Export target updated"
+        }
     }
 }

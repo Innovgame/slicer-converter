@@ -15,7 +15,7 @@ interface AppShellProps {
     source: ReactNode;
     viewer: ReactNode | ((session: MobileWorkbenchSession) => ReactNode);
     inspector: ReactNode | ((session: MobileWorkbenchSession) => ReactNode);
-    status: ReactNode;
+    status: ReactNode | ((session: MobileWorkbenchSession) => ReactNode);
     onBrowseFile?(): void;
     sourceSummary?: string;
     documentIdentity?: unknown;
@@ -114,7 +114,6 @@ export function AppShell({
                                 disabled={chromeHidden}
                             >
                                 <strong title={documentStatus}>{documentStatus}</strong>
-                                <small>{sourceSummary ?? t("mobile.openFile")}</small>
                             </button>
                         )}
                     </div>
@@ -225,7 +224,10 @@ export function AppShell({
                 </aside>
             </div>
             <footer className="sc-status-bar" hidden={session.isMobile && session.immersive}>
-                {status}
+                {session.isMobile && session.tab === "preview" && (
+                    <small className="sc-mobile-status-summary">{sourceSummary ?? t("mobile.openFile")}</small>
+                )}
+                {typeof status === "function" ? status(mobileSession) : status}
             </footer>
             {session.isMobile && !session.immersive && (
                 <nav className="sc-mobile-tabs" role="tablist" aria-label={t("mobile.navigation")}>

@@ -99,7 +99,16 @@ export function ConverterPage() {
                     onCancel={controller.onCancel}
                 />
             )}
-            status={<StatusBanner id="statusMsg" status={controller.status} />}
+            status={(mobile) => (
+                <StatusBanner
+                    id="statusMsg"
+                    status={controller.status}
+                    mobile={mobile.isMobile}
+                    converting={controller.converting}
+                    progress={controller.progress}
+                    documentLoaded={controller.parsedHeader !== null}
+                />
+            )}
         />
     );
 }
