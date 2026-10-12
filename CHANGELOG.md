@@ -4,6 +4,7 @@ This file records changes that users can see. Versions follow repository tags, f
 
 ## Unreleased
 
+- Importing a file on iOS, iPadOS, or macOS no longer greys out `.goo`, `.ctb`, and other slicer formats in the system file dialog.
 - Clicking the version label in the desktop header or mobile settings shows the build commit's first eight characters; clicking again hides it. Build metadata follows Vite environment-variable conventions and uses the actual checked-out commit or an explicit CI value.
 - Layer preview wheel zoom combines consecutive redraws and reads cached grayscale values without synchronous Canvas readback.
 - Opening large 8K files no longer freezes desktop or mobile layouts in React development builds while expanding preview grayscale data.

@@ -6,6 +6,7 @@ import { listImportableFileExtensions, type ParsedHeader } from "@innovgame/slic
 
 import { formatBytes } from "../../../shared/lib/format";
 import { renderThumbnail } from "../../preview";
+import { buildFilePickerAccept } from "./file-picker-accept";
 import { FileIcon, UploadIcon } from "./icons";
 
 interface FileSummaryCardProps {
@@ -37,7 +38,7 @@ export function FileSummaryCard({ sourceFile, parsedHeader, onFileSelect, inputR
     const fileInfoVisible = sourceFile !== null && parsedHeader !== null;
     const metadata = parsedHeader?.metadata;
     const importableExtensions = listImportableFileExtensions();
-    const accept = importableExtensions.join(",");
+    const accept = buildFilePickerAccept(importableExtensions);
     const supportText =
         importableExtensions.length > 0
             ? t("source.supports", { extensions: importableExtensions.join(", ") })
@@ -108,7 +109,7 @@ export function FileSummaryCard({ sourceFile, parsedHeader, onFileSelect, inputR
                         ref={fileInputRef}
                         id="fileInput"
                         type="file"
-                        accept={accept}
+                        {...(accept ? { accept } : {})}
                         className="hidden"
                         onChange={(event) => {
                             const file = event.target.files?.[0];

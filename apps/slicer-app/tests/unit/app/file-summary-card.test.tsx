@@ -3,6 +3,7 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { syncFormatFacts } from "@innovgame/slicer-converter";
 
+import { buildFilePickerAccept } from "../../../src/features/converter/ui/file-picker-accept";
 import { FileSummaryCard } from "../../../src/features/converter/ui/file-summary-card";
 import { ThemeProvider } from "../../../src/app/providers";
 import { formatFact } from "../support/format-facts";
@@ -64,7 +65,45 @@ describe("FileSummaryCard / 文件摘要卡片", () => {
 
         expect(screen.getByLabelText("Drop slicer file or browse")).toBeInTheDocument();
         expect(screen.getByText("Supports .ctb, .futurefmt or click to browse")).toBeInTheDocument();
-        expect(document.getElementById("fileInput")).toHaveAttribute("accept", ".ctb,.futurefmt");
+        expect(document.getElementById("fileInput")).toHaveAttribute(
+            "accept",
+            buildFilePickerAccept([".ctb", ".futurefmt"])
+        );
+    });
+
+    it("does not put dotted catalog extensions on the native file picker / 带点目录扩展名不进入原生文件选择器", () => {
+        syncFormatFacts([
+            formatFact({
+                name: "ctb",
+                aliases: ["ctb"],
+                extensions: ["ctb", "v1.ctb", "gktwo.ctb"],
+                is_zip: false
+            }),
+            formatFact({
+                name: "goo",
+                aliases: ["goo"],
+                extensions: ["goo"],
+                is_zip: false
+            })
+        ]);
+
+        render(
+            React.createElement(
+                ThemeProvider,
+                null,
+                React.createElement(FileSummaryCard, {
+                    sourceFile: null,
+                    parsedHeader: null,
+                    onFileSelect: vi.fn()
+                })
+            )
+        );
+
+        const accept = document.getElementById("fileInput")?.getAttribute("accept") ?? "";
+        expect(accept).not.toContain("v1.ctb");
+        expect(accept).not.toContain("gktwo.ctb");
+        expect(screen.getByText(/\.v1\.ctb/)).toBeInTheDocument();
+        expect(screen.getByText(/\.goo/)).toBeInTheDocument();
     });
 
     it("updates the drop zone prompt while dragging / updates the drop zone prompt 同时 dragging", () => {
