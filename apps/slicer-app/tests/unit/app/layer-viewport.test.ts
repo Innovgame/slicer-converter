@@ -39,7 +39,7 @@ describe("layer viewport plate mapping / 层图板面换算", () => {
 describe("LayerViewport touch and visibility / 层图触摸与可见性", () => {
     function createViewport() {
         const canvas = document.createElement("canvas");
-        vi.spyOn(canvas, "getContext").mockReturnValue({
+        vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({
             clearRect() {},
             drawImage() {},
             setTransform() {}
@@ -92,6 +92,39 @@ describe("LayerViewport touch and visibility / 层图触摸与可见性", () => 
             expect(Number(canvas.dataset.zoom)).toBeCloseTo(4);
         } finally {
             viewport.dispose();
+            vi.restoreAllMocks();
+        }
+    });
+
+    it("continues zooming past 32x through controls and wheel up to 128x / 按钮与滚轮继续放大到 128 倍", () => {
+        const { canvas, viewport } = createViewport();
+        try {
+            viewport.setZoom(32);
+            viewport.zoomBy(2);
+            expect(Number(canvas.dataset.zoom)).toBe(64);
+            canvas.dispatchEvent(new WheelEvent("wheel", { deltaY: -600, clientX: 200, clientY: 150 }));
+            expect(Number(canvas.dataset.zoom)).toBe(128);
+            viewport.setZoom(1024);
+            expect(Number(canvas.dataset.zoom)).toBe(128);
+        } finally {
+            viewport.dispose();
+            vi.restoreAllMocks();
+        }
+    });
+
+    it("pinches past 32x with the same 128x limit / 双指缩放超过 32 倍并采用相同的 128 倍上限", () => {
+        const { canvas, viewport } = createViewport();
+        try {
+            viewport.setZoom(32);
+            pointer(canvas, "pointerdown", 1, 150, 150);
+            pointer(canvas, "pointerdown", 2, 250, 150);
+            pointer(canvas, "pointermove", 2, 350, 150);
+            expect(Number(canvas.dataset.zoom)).toBe(64);
+            pointer(canvas, "pointermove", 2, 650, 150);
+            expect(Number(canvas.dataset.zoom)).toBe(128);
+        } finally {
+            viewport.dispose();
+            vi.restoreAllMocks();
         }
     });
 
@@ -111,6 +144,7 @@ describe("LayerViewport touch and visibility / 层图触摸与可见性", () => 
             expect(Number(canvas.dataset.zoom)).toBeCloseTo(2);
         } finally {
             viewport.dispose();
+            vi.restoreAllMocks();
         }
     });
 });

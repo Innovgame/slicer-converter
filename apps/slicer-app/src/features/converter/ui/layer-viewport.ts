@@ -1,5 +1,7 @@
 import type { PreviewImageState } from "../model/use-converter-controller";
 
+const MAX_LAYER_ZOOM = 128;
+
 /**
  * @zh 层图像素对应的构建板毫米参数。原点在板心，图像 Y=0 为顶边，对齐 PrintLab 切片预览。
  * @en Plate millimetre frame for a layer image. Origin is the plate center and image Y=0 is the top edge, matching the PrintLab slice preview.
@@ -101,6 +103,11 @@ export function formatLayerHeight(value: number): string {
  */
 export class LayerViewport {
     private readonly source = document.createElement("canvas");
+    /**
+     * @zh 缓冲画布完成层图与网格合成；屏幕画布只接收完整像素帧。
+     * @en Composites the layer and grid in a buffer; the visible canvas receives only complete pixel frames.
+     */
+    private readonly frameCanvas = document.createElement("canvas");
     private readonly events = new AbortController();
     private readonly observer: ResizeObserver | null;
     private image: DisplayedLayer | undefined;
@@ -270,7 +277,7 @@ export class LayerViewport {
         }
         this.fitting = true;
         this.zoom = Math.min(
-            32,
+            MAX_LAYER_ZOOM,
             Math.min(
                 Math.max(1, this.width - 32) / image.plate.nativeWidth,
                 Math.max(1, this.height - 32) / image.plate.nativeHeight
@@ -285,7 +292,7 @@ export class LayerViewport {
         if (!this.image || !Number.isFinite(zoom) || zoom <= 0) {
             return;
         }
-        const next = Math.max(this.minimumZoom, Math.min(32, zoom));
+        const next = Math.max(this.minimumZoom, Math.min(MAX_LAYER_ZOOM, zoom));
         const ratio = next / this.zoom;
         this.offsetX = x - (x - this.offsetX) * ratio;
         this.offsetY = y - (y - this.offsetY) * ratio;
@@ -316,6 +323,8 @@ export class LayerViewport {
         }
         this.source.width = 0;
         this.source.height = 0;
+        this.frameCanvas.width = 0;
+        this.frameCanvas.height = 0;
         this.image = undefined;
     }
 
@@ -360,7 +369,9 @@ export class LayerViewport {
     }
 
     private draw(): void {
-        const context = this.canvas.getContext("2d");
+        if (this.frameCanvas.width !== this.canvas.width) this.frameCanvas.width = this.canvas.width;
+        if (this.frameCanvas.height !== this.canvas.height) this.frameCanvas.height = this.canvas.height;
+        const context = this.frameCanvas.getContext("2d", { willReadFrequently: true });
         if (!context || typeof context.setTransform !== "function" || typeof context.clearRect !== "function") {
             this.publish(this.snapshot());
             return;
@@ -373,16 +384,35 @@ export class LayerViewport {
         if (image && this.width >= 2 && this.height >= 2 && typeof context.drawImage === "function") {
             context.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
             context.imageSmoothingEnabled = this.zoom < 1;
-            context.drawImage(
-                this.source,
-                this.offsetX,
-                this.offsetY,
-                image.plate.nativeWidth * scale,
-                image.plate.nativeHeight * scale
-            );
+            const pixelWidth = (image.plate.nativeWidth * scale) / image.bitmapWidth;
+            const pixelHeight = (image.plate.nativeHeight * scale) / image.bitmapHeight;
+            const left = Math.max(0, Math.floor(-this.offsetX / pixelWidth));
+            const right = Math.min(image.bitmapWidth, Math.ceil((this.width - this.offsetX) / pixelWidth));
+            const top = Math.max(0, Math.floor(-this.offsetY / pixelHeight));
+            const bottom = Math.min(image.bitmapHeight, Math.ceil((this.height - this.offsetY) / pixelHeight));
+            if (right > left && bottom > top) {
+                context.drawImage(
+                    this.source,
+                    left,
+                    top,
+                    right - left,
+                    bottom - top,
+                    this.offsetX + left * pixelWidth,
+                    this.offsetY + top * pixelHeight,
+                    (right - left) * pixelWidth,
+                    (bottom - top) * pixelHeight
+                );
+            }
             if (gridVisible) {
                 this.drawGrid(context, image);
             }
+        }
+        const target = this.canvas.getContext("2d");
+        if (target) {
+            target.setTransform(1, 0, 0, 1, 0, 0);
+            target.globalCompositeOperation = "copy";
+            target.drawImage(this.frameCanvas, 0, 0);
+            target.globalCompositeOperation = "source-over";
         }
         this.canvas.dataset.zoom = String(this.zoom);
         this.canvas.dataset.offsetX = String(this.offsetX);
@@ -406,17 +436,17 @@ export class LayerViewport {
         context.clip();
         context.beginPath();
         for (let x = left; x <= right; x += 1) {
-            const screen = (Math.round((this.offsetX + x * scale) * this.dpr) + 0.5) / this.dpr;
+            const screen = (Math.round((this.offsetX + x * scale) * this.dpr) + this.dpr / 2) / this.dpr;
             context.moveTo(screen, 0);
             context.lineTo(screen, this.height);
         }
         for (let y = top; y <= bottom; y += 1) {
-            const screen = (Math.round((this.offsetY + y * scale) * this.dpr) + 0.5) / this.dpr;
+            const screen = (Math.round((this.offsetY + y * scale) * this.dpr) + this.dpr / 2) / this.dpr;
             context.moveTo(0, screen);
             context.lineTo(this.width, screen);
         }
-        context.strokeStyle = "rgba(128, 128, 128, 0.65)";
-        context.lineWidth = 1 / this.dpr;
+        context.strokeStyle = "rgba(112, 112, 112, 0.85)";
+        context.lineWidth = 1;
         context.stroke();
         context.restore();
     }
@@ -519,7 +549,7 @@ export class LayerViewport {
                 const [a, b] = Array.from(this.touches.values());
                 const zoom = Math.max(
                     this.minimumZoom,
-                    Math.min(32, (this.pinch.zoom * Math.hypot(a.x - b.x, a.y - b.y)) / this.pinch.distance)
+                    Math.min(MAX_LAYER_ZOOM, (this.pinch.zoom * Math.hypot(a.x - b.x, a.y - b.y)) / this.pinch.distance)
                 );
                 const ratio = zoom / this.pinch.zoom;
                 this.offsetX = (a.x + b.x) / 2 - (this.pinch.x - this.pinch.offsetX) * ratio;
