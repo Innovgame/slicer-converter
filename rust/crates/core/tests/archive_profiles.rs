@@ -167,7 +167,8 @@ fn archive_specs_encode_documents_through_zip_pipeline() {
                     .by_index(index)
                     .expect("zip entry")
                     .name()
-                    .to_string()
+                    .expect("zip entry name")
+                    .into_owned()
             })
             .collect::<Vec<_>>();
         assert_eq!(entry_names, expected_entries, "{name} entry order");

@@ -373,7 +373,10 @@ pub(crate) fn collect_zip_entries(
             .map_err(|error| ConvertError::ZipError(error.to_string()))?;
         entries.push(ZipEntryInfo {
             index,
-            name: file.name().to_string(),
+            name: file
+                .name()
+                .map_err(|error| ConvertError::ZipError(error.to_string()))?
+                .into_owned(),
             compressed_size: file.compressed_size(),
             uncompressed_size: file.size(),
         });

@@ -206,7 +206,8 @@ fn anycubic_zip_archive_export_builds_printer_native_entries() {
                 .by_index(index)
                 .expect("zip entry")
                 .name()
-                .to_string()
+                .expect("zip entry name")
+                .into_owned()
         })
         .collect::<Vec<_>>();
     for required in [

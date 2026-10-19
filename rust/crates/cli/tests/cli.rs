@@ -1587,7 +1587,7 @@ fn cli_converts_goo_to_vdt_with_uvtools_layer_manifest() {
             archive
                 .by_index(index)
                 .ok()
-                .map(|entry| entry.name().to_string())
+                .map(|entry| entry.name().expect("zip entry name").into_owned())
         })
         .filter(|name| {
             name.strip_suffix(".png")
