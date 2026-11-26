@@ -33,6 +33,6 @@
         "test:unit": "node ../../scripts/run-vitest-safe.mjs run --pool=threads"
     },
     "devDependencies": {
-        "vitest": "^4.1.4"
+        "vitest": "^5.0.5"
     }
 }
