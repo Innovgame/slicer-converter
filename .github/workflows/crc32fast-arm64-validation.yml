@@ -1,0 +1,64 @@
+name: Validate crc32fast 1.5.5 on Apple Silicon
+
+on:
+    push:
+        branches: [validation/crc32fast-1.5.5-macos-arm64]
+
+permissions:
+    contents: read
+
+jobs:
+    native-cli:
+        runs-on: macos-15
+        timeout-minutes: 20
+        env:
+            CANDIDATE_SHA: 6c4a6666e40fb54d7e7e531329df86a72c24a771
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+              with:
+                  ref: ${{ env.CANDIDATE_SHA }}
+                  persist-credentials: false
+
+            - name: Verify revision, architecture, and locked CRC version
+              shell: bash
+              run: |
+                  git rev-parse HEAD
+                  test "$(git rev-parse HEAD)" = "$CANDIDATE_SHA"
+                  uname -m
+                  test "$(uname -m)" = arm64
+                  rustc +stable -vV
+                  test "$(rustc +stable --print host-tuple)" = aarch64-apple-darwin
+                  cargo +stable tree --locked --manifest-path rust/Cargo.toml --target aarch64-apple-darwin -p slicer-converter-cli -i crc32fast@1.5.5
+
+            - name: Run locked CLI integration tests
+              run: cargo +stable test --locked --manifest-path rust/Cargo.toml --target aarch64-apple-darwin -p slicer-converter-cli --test cli
+
+            - name: Run release CLI archive roundtrip
+              shell: bash
+              run: |
+                  cargo +stable build --locked --release --manifest-path rust/Cargo.toml --target aarch64-apple-darwin -p slicer-converter-cli
+                  cli=rust/target/aarch64-apple-darwin/release/slicer-converter
+                  file "$cli"
+                  output=$(mktemp -d "$RUNNER_TEMP/crc32fast.XXXXXX")
+                  mkdir "$output/first" "$output/second"
+                  "$cli" --input rust/crates/core/tests/fixtures/sample.goo --output "$output/first/sample.sl1"
+                  "$cli" --input "$output/first/sample.sl1" --output "$output/restored.goo"
+                  "$cli" --input "$output/restored.goo" --output "$output/second/sample.sl1"
+                  python3 - "$output/first/sample.sl1" "$output/second/sample.sl1" <<'PY'
+                  import sys
+                  from zipfile import ZipFile
+
+                  expected = {f"sample_{idx:05}.png" for idx in range(10)}
+                  with ZipFile(sys.argv[1]) as first, ZipFile(sys.argv[2]) as second:
+                      for archive in (first, second):
+                          bad_entry = archive.testzip()
+                          if bad_entry is not None:
+                              raise SystemExit(f"ZIP CRC validation failed for {bad_entry}")
+                          layers = {name for name in archive.namelist() if name.startswith('sample_') and name.endswith('.png')}
+                          if layers != expected:
+                              raise SystemExit(f"Unexpected SL1 layer entries: {sorted(layers)}")
+                      for name in sorted(expected):
+                          if first.read(name) != second.read(name):
+                              raise SystemExit(f"Round-tripped layer changed: {name}")
+                  print("GOO -> SL1 -> GOO: ZIP CRC checks passed and all 10 layer images match")
+                  PY
